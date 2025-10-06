@@ -1,6 +1,6 @@
-# DungeonBlade: AI Dungeon Master Adventure
+# Dungeon Blade: AI Dungeon Master Adventure
 
-Welcome to DungeonBlade, an online RPG where an AI Dungeon Master guides your fate through epic quests, battles, and mysteries!
+Welcome to Dungeon Blade, an online RPG where an AI Dungeon Master guides your fate through epic quests, battles, and mysteries!
 
 ## Overview
 - **Created by**: Michael Arnold, CEO of Next Network entertainment
