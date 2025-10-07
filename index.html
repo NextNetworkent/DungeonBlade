@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Turtle WoW Radio Player</title>
+  <title>Turtle WoW Radio + YouTube Short</title>
   <style>
     body {
       margin: 0;
@@ -12,7 +12,28 @@
       color: #e2e2e2;
       font-family: Arial, sans-serif;
       height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
       overflow: hidden;
+    }
+
+    /* Centered YouTube container */
+    .youtube-container {
+      position: relative;
+      width: 300px;
+      height: 533px; /* 9:16 aspect ratio for Shorts */
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .youtube-container iframe {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: none;
     }
 
     /* Floating radio player in top-right corner */
@@ -44,61 +65,4 @@
     }
 
     .radio-player button:hover {
-      background-color: #49a85c;
-    }
-
-    .radio-status {
-      font-size: 0.85rem;
-      color: #cfcfcf;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Floating Radio Player -->
-  <div class="radio-player">
-    <button id="radioToggle" aria-pressed="false">▶ Play</button>
-    <span id="radioStatus" class="radio-status">stopped</span>
-    <audio id="everlookAudio" preload="none" crossorigin>
-      <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
-      Your browser does not support the audio element.
-    </audio>
-  </div>
-
-  <script>
-    const btn = document.getElementById('radioToggle');
-    const status = document.getElementById('radioStatus');
-    const audio = document.getElementById('everlookAudio');
-    let playing = false;
-
-    btn.addEventListener('click', async () => {
-      try {
-        if (!playing) {
-          await audio.play();
-          btn.textContent = '⏸ Pause';
-          btn.setAttribute('aria-pressed', 'true');
-          status.textContent = 'playing';
-          playing = true;
-        } else {
-          audio.pause();
-          btn.textContent = '▶ Play';
-          btn.setAttribute('aria-pressed', 'false');
-          status.textContent = 'stopped';
-          playing = false;
-        }
-      } catch (err) {
-        console.error('Playback error:', err);
-        alert('Unable to start stream. Check console for details.');
-      }
-    });
-
-    audio.addEventListener('ended', () => {
-      btn.textContent = '▶ Play';
-      btn.setAttribute('aria-pressed', 'false');
-      status.textContent = 'stopped';
-      playing = false;
-    });
-  </script>
-
-</body>
-</html>
+      backgro
