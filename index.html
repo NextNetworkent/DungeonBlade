@@ -2,141 +2,103 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>My Black Page with Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Turtle WoW Radio Player</title>
   <style>
     body {
       margin: 0;
-      background-color: #000;
-      color: #fff;
+      padding: 0;
+      background-color: #0b0e12;
+      color: #e2e2e2;
       font-family: Arial, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Floating radio player in top-right corner */
+    .radio-player {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background-color: rgba(20, 25, 30, 0.85);
+      border: 1px solid #2a323a;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+      padding: 0.75rem 1rem;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      padding: 2em;
-      text-align: center;
+      gap: 0.6rem;
+      z-index: 9999;
     }
 
-    h1 {
-      font-size: 2em;
-      margin-bottom: 1em;
-    }
-
-    .content-wrapper {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: flex-start;
-      width: 100%;
-      max-width: 1000px;
-    }
-
-    .video-section {
-      flex: 1;
-      margin-right: 2em;
-      text-align: left;
-    }
-
-    .video-section h2 {
-      color: #ffcc00;
-    }
-
-    .video-section iframe {
-      width: 100%;
-      height: 315px;
+    .radio-player button {
+      background-color: #3a8b4c;
       border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 0.9rem;
+      font-weight: bold;
+      padding: 0.4rem 0.8rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
     }
 
-    .text-section {
-      flex: 1.5;
-      text-align: left;
+    .radio-player button:hover {
+      background-color: #49a85c;
     }
 
-    .text-section h2 {
-      color: #ffcc00;
-      margin-top: 1.5em;
-    }
-
-    a {
-      color: #00afff;
-    }
-
-    ul {
-      padding-left: 1.2em;
-    }
-
-    li {
-      margin-bottom: 0.5em;
-    }
-
-    p {
-      margin-bottom: 1em;
+    .radio-status {
+      font-size: 0.85rem;
+      color: #cfcfcf;
     }
   </style>
 </head>
 <body>
 
-  <h1>Welcome to The Boars Breath Tavern</h1>
-
-  <div class="content-wrapper">
-
-    <div class="video-section">
-      <h2>ABOUT</h2>
-      <!-- Embedded YouTube Short via iframe -->
-      <iframe 
-        src="https://www.youtube.com/embed/nGDDXFt4coU" 
-        title="YouTube video player" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
-      </iframe>
-    </div>
-
-    <div class="text-section">
-      <h2>Dungeon Blade: AI Dungeon Master Adventure</h2>
-      <p>Welcome to Dungeon Blade, an online RPG where an AI Dungeon Master guides your fate through epic quests, battles, and mysteries!</p>
-
-      <h2>Overview</h2>
-      <ul>
-        <li><strong>Created by:</strong> Michael Arnold, CEO of Next Network entertainment</li>
-        <li><strong>Date:</strong> October 1, 2025</li>
-        <li>DungeonBlade is a simple, self-contained web game blending text-based storytelling with AI narration. Explore dungeons, make choices, and roll digital dice—all for free!</li>
-      </ul>
-
-      <h2>How to Play</h2>
-      <ol>
-        <li>Visit the live portal: <a href="https://nextnetworkent.github.io/DungeonBlade/" target="_blank">https://nextnetworkent.github.io/DungeonBlade/</a></li>
-        <li>Enter commands in the interface and wait for the AI Dungeon Master to reply.</li>
-        <li>Make a character profile. Enter the Tavern, meet up with friends, show them your character sheet and bio.</li>
-        <li>Progress your character through encounters with true AI rolls dice and pulls from a library of assets and info.</li>
-      </ol>
-
-      <h2>Features</h2>
-      <ul>
-        <li>Interactive story scroller with player inputs and talking AI.</li>
-        <li>Free character page.</li>
-        <li>A chat room to meet up and watch or join sessions.</li>
-      </ul>
-
-      <h2>Contributing</h2>
-      <p>Fork this repo, add enchantments, and submit a pull request. All free tools welcome!</p>
-
-      <p><strong>May your rolls be high and your adventures legendary!</strong></p>
-    </div>
-
+  <!-- Floating Radio Player -->
+  <div class="radio-player">
+    <button id="radioToggle" aria-pressed="false">▶ Play</button>
+    <span id="radioStatus" class="radio-status">stopped</span>
+    <audio id="everlookAudio" preload="none" crossorigin>
+      <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
   </div>
 
-  <!--Start of Tawk.to Script-->
-  <script type="text/javascript">
-    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
-    (function () {
-      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
-      s1.async = true;
-      s1.src = 'https://embed.tawk.to/68e45e25a72e3519521841d3/1j6u0vh8c';
-      s1.charset = 'UTF-8';
-      s1.setAttribute('crossorigin', '*');
-      s0.parentNode.insertBefore(s1, s0);
-    })();
+  <script>
+    const btn = document.getElementById('radioToggle');
+    const status = document.getElementById('radioStatus');
+    const audio = document.getElementById('everlookAudio');
+    let playing = false;
+
+    btn.addEventListener('click', async () => {
+      try {
+        if (!playing) {
+          await audio.play();
+          btn.textContent = '⏸ Pause';
+          btn.setAttribute('aria-pressed', 'true');
+          status.textContent = 'playing';
+          playing = true;
+        } else {
+          audio.pause();
+          btn.textContent = '▶ Play';
+          btn.setAttribute('aria-pressed', 'false');
+          status.textContent = 'stopped';
+          playing = false;
+        }
+      } catch (err) {
+        console.error('Playback error:', err);
+        alert('Unable to start stream. Check console for details.');
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      btn.textContent = '▶ Play';
+      btn.setAttribute('aria-pressed', 'false');
+      status.textContent = 'stopped';
+      playing = false;
+    });
   </script>
-  <!--End of Tawk.to Script-->
 
 </body>
 </html>
