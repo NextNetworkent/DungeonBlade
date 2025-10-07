@@ -1,98 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dungeon Blade: AI Dungeon Master</title>
-    <style>
-        body {
-            font-family: 'Courier New', monospace;
-            background-color: #121212;
-            color: #e0e0e0;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        #story {
-            flex: 1;
-            overflow-y: auto;
-            border: 1px solid #444;
-            padding: 10px;
-            background-color: #1e1e1e;
-            margin-bottom: 10px;
-        }
-        #input-container {
-            display: flex;
-        }
-        #user-input {
-            flex: 1;
-            padding: 10px;
-            background-color: #2a2a2a;
-            color: #e0e0e0;
-            border: 1px solid #444;
-            font-family: inherit;
-        }
-        #submit-btn {
-            padding: 10px 20px;
-            background-color: #4a4a4a;
-            color: #fff;
-            border: 1px solid #444;
-            cursor: pointer;
-        }
-        #submit-btn:hover {
-            background-color: #5a5a5a;
-        }
-        .player-action {
-            color: #00ff00;
-        }
-        .ai-response {
-            color: #ffff00;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>My Black Page with Chat</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2em;
+    }
+  </style>
 </head>
 <body>
-    <div id="story">
-        <p>Welcome to Dungeon Blade, where the AI Dungeon Master guides your fate. Begin your quest...</p>
-    </div>
-    <div id="input-container">
-        <input type="text" id="user-input" placeholder="Enter your action (e.g., 'Enter the tavern')" autofocus>
-        <button id="submit-btn">Submit</button>
-    </div>
 
-    <script>
-        const storyDiv = document.getElementById('story');
-        const userInput = document.getElementById('user-input');
-        const submitBtn = document.getElementById('submit-btn');
+  <h1>Welcome to My Website</h1>
 
-        submitBtn.addEventListener('click', handleInput);
-        userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleInput();
-        });
+  <!--Start of Tawk.to Script-->
+  <script type="text/javascript">
+    var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+    (function () {
+      var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+      s1.async = true;
+      s1.src = 'https://embed.tawk.to/68e45e25a72e3519521841d3/1j6u0vh8c';
+      s1.charset = 'UTF-8';
+      s1.setAttribute('crossorigin', '*');
+      s0.parentNode.insertBefore(s1, s0);
+    })();
+  </script>
+  <!--End of Tawk.to Script-->
 
-        function handleInput() {
-            const input = userInput.value.trim();
-            if (!input) return;
-
-            // Append player action
-            const playerP = document.createElement('p');
-            playerP.classList.add('player-action');
-            playerP.textContent = `> ${input}`;
-            storyDiv.appendChild(playerP);
-
-            // Placeholder for AI response (replace with API call later)
-            const aiP = document.createElement('p');
-            aiP.classList.add('ai-response');
-            aiP.textContent = `The Dungeon Master responds: (AI magic will narrate here soon...)`;
-            storyDiv.appendChild(aiP);
-
-            // Scroll to bottom
-            storyDiv.scrollTop = storyDiv.scrollHeight;
-
-            userInput.value = '';
-            userInput.focus();
-        }
-    </script>
 </body>
 </html>
