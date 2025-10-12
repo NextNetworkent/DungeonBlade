@@ -1,214 +1,98 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boar's Breath Tavern</title>
+    <title>Everlook Broadcasting Station</title>
     <style>
         body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #14191e;
-            color: #cfcfcf;
-            font-family: Arial, sans-serif;
-        }
-
-        #header {
-            background-color: #000;
-            text-align: center;
-            padding: 1rem;
-        }
-
-        #header h1 {
-            margin: 0;
-            color: #fff;
-        }
-
-        /* Menu styles */
-        #menu-container {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            z-index: 10000;
-        }
-
-        .hamburger {
-            cursor: pointer;
-        }
-
-        .hamburger span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background: #fff;
-            margin: 5px 0;
-            transition: 0.3s;
-        }
-
-        #menu {
-            display: none;
-            position: absolute;
-            top: 2.5rem;
-            left: 0;
-            background-color: #000;
-            list-style: none;
-            padding: 0.5rem;
-            margin: 0;
-            border: 1px solid #2a323a;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-        }
-
-        #menu li {
-            margin: 0.5rem 0;
-        }
-
-        #menu a {
-            color: #cfcfcf;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            display: block;
-        }
-
-        #menu a:hover {
-            background-color: #2a323a;
-        }
-
-        /* Floating radio player */
-        .radio-player {
-            position: fixed;
-            top: 1rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: rgba(20, 25, 30, 0.85);
-            border: 1px solid #2a323a;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-            padding: 0.75rem 1rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.6rem;
-            z-index: 9999;
+            height: 100vh;
         }
-
-        .radio-player button {
-            background-color: #3a8b4c;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 0.9rem;
-            font-weight: bold;
-            padding: 0.4rem 0.8rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .radio-player button:hover {
-            background-color: #49a85c;
-        }
-
-        .radio-status {
-            font-size: 0.85rem;
-            color: #cfcfcf;
-        }
-
-        .radio-info {
-            font-size: 0.7rem;
-            color: #cfcfcf;
+        header {
             text-align: center;
-            max-width: 200px;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: bold;
         }
-
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .radio-player {
-                padding: 0.5rem;
-                gap: 0.4rem;
-            }
-
-            .radio-player button {
-                font-size: 0.8rem;
-                padding: 0.3rem 0.6rem;
-            }
-
-            .radio-status {
-                font-size: 0.75rem;
-            }
-
-            .radio-info {
-                font-size: 0.6rem;
-            }
+        .player {
+            background-color: #333333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #progress {
+            width: 200px;
+            height: 5px;
+            background-color: #666;
+            margin-top: 10px;
+        }
+        .content {
+            margin-top: 20px;
+            max-height: 50vh;
+            overflow-y: auto;
+            width: 80%;
         }
     </style>
 </head>
 <body>
-    <div id="header">
-        <h1>Welcome to the Boar's Breath Tavern</h1>
+    <header>Everlook Broadcasting Station</header>
+    <div class="player">
+        <p>Breath Raven</p>
+        <button id="playButton">Play</button>
+        <div id="progress"></div>
     </div>
-
-    <div id="menu-container">
-        <div class="hamburger" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <ul id="menu">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-        </ul>
-    </div>
-
-    <div class="radio-player">
-        <div style="display: flex; align-items: center; gap: 0.6rem;">
-            <button id="radioToggle" aria-pressed="false">▶ Play</button>
-            <span id="radioStatus" class="radio-status">stopped</span>
-        </div>
-        <small class="radio-info">Everlook Broadcasting Station<br>wait a few seconds for it to begin after clicking play</small>
-        <audio id="everlookAudio" preload="none" crossorigin>
-            <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
+    <div class="content">
+        <!-- Additional content will go here -->
     </div>
 
     <script>
-        // Menu toggle
-        function toggleMenu() {
-            const menu = document.getElementById('menu');
-            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-        }
+        const playButton = document.getElementById('playButton');
+        let audio = new Audio('your-audio-file.mp3'); // Replace with actual audio file URL
 
-        // Radio player functionality
-        const audio = document.getElementById('everlookAudio');
-        const toggleBtn = document.getElementById('radioToggle');
-        const status = document.getElementById('radioStatus');
-
-        toggleBtn.addEventListener('click', () => {
+        playButton.addEventListener('click', () => {
             if (audio.paused) {
-                audio.play().then(() => {
-                    toggleBtn.textContent = '❚❚ Pause';
-                    status.textContent = 'playing';
-                    toggleBtn.setAttribute('aria-pressed', 'true');
-                }).catch(error => {
-                    console.error('Playback failed:', error);
-                });
+                audio.play();
+                playButton.textContent = 'Pause';
             } else {
                 audio.pause();
-                toggleBtn.textContent = '▶ Play';
-                status.textContent = 'stopped';
-                toggleBtn.setAttribute('aria-pressed', 'false');
+                playButton.textContent = 'Play';
             }
         });
 
-        // Close menu if clicking outside
-        document.addEventListener('click', (event) => {
-            const menuContainer = document.getElementById('menu-container');
-            if (!menuContainer.contains(event.target)) {
-                document.getElementById('menu').style.display = 'none';
+        // Stop audio when window is closed or minimized
+        window.onbeforeunload = () => {
+            audio.pause();
+            audio.currentTime = 0;
+        };
+
+        // Prevent background play when switching screens
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                audio.pause();
+                playButton.textContent = 'Play';
             }
         });
     </script>
 </body>
 </html>
-```
