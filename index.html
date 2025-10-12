@@ -1,0 +1,214 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boar's Breath Tavern</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #14191e;
+            color: #cfcfcf;
+            font-family: Arial, sans-serif;
+        }
+
+        #header {
+            background-color: #000;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        #header h1 {
+            margin: 0;
+            color: #fff;
+        }
+
+        /* Menu styles */
+        #menu-container {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 10000;
+        }
+
+        .hamburger {
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #fff;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        #menu {
+            display: none;
+            position: absolute;
+            top: 2.5rem;
+            left: 0;
+            background-color: #000;
+            list-style: none;
+            padding: 0.5rem;
+            margin: 0;
+            border: 1px solid #2a323a;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+        }
+
+        #menu li {
+            margin: 0.5rem 0;
+        }
+
+        #menu a {
+            color: #cfcfcf;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: block;
+        }
+
+        #menu a:hover {
+            background-color: #2a323a;
+        }
+
+        /* Floating radio player */
+        .radio-player {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(20, 25, 30, 0.85);
+            border: 1px solid #2a323a;
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+            padding: 0.75rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            z-index: 9999;
+        }
+
+        .radio-player button {
+            background-color: #3a8b4c;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .radio-player button:hover {
+            background-color: #49a85c;
+        }
+
+        .radio-status {
+            font-size: 0.85rem;
+            color: #cfcfcf;
+        }
+
+        .radio-info {
+            font-size: 0.7rem;
+            color: #cfcfcf;
+            text-align: center;
+            max-width: 200px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .radio-player {
+                padding: 0.5rem;
+                gap: 0.4rem;
+            }
+
+            .radio-player button {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            .radio-status {
+                font-size: 0.75rem;
+            }
+
+            .radio-info {
+                font-size: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>Welcome to the Boar's Breath Tavern</h1>
+    </div>
+
+    <div id="menu-container">
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul id="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </div>
+
+    <div class="radio-player">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <button id="radioToggle" aria-pressed="false">▶ Play</button>
+            <span id="radioStatus" class="radio-status">stopped</span>
+        </div>
+        <small class="radio-info">Everlook Broadcasting Station<br>wait a few seconds for it to begin after clicking play</small>
+        <audio id="everlookAudio" preload="none" crossorigin>
+            <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <script>
+        // Menu toggle
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Radio player functionality
+        const audio = document.getElementById('everlookAudio');
+        const toggleBtn = document.getElementById('radioToggle');
+        const status = document.getElementById('radioStatus');
+
+        toggleBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    toggleBtn.textContent = '❚❚ Pause';
+                    status.textContent = 'playing';
+                    toggleBtn.setAttribute('aria-pressed', 'true');
+                }).catch(error => {
+                    console.error('Playback failed:', error);
+                });
+            } else {
+                audio.pause();
+                toggleBtn.textContent = '▶ Play';
+                status.textContent = 'stopped';
+                toggleBtn.setAttribute('aria-pressed', 'false');
+            }
+        });
+
+        // Close menu if clicking outside
+        document.addEventListener('click', (event) => {
+            const menuContainer = document.getElementById('menu-container');
+            if (!menuContainer.contains(event.target)) {
+                document.getElementById('menu').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
+```
