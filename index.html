@@ -116,7 +116,6 @@
             margin: 0;
             display: inline-block;
             transition: opacity 0.2s ease;
-            /* Prevent default active state darkening */
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
@@ -128,12 +127,12 @@
         }
 
         .radio-player button:active {
-            opacity: 1; /* Override any active state darkening */
-            transform: none; /* Prevent any transform effects */
+            opacity: 1;
+            transform: none;
         }
 
         .radio-player button:focus {
-            outline: none; /* Remove focus outline to maintain clean look */
+            outline: none;
             box-shadow: none;
         }
 
@@ -141,7 +140,7 @@
             width: 250px;
             height: auto;
             display: block;
-            pointer-events: none; /* Ensure clicks go to button, not image */
+            pointer-events: none;
         }
 
         .radio-status {
@@ -154,6 +153,31 @@
             color: #cfcfcf;
             text-align: center;
             max-width: 200px;
+        }
+
+        /* Video container */
+        .video-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Main content area */
+        .main-content {
+            margin-top: 20px; /* Extra spacing below fixed elements */
+            padding: 2rem 1rem;
+            min-height: calc(100vh - 200px);
         }
 
         /* Responsive adjustments */
@@ -173,6 +197,14 @@
 
             .radio-info {
                 font-size: 0.6rem;
+            }
+
+            .video-container {
+                padding: 1rem 0.5rem;
+            }
+
+            .video-container iframe {
+                height: 300px;
             }
         }
 
@@ -216,6 +248,23 @@
         </audio>
     </div>
 
+    <!-- Video Section -->
+    <div class="video-container">
+        <iframe 
+            src="https://www.youtube.com/embed/dThMRsPONT8?si=ru0ijriYOuKvYXA8" 
+            title="Dungeon Blade Video" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <!-- Add your main content here -->
+        <h3>Welcome to the Tavern!</h3>
+        <p>Enjoy the bard radio above and explore the Dungeon Blade adventure!</p>
+    </div>
+
     <script>
         // Menu toggle
         function toggleMenu() {
@@ -234,8 +283,6 @@
                 audio.play().then(() => {
                     toggleBtn.setAttribute('aria-pressed', 'true');
                     status.textContent = '';
-                    // You can add a different GIF for pause state here if desired
-                    // playGif.src = 'pause-button.gif';
                 }).catch(error => {
                     console.error('Playback failed:', error);
                 });
@@ -243,8 +290,6 @@
                 audio.pause();
                 toggleBtn.setAttribute('aria-pressed', 'false');
                 status.textContent = '';
-                // Switch back to play GIF if you have separate pause GIF
-                // playGif.src = 'play-button.gif';
             }
         });
 
@@ -262,7 +307,17 @@
             const radio = document.querySelector('.radio-player');
             const headerHeight = header.offsetHeight;
             radio.style.top = `${headerHeight}px`;
-            document.body.style.paddingTop = `${headerHeight + radio.offsetHeight}px`;
+            document.body.style.paddingTop = `${headerHeight + radio.offsetHeight + 20}px`;
+        });
+
+        // Handle YouTube video lazy loading and responsive behavior
+        window.addEventListener('resize', () => {
+            const iframe = document.querySelector('.video-container iframe');
+            if (window.innerWidth <= 600 && iframe) {
+                iframe.style.height = '300px';
+            } else if (iframe) {
+                iframe.style.height = '450px';
+            }
         });
     </script>
 </body>
