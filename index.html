@@ -116,16 +116,32 @@
             margin: 0;
             display: inline-block;
             transition: opacity 0.2s ease;
+            /* Prevent default active state darkening */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            outline: none;
         }
 
         .radio-player button:hover {
             opacity: 0.8;
         }
 
+        .radio-player button:active {
+            opacity: 1; /* Override any active state darkening */
+            transform: none; /* Prevent any transform effects */
+        }
+
+        .radio-player button:focus {
+            outline: none; /* Remove focus outline to maintain clean look */
+            box-shadow: none;
+        }
+
         .radio-player button img {
             width: 250px;
             height: auto;
             display: block;
+            pointer-events: none; /* Ensure clicks go to button, not image */
         }
 
         .radio-status {
@@ -191,7 +207,7 @@
             <button id="radioToggle" aria-pressed="false">
                 <img id="playGif" src="https://files.catbox.moe/cmdr3m.gif" alt="Play/Pause Radio">
             </button>
-            <span id="radioStatus" class="radio-status"></span>
+            <span id="radioStatus" class="radio-status">stopped</span>
         </div>
         <small class="radio-info">Bard Radio</small>
         <audio id="everlookAudio" preload="none" crossorigin>
@@ -217,7 +233,7 @@
             if (audio.paused) {
                 audio.play().then(() => {
                     toggleBtn.setAttribute('aria-pressed', 'true');
-                    status.textContent = '';
+                    status.textContent = 'playing';
                     // You can add a different GIF for pause state here if desired
                     // playGif.src = 'pause-button.gif';
                 }).catch(error => {
@@ -226,7 +242,7 @@
             } else {
                 audio.pause();
                 toggleBtn.setAttribute('aria-pressed', 'false');
-                status.textContent = '';
+                status.textContent = 'stopped';
                 // Switch back to play GIF if you have separate pause GIF
                 // playGif.src = 'play-button.gif';
             }
