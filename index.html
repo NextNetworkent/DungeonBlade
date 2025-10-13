@@ -109,19 +109,23 @@
         }
 
         .radio-player button {
-            background-color: #3a8b4c;
+            background-color: transparent;
             border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 0.9rem;
-            font-weight: bold;
-            padding: 0.4rem 0.8rem;
             cursor: pointer;
-            transition: background-color 0.2s ease;
+            padding: 0;
+            margin: 0;
+            display: inline-block;
+            transition: opacity 0.2s ease;
         }
 
         .radio-player button:hover {
-            background-color: #49a85c;
+            opacity: 0.8;
+        }
+
+        .radio-player button img {
+            width: 250px;
+            height: auto;
+            display: block;
         }
 
         .radio-status {
@@ -143,9 +147,8 @@
                 gap: 0.4rem;
             }
 
-            .radio-player button {
-                font-size: 0.8rem;
-                padding: 0.3rem 0.6rem;
+            .radio-player button img {
+                width: 200px;
             }
 
             .radio-status {
@@ -154,6 +157,12 @@
 
             .radio-info {
                 font-size: 0.6rem;
+            }
+        }
+
+        @media (max-width: 280px) {
+            .radio-player button img {
+                width: 180px;
             }
         }
     </style>
@@ -179,7 +188,9 @@
 
     <div class="radio-player">
         <div style="display: flex; align-items: center; gap: 0.6rem;">
-            <button id="radioToggle" aria-pressed="false">▶ Play</button>
+            <button id="radioToggle" aria-pressed="false">
+                <img id="playGif" src="play-button.gif" alt="Play/Pause Radio">
+            </button>
             <span id="radioStatus" class="radio-status">stopped</span>
         </div>
         <small class="radio-info">Bard Radio</small>
@@ -200,21 +211,24 @@
         const audio = document.getElementById('everlookAudio');
         const toggleBtn = document.getElementById('radioToggle');
         const status = document.getElementById('radioStatus');
+        const playGif = document.getElementById('playGif');
 
         toggleBtn.addEventListener('click', () => {
             if (audio.paused) {
                 audio.play().then(() => {
-                    toggleBtn.textContent = '❚❚ Pause';
-                    status.textContent = 'playing';
                     toggleBtn.setAttribute('aria-pressed', 'true');
+                    status.textContent = 'playing';
+                    // You can add a different GIF for pause state here if desired
+                    // playGif.src = 'pause-button.gif';
                 }).catch(error => {
                     console.error('Playback failed:', error);
                 });
             } else {
                 audio.pause();
-                toggleBtn.textContent = '▶ Play';
-                status.textContent = 'stopped';
                 toggleBtn.setAttribute('aria-pressed', 'false');
+                status.textContent = 'stopped';
+                // Switch back to play GIF if you have separate pause GIF
+                // playGif.src = 'play-button.gif';
             }
         });
 
