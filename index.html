@@ -39,18 +39,59 @@
             font-size: 12px;
         }
 
-        /* Menu styles */
-        #menu-container {
+        /* Menu and Radio Container */
+        #menu-radio-container {
+            display: flex;
+            align-items: center;
             padding: 1rem;
-            text-align: center;
         }
 
-        .radio-player {
+        .hamburger {
             cursor: pointer;
-            display: inline-block;
+            margin-right: 1rem;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #fff;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        #menu {
+            display: none;
             background-color: #000;
-            padding: 0.75rem;
-            transition: opacity 0.2s ease;
+            list-style: none;
+            padding: 0.5rem;
+            margin: 0.5rem 0 0 0;
+            border: 1px solid #2a323a;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+        }
+
+        #menu li {
+            margin: 0.5rem 0;
+        }
+
+        #menu a {
+            color: #cfcfcf;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: block;
+        }
+
+        #menu a:hover {
+            background-color: #2a323a;
+        }
+
+        /* Radio player */
+        .radio-player {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
         }
 
         .radio-player button {
@@ -91,7 +132,6 @@
         .radio-status {
             font-size: 0.85rem;
             color: #cfcfcf;
-            display: none;
         }
 
         .radio-info {
@@ -99,34 +139,6 @@
             color: #cfcfcf;
             text-align: center;
             max-width: 200px;
-            margin-top: 0.5rem;
-        }
-
-        #menu {
-            display: none;
-            background-color: #000;
-            list-style: none;
-            padding: 0.5rem;
-            margin: 0.5rem auto 0;
-            border: 1px solid #2a323a;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-            width: fit-content;
-        }
-
-        #menu li {
-            margin: 0.5rem 0;
-        }
-
-        #menu a {
-            color: #cfcfcf;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            display: block;
-        }
-
-        #menu a:hover {
-            background-color: #2a323a;
         }
 
         /* Video container */
@@ -153,10 +165,6 @@
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
-            .radio-player {
-                padding: 0.5rem;
-            }
-
             .radio-player button img {
                 width: 100px;
             }
@@ -192,13 +200,20 @@
         <p></p>
     </div>
 
-    <div id="menu-container">
-        <div class="radio-player" onclick="toggleMenu()">
-            <button id="radioToggle" aria-pressed="false">
-                <img id="playGif" src="https://files.catbox.moe/cmdr3m.gif" alt="Play/Pause Radio">
-            </button>
-            <span id="radioStatus" class="radio-status"></span>
-            <div class="radio-info">Bard Radio</div>
+    <div id="menu-radio-container">
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="radio-player">
+            <div style="display: flex; align-items: center; gap: 0.6rem;">
+                <button id="radioToggle" aria-pressed="false">
+                    <img id="playGif" src="https://files.catbox.moe/cmdr3m.gif" alt="Play/Pause Radio">
+                </button>
+                <span id="radioStatus" class="radio-status"></span>
+            </div>
+            <small class="radio-info">Bard Radio</small>
         </div>
         <ul id="menu">
             <li><a href="index.html">Home</a></li>
@@ -206,6 +221,7 @@
         </ul>
     </div>
 
+    <!-- Video Section -->
     <div class="video-container">
         <iframe 
             src="https://www.youtube.com/embed/dThMRsPONT8?si=ru0ijriYOuKvYXA8" 
@@ -215,26 +231,26 @@
         </iframe>
     </div>
 
+    <!-- Main content area -->
     <div class="main-content">
         <h3>Welcome to the Tavern!</h3>
         <p>Enjoy the bard radio above and explore the Dungeon Blade adventure!</p>
     </div>
 
     <script>
-        // Menu and radio toggle
+        // Menu toggle
         function toggleMenu() {
             const menu = document.getElementById('menu');
-            const audio = document.getElementById('everlookAudio');
-            const toggleBtn = document.getElementById('radioToggle');
-            const status = document.getElementById('radioStatus');
-            const playGif = document.getElementById('playGif');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
 
-            if (menu.style.display === 'none' || menu.style.display === '') {
-                menu.style.display = 'block';
-            } else {
-                menu.style.display = 'none';
-            }
+        // Radio player functionality
+        const audio = document.getElementById('everlookAudio');
+        const toggleBtn = document.getElementById('radioToggle');
+        const status = document.getElementById('radioStatus');
+        const playGif = document.getElementById('playGif');
 
+        toggleBtn.addEventListener('click', () => {
             if (audio.paused) {
                 audio.play().then(() => {
                     toggleBtn.setAttribute('aria-pressed', 'true');
@@ -247,11 +263,11 @@
                 toggleBtn.setAttribute('aria-pressed', 'false');
                 status.textContent = '';
             }
-        }
+        });
 
         // Close menu if clicking outside
         document.addEventListener('click', (event) => {
-            const menuContainer = document.getElementById('menu-container');
+            const menuContainer = document.getElementById('menu-radio-container');
             if (!menuContainer.contains(event.target)) {
                 document.getElementById('menu').style.display = 'none';
             }
@@ -267,9 +283,5 @@
             }
         });
     </script>
-    <audio id="everlookAudio" preload="none" crossorigin>
-        <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
-        Your browser does not support the audio element.
-    </audio>
 </body>
 </html>
