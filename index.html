@@ -103,7 +103,7 @@
             padding: 0;
             margin: 0;
             display: inline-block;
-            transition: none; /* Removed opacity transition */
+            transition: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
@@ -111,7 +111,7 @@
         }
 
         .radio-player button:hover {
-            opacity: 1; /* Ensure no darkening on hover */
+            opacity: 1;
         }
 
         .radio-player button:active {
@@ -150,6 +150,14 @@
             margin: 0 auto;
             padding: 2rem 1rem;
             box-sizing: border-box;
+        }
+
+        .video-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
         }
 
         .video-container iframe {
@@ -235,6 +243,7 @@
 
     <!-- Video Section -->
     <div class="video-container">
+        <img src="https://files.catbox.moe/274xn5.jpg" alt="Dungeon Blade Image">
         <iframe 
             src="https://www.youtube.com/embed/dThMRsPONT8?si=ru0ijriYOuKvYXA8" 
             title="Dungeon Blade Video" 
