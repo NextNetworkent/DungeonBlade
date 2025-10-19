@@ -103,7 +103,7 @@
             padding: 0;
             margin: 0;
             display: inline-block;
-            transition: opacity 0.2s ease;
+            transition: none; /* Removed opacity transition */
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
@@ -111,7 +111,7 @@
         }
 
         .radio-player button:hover {
-            opacity: 0.8;
+            opacity: 1; /* Ensure no darkening on hover */
         }
 
         .radio-player button:active {
