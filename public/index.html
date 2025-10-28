@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Message Board</title>
+  <style>
+    #messages { height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
+    #messages div { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <h1>Message Board</h1>
+  <form id="messageForm">
+    <input type="text" id="messageInput" placeholder="Write a message..." required>
+    <button type="submit">Post</button>
+  </form>
+  <div id="messages"></div>
+
+  <script>
+    // Load messages on page load
+    async function loadMessages() {
+      const response = await fetch('/messages');
+      const messages = await response.json();
+      const messagesDiv = document.getElementById('messages');
+      messagesDiv.innerHTML = messages.map(msg => `<div>${msg.text}</div>`).join('');
+      messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to bottom
+    }
+
+    // Post a new message
+    document.getElementById('messageForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('messageInput');
+      const text = input.value.trim();
+      if (text) {
+        await fetch('/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        input.value = ''; // Clear input
+        loadMessages(); // Refresh messages
+      }
+    });
+
+    // Initial load
+    loadMessages();
+  </script>
+</body>
+</html>
