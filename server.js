@@ -1,31 +1,36 @@
 const express = require('express');
+const cors = require('cors');          // <-- NEW
 const fs = require('fs').promises;
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware to parse JSON
+// ---- CORS: allow your GitHub Pages site ----
+app.use(cors({
+  origin: ['https://YOURUSERNAME.github.io'],   // <-- CHANGE THIS
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+// -------------------------------------------
+
 app.use(express.json());
 
 // File to store messages
 const messagesFile = 'messages.json';
 
-// Initialize messages file if it doesn't exist
+// Initialize file if it does not exist
 async function initMessages() {
-  try {
-    await fs.access(messagesFile);
-  } catch {
-    await fs.writeFile(messagesFile, JSON.stringify([]));
-  }
+  try { await fs.access(messagesFile); }
+  catch { await fs.writeFile(messagesFile, JSON.stringify([])); }
 }
 initMessages();
 
-// Get all messages
+// GET all messages
 app.get('/messages', async (req, res) => {
   const messages = JSON.parse(await fs.readFile(messagesFile));
   res.json(messages);
 });
 
-// Post a new message
+// POST a new message
 app.post('/messages', async (req, res) => {
   const { text } = req.body;
   if (!text) return res.status(400).send('Message required');
@@ -35,8 +40,8 @@ app.post('/messages', async (req, res) => {
   res.status(201).send('Posted');
 });
 
-// Serve frontend files
+// Serve the static HTML (public folder)
 app.use(express.static('public'));
 
-// Start server (bind to 0.0.0.0 for Render)
+// Bind to 0.0.0.0 for Render
 app.listen(port, '0.0.0.0', () => console.log(`Server running on port ${port}`));
