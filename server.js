@@ -6,7 +6,7 @@ const port = process.env.PORT || 3000;
 
 // ---- CORS: allow your GitHub Pages site ----
 app.use(cors({
-  origin: ['https://YOURUSERNAME.github.io'],   // <-- CHANGE THIS
+  origin: ['https://dungeonblade.github.io'],   // <-- CHANGE THIS
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
