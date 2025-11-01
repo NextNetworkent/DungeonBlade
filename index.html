@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dungeon Blade Home</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #14191e;
+            color: #cfcfcf;
+            font-family: Arial, sans-serif;
+        }
+
+        #menu-container {
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .hamburger {
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #fff;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        #menu {
+            display: none;
+            background-color: #000;
+            list-style: none;
+            padding: 0.5rem;
+            margin: 0.5rem auto;
+            border: 1px solid #2a323a;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+            width: fit-content;
+        }
+
+        #menu li {
+            margin: 0.5rem 0;
+        }
+
+        #menu a {
+            color: #cfcfcf;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: block;
+        }
+
+        #menu a:hover {
+            background-color: #2a323a;
+        }
+
+        #header {
+            width: 100%;
+            background-color: #000;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        #header h1 {
+            margin: 0;
+            color: #fff;
+            font-size: 24px;
+        }
+
+        #header h2 {
+            margin: 0;
+            color: #cfcfcf;
+            font-size: 18px;
+            font-weight: normal;
+        }
+
+        #header p {
+            margin: 0;
+            color: #cfcfcf;
+            font-size: 12px;
+        }
+
+        /* Radio player */
+        .radio-player {
+            width: 100%;
+            background-color: #000;
+            padding: 0.75rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .radio-player button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            display: inline-block;
+            transition: none; /* Removed opacity transition */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            outline: none;
+        }
+
+        .radio-player button:hover {
+            opacity: 1; /* Ensure no darkening on hover */
+        }
+
+        .radio-player button:active {
+            opacity: 1;
+            transform: none;
+        }
+
+        .radio-player button:focus {
+            outline: none;
+            box-shadow: none;
+        }
+
+        .radio-player button img {
+            width: 125px;
+            height: auto;
+            display: block;
+            pointer-events: none;
+        }
+
+        .radio-status {
+            font-size: 0.85rem;
+            color: #cfcfcf;
+        }
+
+        .radio-info {
+            font-size: 0.7rem;
+            color: #cfcfcf;
+            text-align: center;
+            max-width: 200px;
+        }
+
+        /* Video container */
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+
+        .video-container iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Main content area */
+        .main-content {
+            padding: 2rem 1rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .radio-player {
+                padding: 0.5rem;
+                gap: 0.4rem;
+            }
+
+            .radio-player button img {
+                width: 100px;
+            }
+
+            .radio-status {
+                font-size: 0.75rem;
+            }
+
+            .radio-info {
+                font-size: 0.6rem;
+            }
+
+            .video-container {
+                padding: 1rem 0.5rem;
+            }
+
+            .video-container iframe {
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 280px) {
+            .radio-player button img {
+                width: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-container">
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul id="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+    </div>
+
+    <div id="header">
+        <h1>Welcome to<br>The Boar's Breath Tavern</h1>
+        <h2>Home of Dungeon Blade<br>ai adventure game</h2>
+        <p></p>
+    </div>
+
+    <div class="radio-player">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <button id="radioToggle" aria-pressed="false">
+                <img id="playGif" src="https://files.catbox.moe/cmdr3m.gif" alt="Play/Pause Radio">
+            </button>
+            <span id="radioStatus" class="radio-status"></span>
+        </div>
+        <small class="radio-info">Bard Radio</small>
+        <audio id="everlookAudio" preload="none" crossorigin>
+            <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <!-- Video Section -->
+    <div class="video-container">
+        <iframe 
+            src="https://www.youtube.com/embed/dThMRsPONT8?si=ru0ijriYOuKvYXA8" 
+            title="Dungeon Blade Video" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>
+
+    <!-- Main content area -->
+    <div class="main-content">
+        <h3>Welcome to the Tavern!</h3>
+        <p>Enjoy the bard radio above and explore the Dungeon Blade adventure!</p>
+    </div>
+
+    <script>
+        // Menu toggle
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Radio player functionality
+        const audio = document.getElementById('everlookAudio');
+        const toggleBtn = document.getElementById('radioToggle');
+        const status = document.getElementById('radioStatus');
+        const playGif = document.getElementById('playGif');
+
+        toggleBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    toggleBtn.setAttribute('aria-pressed', 'true');
+                    status.textContent = '';
+                }).catch(error => {
+                    console.error('Playback failed:', error);
+                });
+            } else {
+                audio.pause();
+                toggleBtn.setAttribute('aria-pressed', 'false');
+                status.textContent = '';
+            }
+        });
+
+        // Close menu if clicking outside
+        document.addEventListener('click', (event) => {
+            const menuContainer = document.getElementById('menu-container');
+            if (!menuContainer.contains(event.target)) {
+                document.getElementById('menu').style.display = 'none';
+            }
+        });
+
+        // Handle YouTube video responsive behavior
+        window.addEventListener('resize', () => {
+            const iframe = document.querySelector('.video-container iframe');
+            if (window.innerWidth <= 600 && iframe) {
+                iframe.style.height = '300px';
+            } else if (iframe) {
+                iframe.style.height = '450px';
+            }
+        });
+    </script>
+</body>
+</html>
