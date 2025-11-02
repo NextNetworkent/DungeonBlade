@@ -150,6 +150,7 @@
             margin: 0 auto;
             padding: 2rem 1rem;
             box-sizing: border-box;
+            position: relative;
         }
 
         .video-container iframe {
@@ -159,6 +160,23 @@
             border-radius: 8px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
+
+        .unmute-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2a323a;
+            color: #cfcfcf;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0.9;
+        }
+
+        .unmute-btn:hover { opacity: 1; }
 
         /* Main content area */
         .main-content {
@@ -236,11 +254,13 @@
     <!-- Video Section -->
     <div class="video-container">
         <iframe 
-            src="https://www.youtube.com/embed/dThMRsPONT8?si=ru0ijriYOuKvYXA8" 
+            id="ytplayer"
+            src="https://www.youtube.com/embed/dThMRsPONT8?autoplay=1&mute=1&loop=1&playlist=dThMRsPONT8&rel=0&controls=1&modestbranding=1"
             title="Dungeon Blade Video" 
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
             allowfullscreen>
         </iframe>
+        <button class="unmute-btn" onclick="unmuteVideo()">Unmute</button>
     </div>
 
     <!-- Main content area -->
@@ -294,6 +314,17 @@
                 iframe.style.height = '450px';
             }
         });
+
+        // Unmute video function
+        function unmuteVideo() {
+            const iframe = document.getElementById('ytplayer');
+            const src = iframe.src;
+            if (src.includes('mute=1')) {
+                iframe.src = src.replace('mute=1', 'mute=0');
+            }
+            // Hide the button after unmute
+            event.target.style.display = 'none';
+        }
     </script>
 </body>
 </html>
