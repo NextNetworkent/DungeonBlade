@@ -13,57 +13,15 @@
             font-family: Arial, sans-serif;
         }
 
-        #menu-container {
-            padding: 1rem;
-            text-align: center;
-        }
-
-        .hamburger {
-            cursor: pointer;
-            display: inline-block;
-        }
-
-        .hamburger span {
-            display: block;
-            width: 25px;
-            height: 3px;
-            background: #fff;
-            margin: 5px 0;
-            transition: 0.3s;
-        }
-
-        #menu {
-            display: none;
-            background-color: #000;
-            list-style: none;
-            padding: 0.5rem;
-            margin: 0.5rem auto;
-            border: 1px solid #2a323a;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-            width: fit-content;
-        }
-
-        #menu li {
-            margin: 0.5rem 0;
-        }
-
-        #menu a {
-            color: #cfcfcf;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            display: block;
-        }
-
-        #menu a:hover {
-            background-color: #2a323a;
-        }
-
+        /* Header with menu button in top-left corner */
         #header {
+            position: relative;
             width: 100%;
             background-color: #000;
             text-align: center;
-            padding: 1rem;
+            padding: 1rem 1rem 1rem 3.5rem; /* Left padding to make room for menu button */
+            box-sizing: border-box;
+            margin: 0;
         }
 
         #header h1 {
@@ -85,6 +43,62 @@
             font-size: 12px;
         }
 
+        /* Hamburger menu button - fixed top-left */
+        .hamburger {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            cursor: pointer;
+            display: inline-block;
+            z-index: 1000;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 25px;
+            height: 3px;
+            background: #fff;
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        /* Menu dropdown */
+        #menu {
+            display: none;
+            position: absolute;
+            top: 4.5rem;
+            left: 1rem;
+            background-color: #000;
+            list-style: none;
+            padding: 0.5rem;
+            margin: 0;
+            border: 1px solid #2a323a;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+            width: fit-content;
+            z-index: 999;
+        }
+
+        #menu.show {
+            display: block;
+        }
+
+        #menu li {
+            margin: 0.5rem 0;
+        }
+
+        #menu a {
+            color: #cfcfcf;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            display: block;
+            white-space: nowrap;
+        }
+
+        #menu a:hover {
+            background-color: #2a323a;
+        }
+
         /* Radio player */
         .radio-player {
             width: 100%;
@@ -103,7 +117,7 @@
             padding: 0;
             margin: 0;
             display: inline-block;
-            transition: none; /* Removed opacity transition */
+            transition: none;
             -webkit-appearance: none;
             -moz-appearance: none;
             appearance: none;
@@ -111,7 +125,7 @@
         }
 
         .radio-player button:hover {
-            opacity: 1; /* Ensure no darkening on hover */
+            opacity: 1;
         }
 
         .radio-player button:active {
@@ -185,6 +199,20 @@
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
+            #header {
+                padding: 1rem 1rem 1rem 3rem;
+            }
+
+            .hamburger {
+                top: 0.8rem;
+                left: 0.8rem;
+            }
+
+            #menu {
+                top: 4rem;
+                left: 0.8rem;
+            }
+
             .radio-player {
                 padding: 0.5rem;
                 gap: 0.4rem;
@@ -219,8 +247,10 @@
     </style>
 </head>
 <body>
-    <div id="menu-container">
-        <div class="hamburger" onclick="toggleMenu()">
+
+    <!-- Header with hamburger in top-left -->
+    <div id="header">
+        <div class="hamburger" id="hamburgerBtn">
             <span></span>
             <span></span>
             <span></span>
@@ -229,14 +259,12 @@
             <li><a href="index.html">Home</a></li>
             <li><a href="about.html">About</a></li>
         </ul>
-    </div>
-
-    <div id="header">
         <h1>Welcome to<br>The Boar's Breath Tavern</h1>
         <h2>Home of Dungeon Blade<br>ai adventure game</h2>
         <p></p>
     </div>
 
+    <!-- Radio Player -->
     <div class="radio-player">
         <div style="display: flex; align-items: center; gap: 0.6rem;">
             <button id="radioToggle" aria-pressed="false">
@@ -270,17 +298,31 @@
     </div>
 
     <script>
-        // Menu toggle
-        function toggleMenu() {
-            const menu = document.getElementById('menu');
-            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-        }
+        // Menu toggle - now works on first click
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const menu = document.getElementById('menu');
+
+        hamburgerBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event from bubbling to document
+            menu.classList.toggle('show');
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.remove('show');
+            }
+        });
+
+        // Prevent menu from closing when clicking inside it
+        menu.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
 
         // Radio player functionality
         const audio = document.getElementById('everlookAudio');
         const toggleBtn = document.getElementById('radioToggle');
         const status = document.getElementById('radioStatus');
-        const playGif = document.getElementById('playGif');
 
         toggleBtn.addEventListener('click', () => {
             if (audio.paused) {
@@ -294,14 +336,6 @@
                 audio.pause();
                 toggleBtn.setAttribute('aria-pressed', 'false');
                 status.textContent = '';
-            }
-        });
-
-        // Close menu if clicking outside
-        document.addEventListener('click', (event) => {
-            const menuContainer = document.getElementById('menu-container');
-            if (!menuContainer.contains(event.target)) {
-                document.getElementById('menu').style.display = 'none';
             }
         });
 
@@ -322,7 +356,6 @@
             if (src.includes('mute=1')) {
                 iframe.src = src.replace('mute=1', 'mute=0');
             }
-            // Hide the button after unmute
             event.target.style.display = 'none';
         }
     </script>
