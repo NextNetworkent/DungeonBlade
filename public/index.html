@@ -72,8 +72,8 @@
         .radio-player button img{
             width:125px;height:125px;
             pointer-events:none;
-            border:3px solid #fff;           /* WHITE BORDER */
-            border-radius:50%;               /* circular icon */
+            border:1px solid #fff;           /* WHITE BORDER */
+            border-radius:20%;               /* circular icon */
             box-shadow:0 0 12px rgba(255,255,255,.3); /* glow */
         }
         .radio-status{font-size:.85rem;color:#cfcfcf}
@@ -147,7 +147,7 @@
             </button>
             <span id="radioStatus" class="radio-status"></span>
         </div>
-        <small class="radio-info">Bard Radio</small>
+        <small class="radio-info">Bard Radio  </small>
         <audio id="everlookAudio" preload="metadata" crossorigin>
             <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
             <source src="https://icecast.radiofrance.fr/franceinfo-midfi.mp3" type="audio/mpeg">
@@ -168,7 +168,7 @@
     <!-- Main Content -->
     <div class="main-content">
         <h3>Welcome to the Tavern!</h3>
-        <p>Enjoy the bard radio above and explore the Dungeon Blade adventure!</p>
+        <p>Enjoy Bard Radio and learn more about Dungeon Blade</p>
     </div>
 
     <script>
@@ -196,17 +196,17 @@
                 audio.play().then(() => {
                     radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727245.png'; // Pause icon
                     toggleBtn.setAttribute('aria-pressed', 'true');
-                    status.textContent = 'Playing...';
+                    status.textContent = '';
                 }).catch(err => {
                     console.error('Playback failed:', err);
-                    status.textContent = 'Error – try again';
+                    status.textContent = 'Error';
                     alert('Radio failed to play. Check your connection or try refreshing.');
                 });
             } else {
                 audio.pause();
                 radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727218.png'; // Play icon
                 toggleBtn.setAttribute('aria-pressed', 'false');
-                status.textContent = 'Paused';
+                status.textContent = '';
             }
         });
 
