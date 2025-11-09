@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Adventure Game</title>
+  <style>
+    /* Basic Page Setup */
+    body {
+      margin: 0;
+      padding: 2rem;
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    main {
+      max-width: 800px;
+      width: 100%;
+    }
+
+    h1, h2 {
+      color: #fff;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.7rem; /* slightly smaller */
+      margin-top: 1rem;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      margin-top: 2rem;
+    }
+
+    ul, ol {
+      margin-left: 2rem;
+    }
+
+    /* Title image */
+    .title-image {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 1rem;
+    }
+
+    /* Responsive YouTube video embed */
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 ratio */
+      height: 0;
+      overflow: hidden;
+      max-width: 100%;
+      margin: 1rem auto;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+
+
+
+  <!-- Main Content -->
+  <main>
+    <img src="https://files.catbox.moe/jg1ibd.png" alt="Dungeon Blade Title" class="title-image">
+    <h1>AI Adventure Game</h1>
+    <p>Welcome to Dungeon Blade, an online RPG where an AI Dungeon Master guides you and your friends through epic quests, battles, and mysteries!</p>
+
+    <!-- ABOUT Section -->
+    <h2>ABOUT</h2>
+    <div class="video-container">
+      <iframe src="https://www.youtube.com/embed/MMC8pLxnyPk" 
+              title="Dungeon Blade Intro Video" 
+              frameborder="0" 
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+              allowfullscreen>
+      </iframe>
+    </div>
+
+    <h2>Overview</h2>
+    <ul>
+      <li><strong>Created by:</strong> Next Network Entertainment</li>
+      <li><strong>Date:</strong> Development Started October 1, 2025</li>
+      <li>DungeonBlade is an AI TTRPG and Social Network for Players</li>
+    </ul>
+
+    <h2>How to Play</h2>
+    <ol>
+      <li>This is the Live Portal.</li>
+      <li>Make a Character Profile. Enter the Tavern, chat with friends, show them your character sheet and bio. Plan adventures.</li>
+      <li>Enter a Game Session from the Active Game Roster or just observe from the Peanut Gallery.</li>
+      <li>Progress your character through encounters with true AI that talks to you, rolls dice, and pulls from a library of TTRPG assets and information.</li>
+    </ol>
+
+    <h2>Features - early developement stage</h2>
+    <ul>
+      <li>Interactive TTRPG for multiple players with a talking AI Dungeon Master that knows how to play and has ready-made campaigns.</li>
+      <li>Free character page with your avatar, character bio, and a comment section so others can leave comments, images, music, or videos.</li>
+      <li>A chat room to meet up with others, join or watch game sessions, and comment on the game live with others.</li>
+    </ul>
+
+    <h2> Next Network entertainment<br>
+    Updates and Features</h2>
+    <ul>
+      <li>Website is Live</li>
+      <li> Our YouTube Channel 
+        https://www.youtube.com/@nextnetworkent </li>
+      <li>Chat with a simple ai chat bot is Live</li>
+      <li>The Tavern Audio Stream is Live</li>
+    </ul>
+  </main>
+
+  <!-- Radio Toggle Script -->
+  <script>
+    const btn = document.getElementById('radioToggle');
+    const status = document.getElementById('radioStatus');
+    const audio = document.getElementById('everlookAudio');
+    let playing = false;
+
+    btn.addEventListener('click', async () => {
+      try {
+        if (!playing) {
+          await audio.play();
+          btn.textContent = '⏸ Pause';
+          btn.setAttribute('aria-pressed', 'true');
+          status.textContent = 'playing';
+          playing = true;
+        } else {
+          audio.pause();
+          btn.textContent = '▶ Play';
+          btn.setAttribute('aria-pressed', 'false');
+          status.textContent = 'stopped';
+          playing = false;
+        }
+      } catch (err) {
+        console.error('Playback error:', err);
+        alert('Unable to start stream. Check console for details.');
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      btn.textContent = '▶ Play';
+      btn.setAttribute('aria-pressed', 'false');
+      status.textContent = 'stopped';
+      playing = false;
+    });
+  </script>
+
+  <!-- Tawk.to Chat Widget -->
+  <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+      var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+      s1.async=true;
+      s1.src='https://embed.tawk.to/68e45e25a72e3519521841d3/1j6u0vh8c';
+      s1.charset='UTF-8';
+      s1.setAttribute('crossorigin','*');
+      s0.parentNode.insertBefore(s1,s0);
+    })();
+  </script>
+
+</body>
+</html>
