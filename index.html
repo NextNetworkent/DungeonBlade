@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dungeon Blade Home</title>
+
+    <!-- Medieval Font -->
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+
+    <style>
+        body{margin:0;padding:0;background:#14191e;color:#cfcfcf;font-family:Arial,sans-serif}
+
+        /* ---------- HEADER ---------- */
+        #header{
+            position:relative;
+            background:#000;
+            padding:1rem 1rem 1rem 3.5rem;      /* space for hamburger */
+            text-align:center;                  /* centers all text */
+        }
+        #header h1,#header h2,#header p{margin:0}
+        #header h1{
+            color:#fff;font-size:24px;
+            font-family:'IM Fell English SC',serif;
+            letter-spacing:1px;
+        }
+        #header h2{
+            color:#cfcfcf;font-size:18px;
+            font-family:'IM Fell English SC',serif;
+            letter-spacing:.5px;
+        }
+        #header p{color:#cfcfcf;font-size:12px}
+
+        .hamburger{
+            position:absolute;top:1rem;left:1rem;cursor:pointer;z-index:1000;
+        }
+        .hamburger span{
+            display:block;width:25px;height:3px;background:#fff;
+            margin:5px 0;transition:.3s;
+        }
+
+        /* ---------- MENU ---------- */
+        #menu{
+            display:none;position:absolute;top:4.5rem;left:1rem;
+            background:#000;list-style:none;padding:.5rem;margin:0;
+            border:1px solid #2a323a;border-radius:8px;
+            box-shadow:0 0 10px rgba(0,0,0,.4);width:fit-content;z-index:999;
+        }
+        #menu.show{display:block}
+        #menu a{
+            color:#cfcfcf;text-decoration:none;padding:.5rem 1rem;
+            display:block;white-space:nowrap;
+        }
+        #menu a:hover{background:#2a323a}
+
+        /* ---------- RADIO PLAYER ---------- */
+        .radio-player{
+            background:#000;padding:.75rem 1rem;
+            display:flex;flex-direction:column;align-items:center;gap:.6rem;
+        }
+        .radio-player button{
+            background:transparent;border:none;cursor:pointer;padding:0;
+            appearance:none;outline:none;
+        }
+        .radio-player button img{width:125px;height:auto;pointer-events:none}
+        .radio-status{font-size:.85rem;color:#cfcfcf}
+        .radio-info{font-size:.7rem;color:#cfcfcf;text-align:center;max-width:200px}
+
+        /* ---------- VIDEO SECTION ---------- */
+        .video-container{
+            width:100%;max-width:800px;margin:0 auto;
+            padding:1rem 1rem .5rem 1rem;       /* reduced bottom padding */
+            position:relative;box-sizing:border-box;
+        }
+        .video-container iframe{
+            width:100%;height:450px;border:none;
+            border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.3);
+        }
+        .unmute-btn{
+            position:absolute;bottom:.5rem;left:50%;transform:translateX(-50%);
+            background:#2a323a;color:#cfcfcf;border:none;
+            padding:.4rem .8rem;border-radius:4px;font-size:.8rem;
+            cursor:pointer;opacity:.9;
+        }
+        .unmute-btn:hover{opacity:1}
+
+        /* ---------- MAIN CONTENT ---------- */
+        .main-content{
+            padding:0 1rem .5rem 1rem;          /* tiny gap after video */
+            text-align:center;
+        }
+        .main-content h3{margin:0 0 .5rem 0}
+        .main-content p{margin:0}
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width:600px){
+            #header{padding:1rem 1rem 1rem 3rem}
+            .hamburger{top:.8rem;left:.8rem}
+            #menu{top:4rem;left:.8rem}
+            .radio-player{padding:.5rem;gap:.4rem}
+            .radio-player button img{width:100px}
+            .radio-status{font-size:.75rem}
+            .radio-info{font-size:.6rem}
+            .video-container{padding:1rem .5rem .5rem .5rem}
+            .video-container iframe{height:300px}
+        }
+        @media (max-width:280px){
+            .radio-player button img{width:90px}
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header with hamburger -->
+    <div id="header">
+        <div class="hamburger" id="hamburgerBtn">
+            <span></span><span></span><span></span>
+        </div>
+        <ul id="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+        </ul>
+        <h1>Welcome to<br>The Boar's Breath Tavern</h1>
+        <h2>Home of Dungeon Blade<br>ai adventure game</h2>
+        <p></p>
+    </div>
+
+    <!-- Radio Player -->
+    <div class="radio-player">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+            <button id="radioToggle" aria-pressed="false">
+                <img id="playGif" src="https://files.catbox.moe/cmdr3m.gif" alt="Play/Pause Radio">
+            </button>
+            <span id="radioStatus" class="radio-status"></span>
+        </div>
+        <small class="radio-info">Bard Radio</small>
+        <audio id="everlookAudio" preload="none" crossorigin>
+            <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+
+    <!-- Video Section -->
+    <div class="video-container">
+        <iframe id="ytplayer"
+            src="https://www.youtube.com/embed/dThMRsPONT8?autoplay=1&mute=1&loop=1&playlist=dThMRsPONT8&rel=0&controls=1&modestbranding=1"
+            title="Dungeon Blade Video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        <button class="unmute-btn" onclick="unmuteVideo()">Unmute</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h3>Welcome to the Tavern!</h3>
+        <p>Enjoy the bard radio above and explore the Dungeon Blade adventure!</p>
+    </div>
+
+    <script>
+        // Menu toggle
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const menu = document.getElementById('menu');
+        hamburgerBtn.addEventListener('click', e => {
+            e.stopPropagation();
+            menu.classList.toggle('show');
+        });
+        document.addEventListener('click', e => {
+            if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target))
+                menu.classList.remove('show');
+        });
+        menu.addEventListener('click', e => e.stopPropagation());
+
+        // Radio player
+        const audio = document.getElementById('everlookAudio');
+        const toggleBtn = document.getElementById('radioToggle');
+        const status = document.getElementById('radioStatus');
+        toggleBtn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    toggleBtn.setAttribute('aria-pressed', 'true');
+                    status.textContent = '';
+                }).catch(err => console.error('Playback failed:', err));
+            } else {
+                audio.pause();
+                toggleBtn.setAttribute('aria-pressed', 'false');
+                status.textContent = '';
+            }
+        });
+
+        // Responsive iframe height
+        window.addEventListener('resize', () => {
+            const iframe = document.querySelector('.video-container iframe');
+            if (!iframe) return;
+            iframe.style.height = (window.innerWidth <= 600) ? '300px' : '450px';
+        });
+
+        // Unmute video
+        function unmuteVideo() {
+            const iframe = document.getElementById('ytplayer');
+            iframe.src = iframe.src.replace('mute=1', 'mute=0');
+            event.target.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
