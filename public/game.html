@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AI Game Master</title>
+  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0a0e17;
+      --panel-bg: rgba(15, 23, 42, 0.92);
+      --accent-cyan: #00d9ff;
+      --accent-gold: #ffb400;
+      --text-light: #e2e8f0;
+      --border-glow: 0 0 12px rgba(0, 217, 255, 0.6);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg-dark) url('https://images.unsplash.com/photo-1550745162-546050f1b47a?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat fixed;
+      color: var(--text-light);
+      font-family: 'Orbitron', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Header Bar */
+    header {
+      background: rgba(10, 14, 23, 0.95);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      border-bottom: 1px solid rgba(0, 217, 255, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'MedievalSharp', cursive;
+      font-size: 1.3rem;
+      color: var(--accent-cyan);
+      text-shadow: 0 0 8px rgba(0, 217, 255, 0.5);
+    }
+
+    .url-bar {
+      background: rgba(30, 41, 59, 0.7);
+      padding: 0.4rem 0.8rem;
+      border-radius: 2rem;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      flex: 1;
+      max-width: 280px;
+      margin: 0 1rem;
+      text-align: center;
+    }
+
+    .notifications {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: #94a3b8;
+    }
+
+    .notif-icon {
+      position: relative;
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--accent-gold);
+      color: #000;
+      font-size: 0.65rem;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* Main Layout - Three Panel Grid */
+    .container {
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      flex: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+      .center-panel { order: -1; }
+    }
+
+    /* Unified Panel Styling */
+    .panel {
+      background: var(--panel-bg);
+      border: 1px solid rgba(0, 217, 255, 0.4);
+      border-radius: 16px;
+      padding: 1.5rem;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--border-glow), inset 0 0 20px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      height: fit-content;
+      min-height: 500px;
+    }
+
+    .panel h2 {
+      font-family: 'MedievalSharp', cursive;
+      font-size: 1.8rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, var(--accent-gold), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 10px rgba(255, 180, 0, 0.3);
+    }
+
+    /* Left Panel - Adventure Menu */
+    .menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      flex: 1;
+    }
+
+    .menu-item {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(0, 217, 255, 0.3);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 1.1rem;
+      color: var(--text-light);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .menu-item:hover {
+      background: rgba(0, 217, 255, 0.15);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 15px rgba(0, 217, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .menu-item .icon {
+      font-size: 1.4rem;
+    }
+
+    /* Center Panel - AI Game Master */
+    .center-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+
+    .logo-glow {
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(0, 217, 255, 0.3), transparent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      animation: pulse 3s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(0, 217, 255, 0.4); }
+      50% { box-shadow: 0 0 40px rgba(0, 217, 255, 0.8); }
+    }
+
+    .center-panel h1 {
+      font-family: 'MedievalSharp', cursive;
+      font-size: 2.8rem;
+      background: linear-gradient(45deg, #00d9ff, #ffb400, #00d9ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.75rem;
+      text-shadow: 0 0 15px rgba(0, 217, 255, 0.5);
+    }
+
+    .center-panel p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      color: #94a3b8;
+      max-width: 80%;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1.5rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn {
+      flex: 1;
+      max-width: 180px;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-start {
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: white;
+      border: 1px solid #60a5fa;
+    }
+
+    .btn-start:hover {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+      transform: translateY(-3px);
+    }
+
+    .btn-options {
+      background: linear-gradient(135deg, #7c2d12, #dc2626);
+      color: white;
+      border: 1px solid #f87171;
+    }
+
+    .btn-options:hover {
+      background: linear-gradient(135deg, #991b1b, #ef4444);
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+      transform: translateY(-3px);
+    }
+
+    .btn .icon {
+      font-size: 1.8rem;
+    }
+
+    /* Right Panel - World Map */
+    .map-container {
+      position: relative;
+      height: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 217, 255, 0.5);
+      box-shadow: var(--border-glow);
+    }
+
+    .map-placeholder {
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1562755922-28e4d8752f0c?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1rem;
+      position: relative;
+    }
+
+    .map-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 60%, rgba(10, 14, 23, 0.8));
+      pointer-events: none;
+    }
+
+    .map-title {
+      font-family: 'MedievalSharp', cursive;
+      font-size: 1.5rem;
+      color: var(--accent-gold);
+      text-align: center;
+      z-index: 1;
+      text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .map-interactive {
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--accent-cyan);
+      z-index: 1;
+      animation: float 2s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .party-quests {
+      background: rgba(15, 23, 42, 0.9);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      text-align: center;
+      border: 1px solid rgba(0, 217, 255, 0.4);
+      z-index: 1;
+    }
+
+    .party-quests strong {
+      color: var(--accent-gold);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .action-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .btn {
+        width: 100%;
+        max-width: 240px;
+      }
+      .center-panel h1 {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">⚔️ Blade</div>
+    <div class="url-bar">blade.onrender.com</div>
+    <div class="notifications">
+      <div class="notif-icon">🔔<span class="notif-badge">21</span></div>
+      <div>5G</div>
+      <div>63%</div>
+    </div>
+  </header>
+
+  <!-- Main Three-Panel Layout -->
+  <div class="container">
+
+    <!-- Left Panel: Adventure Menu -->
+    <div class="panel">
+      <h2>Adventure Menu</h2>
+      <div class="menu-list">
+        <div class="menu-item">
+          <span class="icon">🗡️</span>
+          <span>Create Character</span>
+        </div>
+        <div class="menu-item">
+          <span class="icon">🎒</span>
+          <span>Inventory</span>
+        </div>
+        <div class="menu-item">
+          <span class="icon">📜</span>
+          <span>Quests</span>
+        </div>
+        <div class="menu-item">
+          <span class="icon">⚙️</span>
+          <span>Settings</span>
+        </div>
+        <div class="menu-item">
+          <span class="icon">👥</span>
+          <span>Party</span>
+        </div>
+        <div class="menu-item">
+          <span class="icon">🏰</span>
+          <span>Guild</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Panel: AI Game Master -->
+    <div class="panel center-panel">
+      <div>
+        <div class="logo-glow">
+          <div style="font-size: 4rem; filter: drop-shadow(0 0 15px #00d9ff);">✨</div>
+        </div>
+        <h1>AI Game Master</h1>
+        <p>Welcome to your epic adventure!<br>Powered by artificial intelligence</p>
+      </div>
+      <div class="action-buttons">
+        <div class="btn btn-start">
+          <div class="icon">🚀</div>
+          <div>Start Quest</div>
+        </div>
+        <div class="btn btn-options">
+          <div class="icon">⚙️</div>
+          <div>Options</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel: World Map -->
+    <div class="panel">
+      <h2>🌍 World Map</h2>
+      <div class="map-container">
+        <div class="map-placeholder">
+          <div class="map-overlay"></div>
+          <div class="map-title">Interactive World Map</div>
+          <div class="map-interactive">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🗺️</div>
+            Click to Explore
+          </div>
+          <div class="party-quests">
+            Party Quests: <strong>5/50</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
