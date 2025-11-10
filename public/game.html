@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Game Master</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+      color: white;
+    }
+
+    .bg-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 300%; /* 3x for mobile swipe: left + center + right */
+      height: 100vh;
+      background-image: url('https://dungeonblade.onrender.com/public/DungeonBladeBG1.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: transform 0.4s ease-in-out;
+      display: flex;
+    }
+
+    .panel {
+      width: 33.333%;
+      height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Center panel styling */
+    .center {
+      text-align: center;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(2px);
+    }
+
+    .center h1 {
+      font-size: 3rem;
+      color: #00ffff;
+      text-shadow: 0 0 20px #00ffff;
+      margin-bottom: 20px;
+    }
+
+    .center p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+    }
+
+    /* Left panel */
+    .left {
+      background: rgba(0, 0, 50, 0.6);
+      justify-content: flex-start;
+      padding-left: 40px;
+      align-items: flex-start;
+    }
+
+    .left h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      color: #00ff88;
+    }
+
+    .left ul {
+      list-style: none;
+      font-size: 1.1rem;
+    }
+
+    .left li {
+      margin: 15px 0;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .left li:hover {
+      background: rgba(0, 255, 136, 0.3);
+      transform: translateX(10px);
+    }
+
+    /* Right panel (Map) */
+    .right {
+      background: rgba(0, 0, 50, 0.6);
+      justify-content: flex-start;
+      padding-right: 40px;
+      align-items: flex-end;
+      text-align: right;
+    }
+
+    .right h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      color: #ffaa00;
+    }
+
+    .map-placeholder {
+      width: 300px;
+      height: 400px;
+      background: linear-gradient(45deg, #1a1a2e, #16213e);
+      border: 2px solid #00ffff;
+      border-radius: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-placeholder::before {
+      content: "🗺️ Interactive World Map";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.2rem;
+      color: #00ffff;
+      text-shadow: 0 0 10px #00ffff;
+    }
+
+    /* Swipe hint for mobile */
+    .swipe-hint {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+      animation: pulse 2s infinite;
+      z-index: 10;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Buttons at bottom */
+    .bottom-buttons {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-blue {
+      background: rgba(0, 150, 255, 0.8);
+      color: white;
+    }
+
+    .btn-brown {
+      background: rgba(139, 69, 19, 0.8);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    }
+
+    /* DESKTOP: Show full image */
+    @media (min-width: 1024px) {
+      .bg-container {
+        width: 100% !important;
+        transform: none !important;
+      }
+      
+      .panel {
+        width: 33.333%;
+      }
+      
+      .swipe-hint {
+        display: none;
+      }
+    }
+
+    /* MOBILE: Swipe enabled */
+    @media (max-width: 1023px) {
+      .bg-container {
+        touch-action: pan-x;
+      }
+      
+      .center h1 {
+        font-size: 2rem;
+      }
+      
+      .panel {
+        flex-shrink: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-container" id="bgContainer">
+    <!-- LEFT PANEL -->
+    <div class="panel left">
+      <h2>⚔️ Adventure Menu</h2>
+      <ul>
+        <li>🗡️ Create Character</li>
+        <li>🎒 Inventory</li>
+        <li>📜 Quests</li>
+        <li>⚙️ Settings</li>
+        <li>👥 Party</li>
+        <li>🏰 Guild</li>
+      </ul>
+    </div>
+
+    <!-- CENTER PANEL -->
+    <div class="panel center">
+      <h1>✨ AI Game Master ✨</h1>
+      <p>Welcome to your epic adventure!<br>
+      Powered by artificial intelligence</p>
+      
+      <div class="bottom-buttons">
+        <button class="btn btn-blue">🚀 Start Quest</button>
+        <button class="btn btn-brown">⚙️ Options</button>
+      </div>
+      
+      <div class="swipe-hint">👈 Swipe to explore</div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="panel right">
+      <h2>🗺️ World Map</h2>
+      <div class="map-placeholder"></div>
+      <p style="margin-top: 20px;">Party Quests: 5/50</p>
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById('bgContainer');
+    let startX = 0;
+    let currentPanel = 1; // Start at center (0=left, 1=center, 2=right)
+
+    // Touch events for mobile swipe
+    if ('ontouchstart' in window || navigator.maxTouchPoints) {
+      container.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+      });
+
+      container.addEventListener('touchend', (e) => {
+        const endX = e.changedTouches[0].clientX;
+        const diff = startX - endX;
+
+        if (Math.abs(diff) > 60) { // Swipe threshold
+          if (diff > 0 && currentPanel < 2) { // Swipe right
+            currentPanel++;
+          } else if (diff < 0 && currentPanel > 0) { // Swipe left
+            currentPanel--;
+          }
+          container.style.transform = `translateX(-${currentPanel * 33.333}%)`;
+        }
+      });
+    }
+
+    // Keyboard arrows (bonus for desktop testing)
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' && currentPanel > 0) {
+        currentPanel--;
+        container.style.transform = `translateX(-${currentPanel * 33.333}%)`;
+      } else if (e.key === 'ArrowRight' && currentPanel < 2) {
+        currentPanel++;
+        container.style.transform = `translateX(-${currentPanel * 33.333}%)`;
+      }
+    });
+
+    // Button clicks (demo)
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alert('Coming soon! 🚀');
+      });
+    });
+  </script>
+</body>
+</html>
