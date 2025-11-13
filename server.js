@@ -1,47 +1,72 @@
 const express = require('express');
-const cors = require('cors');          // <-- NEW
+const cors = require('cors');
 const fs = require('fs').promises;
+const path = require('path');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ---- CORS: allow your GitHub Pages site ----
+// Middleware
 app.use(cors({
-  origin: ['https://dungeonblade.github.io'],   // <-- CHANGE THIS
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
+  origin: ['https://dungeonblade.onrender.com', 'https://nextnetworkent.github.io'],  // Your sites
+  methods: ['GET', 'POST']
 }));
-// -------------------------------------------
-
 app.use(express.json());
+app.use(express.static('public'));  // Serve your HTML files
 
-// File to store messages
-const messagesFile = 'messages.json';
+// Messages file
+const messagesFile = path.join(__dirname, 'messages.json');
 
-// Initialize file if it does not exist
+// Initialize messages file
 async function initMessages() {
-  try { await fs.access(messagesFile); }
-  catch { await fs.writeFile(messagesFile, JSON.stringify([])); }
+  try {
+    await fs.access(messagesFile);
+  } catch {
+    await fs.writeFile(messagesFile, JSON.stringify([]));
+  }
 }
 initMessages();
 
 // GET all messages
 app.get('/messages', async (req, res) => {
-  const messages = JSON.parse(await fs.readFile(messagesFile));
-  res.json(messages);
+  try {
+    const data = await fs.readFile(messagesFile, 'utf8');
+    const messages = JSON.parse(data);
+    res.json(messages);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to load messages' });
+  }
 });
 
-// POST a new message
+// POST new message
 app.post('/messages', async (req, res) => {
-  const { text } = req.body;
-  if (!text) return res.status(400).send('Message required');
-  const messages = JSON.parse(await fs.readFile(messagesFile));
-  messages.push({ text, timestamp: new Date().toISOString() });
-  await fs.writeFile(messagesFile, JSON.stringify(messages));
-  res.status(201).send('Posted');
+  try {
+    const { text } = req.body;
+    if (!text || text.trim().length === 0) {
+      return res.status(400).json({ error: 'Message text required' });
+    }
+    const data = await fs.readFile(messagesFile, 'utf8');
+    const messages = JSON.parse(data);
+    messages.push({
+      text: text.trim(),
+      timestamp: new Date().toISOString()
+    });
+    await fs.writeFile(messagesFile, JSON.stringify(messages, null, 2));
+    res.status(201).json({ message: 'Posted' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to save message' });
+  }
 });
 
-// Serve the static HTML (public folder)
-app.use(express.static('public'));
+// Serve other static pages (about.html, game.html)
+app.get('/about.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'about.html'));
+});
+app.get('/game.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'game.html'));
+});
 
-// Bind to 0.0.0.0 for Render
-app.listen(port, '0.0.0.0', () => console.log(`Server running on port ${port}`));
+// Start server
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server running on port ${port}`);
+});
