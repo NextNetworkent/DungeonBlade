@@ -1,7 +1,7 @@
 {
-  "name": "message-board",
+  "name": "dungeonblade-chat",
   "version": "1.0.0",
-  "description": "",
+  "description": "Backend for Dungeon Blade chat",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
