@@ -2,117 +2,123 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>The Boar's Breath Tavern</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dungeon Blade - Game</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body {
-      background:#0d0d0d; color:#e0e0e0; font-family:Arial,Helvetica,sans-serif;
-      min-height:100vh; display:flex; flex-direction:column;
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
+      font-family: Arial, sans-serif;
     }
-    header {
-      background:#1a1a1a; padding:1rem; text-align:center; border-bottom:2px solid #333;
+
+    /* Sliding Panels Container */
+    .panel-container {
+      display: flex;
+      width: 300%;
+      height: 100%;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
     }
-    header h1 { font-size:1.8rem; color:#ffd700; }
-    #chat-container {
-      flex:1; padding:1rem; max-width:800px; margin:0 auto; width:100%;
+
+    .panel-container::-webkit-scrollbar {
+      display: none;
     }
-    #messages {
-      height:65vh; overflow-y:auto; background:#111; padding:1rem;
-      border:1px solid #333; border-radius:8px; margin-bottom:1rem;
-      display:flex; flex-direction:column; gap:0.5rem;
+
+    /* Panels */
+    .panel {
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+      scroll-snap-align: center;
+      background-size: cover;
+      background-position: center;
     }
-    .message {
-      max-width:80%; padding:0.7rem 1rem; border-radius:12px;
-      background:#2a2a2a; align-self:flex-start; word-wrap:break-word;
+
+    /* Center panel with BG */
+    #center-panel {
+      background-image: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png');
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
     }
-    .message.own { background:#ffd700; color:#000; align-self:flex-end; }
-    #input-area {
-      display:flex; gap:0.5rem;
+
+    /* Header Text Over BG */
+    .title {
+      font-size: 2.5em;
+      color: white;
+      text-shadow: 2px 2px 5px black;
     }
-    #messageInput {
-      flex:1; padding:0.9rem; background:#222; color:#fff;
-      border:1px solid #444; border-radius:8px; font-size:1rem;
+
+    /* Hamburger Menu */
+    .hamburger {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      font-size: 30px;
+      cursor: pointer;
+      z-index: 10;
+      color: white;
+      text-shadow: 2px 2px 5px black;
     }
-    #sendBtn {
-      padding:0 1.5rem; background:#ffd700; color:#000;
-      border:none; border-radius:8px; font-weight:bold; cursor:pointer;
+
+    .menu {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      transform: translateX(-100%);
+      transition: 0.3s;
+      padding-top: 60px;
     }
-    #sendBtn:hover { background:#ffed4e; }
-    footer {
-      text-align:center; padding:0.5rem; font-size:0.8rem; color:#666;
+
+    .menu a {
+      display: block;
+      padding: 15px;
+      text-decoration: none;
+      color: white;
+      font-size: 1.2em;
     }
-    @media (max-width:600px) {
-      header h1 { font-size:1.5rem; }
-      #messages { height:60vh; }
-      #messageInput, #sendBtn { font-size:0.9rem; }
+
+    .menu.show {
+      transform: translateX(0);
     }
+
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>The Boar'sBreath Tavern</h1>
-  </header>
+  <!-- Hamburger -->
+  <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
 
-  <div id="chat-container">
-    <div id="messages"></div>
-    <div id="input-area">
-      <input type="text" id="messageInput" placeholder="Type your message..." autocomplete="off" />
-      <button id="sendBtn">Send</button>
-    </div>
+  <!-- Slide-out Menu -->
+  <div id="sideMenu" class="menu">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="game.html">Game</a>
   </div>
 
-  <footer>
-    Messages are saved forever • No login needed
-  </footer>
+  <!-- Sliding Panels -->
+  <div class="panel-container">
+    <div class="panel" id="left-panel"></div>
+
+    <div class="panel" id="center-panel">
+      <div class="title">Dungeon Blade</div>
+    </div>
+
+    <div class="panel" id="right-panel"></div>
+  </div>
 
   <script>
-    const backendUrl = 'https://dungeonblade.onrender.com';
-    const messagesDiv = document.getElementById('messages');
-    const input = document.getElementById('messageInput');
-    const sendBtn = document.getElementById('sendBtn');
-
-    // Load messages
-    async function loadMessages() {
-      try {
-        const res = await fetch(`${backendUrl}/messages`);
-        const msgs = await res.json();
-        messagesDiv.innerHTML = '';
-        msgs.forEach(m => addMessage(m.text, false));
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
-      } catch (e) { console.error('Load failed', e); }
+    function toggleMenu() {
+      document.getElementById('sideMenu').classList.toggle('show');
     }
-
-    // Add message to screen
-    function addMessage(text, isOwn = false) {
-      const div = document.createElement('div');
-      div.className = 'message' + (isOwn ? ' own' : '');
-      div.textContent = text;
-      messagesDiv.appendChild(div);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    // Send message
-    async function sendMessage() {
-      const text = input.value.trim();
-      if (!text) return;
-      await fetch(`${backendUrl}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text })
-      });
-      input.value = '';
-      loadMessages();
-    }
-
-    // Events
-    sendBtn.addEventListener('click', sendMessage);
-    input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
-
-    // Auto-refresh every 5 sec
-    loadMessages();
-    setInterval(loadMessages, 5000);
   </script>
 
 </body>
