@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dungeon Blade</title>
+    <title>The Tavern – Dungeon Blade</title>
 
     <!-- Medieval Font -->
     <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
@@ -13,23 +13,18 @@
 
         /* ---------- HEADER ---------- */
         #header{
-            position:relative;
-            background:#000;
-            padding:1rem 1rem 1rem 3.5rem;      /* space for hamburger */
-            text-align:center;                  /* centers all text */
+            position:relative;background:#000;
+            padding:1rem 1rem 1rem 3.5rem;text-align:center;
         }
         #header h1,#header h2,#header p{margin:0}
         #header h1{
             color:#fff;font-size:24px;
-            font-family:'IM Fell English SC',serif;
-            letter-spacing:1px;
+            font-family:'IM Fell English SC',serif;letter-spacing:1px;
         }
         #header h2{
-            color:#cfcfcf;font-size:18px;
-            font-family:'IM Fell English SC',serif;
-            letter-spacing:.5px;
+            color:#ffd700;font-size:18px;
+            font-family:'IM Fell English SC',serif;letter-spacing:.5px;
         }
-        #header p{color:#cfcfcf;font-size:12px}
 
         .hamburger{
             position:absolute;top:1rem;left:1rem;cursor:pointer;z-index:1000;
@@ -59,84 +54,75 @@
             display:flex;flex-direction:column;align-items:center;gap:.6rem;
         }
         .radio-player button{
-            background:transparent;border:none;cursor:pointer;padding:0;
-            appearance:none;outline:none;
-            border-radius:50%;               /* circular button */
-            padding:8px;                     /* space for border */
-            transition:transform .2s, background .2s;
+            background:transparent;border:none;cursor:pointer;padding:8px;
+            border-radius:50%;transition:transform .2s, background .2s;
         }
         .radio-player button:hover{
-            background:rgba(255,255,255,.1);
-            transform:scale(1.05);
+            background:rgba(255,255,255,.1);transform:scale(1.05);
         }
         .radio-player button img{
-            width:125px;height:125px;
-            pointer-events:none;
-            border:1px solid #fff;           /* WHITE BORDER */
-            border-radius:50%;               /* circular icon */
-            box-shadow:0 0 12px rgba(255,255,255,.3); /* glow */
+            width:125px;height:125px;pointer-events:none;
+            border:3px solid #fff;border-radius:50%;
+            box-shadow:0 0 15px rgba(255,255,255,.4);
         }
         .radio-status{font-size:.85rem;color:#cfcfcf}
         .radio-info{font-size:.7rem;color:#cfcfcf;text-align:center;max-width:200px}
 
-        /* ---------- VIDEO SECTION ---------- */
-        .video-container{
-            width:100%;max-width:800px;margin:0 auto;
-            padding:1rem 1rem .5rem 1rem;
-            position:relative;box-sizing:border-box;
+        /* ---------- TAVERN CHAT ---------- */
+        #chat-section{
+            max-width:900px;margin:1rem auto;padding:0 1rem;
         }
-        .video-container iframe{
-            width:100%;height:450px;border:none;
-            border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.3);
+        #messages{
+            height:55vh;overflow-y:auto;background:#111;padding:1rem;
+            border:1rem solid #2a1a0d;border-radius:12px;
+            display:flex;flex-direction:column;gap:0.7rem;
+            box-shadow:inset 0 0 20px rgba(0,0,0,.8);
         }
-        .unmute-btn{
-            position:absolute;bottom:.5rem;left:50%;transform:translateX(-50%);
-            background:#2a323a;color:#cfcfcf;border:none;
-            padding:.4rem .8rem;border-radius:4px;font-size:.8rem;
-            cursor:pointer;opacity:.9;
+        .message{
+            max-width:78%;padding:0.8rem 1.2rem;border-radius:18px;
+            background:#2a2a2a;align-self:flex-start;word-wrap:break-word;
         }
-        .unmute-btn:hover{opacity:1}
-
-        /* ---------- MAIN CONTENT ---------- */
-        .main-content{
-            padding:0 1rem .5rem 1rem;
-            text-align:center;
+        .message.own{
+            background:#ffd700;color:#000;align-self:flex-end;
         }
-        .main-content h3{margin:0 0 .5rem 0}
-        .main-content p{margin:0}
+        #input-area{
+            display:flex;gap:0.5rem;margin-top:1rem;
+        }
+        #messageInput{
+            flex:1;padding:1rem;background:#222;color:#fff;
+            border:2px solid #ffd700;border-radius:12px;font-size:1rem;
+        }
+        #sendBtn{
+            padding:0 2rem;background:#ffd700;color:#000;
+            border:none;border-radius:12px;font-weight:bold;cursor:pointer;
+            font-size:1rem;
+        }
+        #sendBtn:hover{background:#ffed4e}
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width:600px){
             #header{padding:1rem 1rem 1rem 3rem}
             .hamburger{top:.8rem;left:.8rem}
-            #menu{top:4rem;left:.8rem}
-            .radio-player{padding:.5rem;gap:.4rem}
             .radio-player button img{width:100px;height:100px}
-            .radio-status{font-size:.75rem}
-            .radio-info{font-size:.6rem}
-            .video-container{padding:1rem .5rem .5rem .5rem}
-            .video-container iframe{height:300px}
-        }
-        @media (max-width:280px){
-            .radio-player button img{width:90px;height:90px}
+            #messages{height:50vh}
+            #messageInput,#sendBtn{font-size:0.9rem}
         }
     </style>
 </head>
 <body>
 
-    <!-- Header with hamburger -->
+    <!-- Header -->
     <div id="header">
         <div class="hamburger" id="hamburgerBtn">
             <span></span><span></span><span></span>
         </div>
         <ul id="menu">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="game.html">Game</a></li>
+            <li><a href="/">The Tavern</a></li>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/game.html">Play Game</a></li>
         </ul>
-        <h1>Welcome to<br>Dungeon Blade</h1>
-        <h2>ai adventure game<br> & social network</h2>
-        <p></p>
+        <h1>The Tavern</h1>
+        <h2>Where Legends Gather</h2>
     </div>
 
     <!-- Radio Player -->
@@ -147,45 +133,31 @@
             </button>
             <span id="radioStatus" class="radio-status"></span>
         </div>
-        <small class="radio-info">Bard Radio      </small>
+        <small class="radio-info">Bard Radio – Live from the Hearth</small>
         <audio id="everlookAudio" preload="metadata" crossorigin>
             <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
             <source src="https://icecast.radiofrance.fr/franceinfo-midfi.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
         </audio>
     </div>
 
-    <!-- Video Section -->
-    <div class="video-container">
-        <iframe id="ytplayer"
-            src="https://www.youtube.com/embed/dThMRsPONT8?autoplay=1&mute=1&loop=1&playlist=dThMRsPONT8&rel=0&controls=1&modestbranding=1"
-            title="Dungeon Blade Video"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen></iframe>
-        <button class="unmute-btn" onclick="unmuteVideo()">Unmute</button>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <h3>Welcome to Dungeon Blade!</h3>
-        <p>Here you will have an AI Dungeon Master to guide you and other players through RPG adventures using voice-acted NPC's, ambience, music, and sound effects. Create a character, aquire treasures as you grow in power & fame. Perhaps you would rather just relax in the Tavern and chat with others, check-out on-going game sessions, start a campaign, or just watch and comment on a game with others in the peanut gallery. If you find a friend you can check-out their character profile or customize yours with a character bio, artwork, music, and a comments section for others to drop links or hook up for a game. Other features are the audio stream, and a search option so you can find other players near you and plan meet-ups in real life. This game hub is Currently in the Early Development stage. I am working on the back end coding.</p>
+    <!-- TAVERN CHAT -->
+    <div id="chat-section">
+        <div id="messages"></div>
+        <div id="input-area">
+            <input type="text" id="messageInput" placeholder="Speak to the room..." autocomplete="off" />
+            <button id="sendBtn">Send</button>
+        </div>
     </div>
 
     <script>
-        // Menu toggle
+        // Menu
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const menu = document.getElementById('menu');
-        hamburgerBtn.addEventListener('click', e => {
-            e.stopPropagation();
-            menu.classList.toggle('show');
-        });
-        document.addEventListener('click', e => {
-            if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target))
-                menu.classList.remove('show');
-        });
+        hamburgerBtn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('show'); });
+        document.addEventListener('click', e => { if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target)) menu.classList.remove('show'); });
         menu.addEventListener('click', e => e.stopPropagation());
 
-        // Radio player
+        // Radio
         const audio = document.getElementById('everlookAudio');
         const toggleBtn = document.getElementById('radioToggle');
         const status = document.getElementById('radioStatus');
@@ -194,38 +166,55 @@
         toggleBtn.addEventListener('click', () => {
             if (audio.paused) {
                 audio.play().then(() => {
-                    radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727245.png'; // Pause icon
+                    radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727245.png';
                     toggleBtn.setAttribute('aria-pressed', 'true');
-                    status.textContent = '';
-                }).catch(err => {
-                    console.error('Playback failed:', err);
-                    status.textContent = 'Error';
-                    alert('Radio failed to play. Check your connection or try refreshing.');
-                });
+                    status.textContent = 'Playing...';
+                }).catch(() => status.textContent = 'Error');
             } else {
                 audio.pause();
-                radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727218.png'; // Play icon
+                radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727218.png';
                 toggleBtn.setAttribute('aria-pressed', 'false');
-                status.textContent = '';
+                status.textContent = 'Paused';
             }
         });
 
-        // Responsive iframe height
-        window.addEventListener('resize', () => {
-            const iframe = document.querySelector('.video-container iframe');
-            if (!iframe) return;
-            iframe.style.height = (window.innerWidth <= 600) ? '300px' : '450px';
-        });
+        // Chat
+        const backendUrl = 'https://dungeonblade.onrender.com';
+        const messagesDiv = document.getElementById('messages');
+        const input = document.getElementById('messageInput');
 
-        // Unmute video
-        function unmuteVideo() {
-            const iframe = document.getElementById('ytplayer');
-            iframe.src = iframe.src.replace('mute=1', 'mute=0');
-            event.target.style.display = 'none';
+        async function loadMessages() {
+            try {
+                const res = await fetch(`${backendUrl}/messages`);
+                const msgs = await res.json();
+                messagesDiv.innerHTML = '';
+                msgs.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = 'message';
+                    div.textContent = m.text;
+                    messagesDiv.appendChild(div);
+                });
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch(e) {}
         }
 
-        // Initial iframe height
-        window.dispatchEvent(new Event('resize'));
+        async function sendMessage() {
+            const text = input.value.trim();
+            if (!text) return;
+            await fetch(`${backendUrl}/messages`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            });
+            input.value = '';
+            loadMessages();
+        }
+
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+
+        loadMessages();
+        setInterval(loadMessages, 5000);
     </script>
 </body>
 </html>
