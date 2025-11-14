@@ -105,7 +105,7 @@
   </div>
 
   <!-- Sliding Panels -->
-  <div class="panel-container">
+  <div id="panelContainer" class="panel-container">
     <div class="panel" id="left-panel"></div>
 
     <div class="panel" id="center-panel">
@@ -119,6 +119,13 @@
     function toggleMenu() {
       document.getElementById('sideMenu').classList.toggle('show');
     }
+
+    // Auto-scroll to center panel on load
+    window.onload = function () {
+      const container = document.getElementById('panelContainer');
+      const screenWidth = window.innerWidth;
+      container.scrollLeft = screenWidth; // Move directly to the center
+    };
   </script>
 
 </body>
