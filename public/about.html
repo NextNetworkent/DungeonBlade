@@ -19,61 +19,73 @@
       flex-direction: column;
     }
 
-    /* Header & Hamburger Menu */
-    header {
-      width: 100%;
-      background: rgba(0,0,0,0.9);
-      padding: 1rem;
-      position: sticky;
-      top: 0;
+    /* Fixed Hamburger Menu in Top-Left */
+    .hamburger-menu {
+      position: fixed;
+      top: 20px;
+      left: 20px;
       z-index: 1000;
-      border-bottom: 1px solid #333;
-    }
-
-    .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #fff;
-      text-decoration: none;
-    }
-
-    /* Hamburger button */
-    .hamburger {
-      display: none;
       flex-direction: column;
       cursor: pointer;
-      gap: 5px;
+      gap: 6px;
+      padding: 10px;
+      background: rgba(0,0,0,0.7);
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+      border: 1px solid #333;
     }
 
-    .hamburger span {
+    .hamburger-menu span {
       width: 30px;
       height: 3px;
       background: #fff;
-      transition: all 0.3s;
+      transition: all 0.3s ease;
     }
 
-    /* Navigation links */
+    /* Hamburger animation when active */
+    .hamburger-menu.active span:nth-child(1) {
+      transform: rotate(45deg) translate(8px, 8px);
+    }
+    .hamburger-menu.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .hamburger-menu.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -6px);
+    }
+
+    /* Navigation Menu (Mobile Overlay) */
     nav ul {
-      list-style: none;
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100vh;
+      background: #111;
       margin: 0;
-      padding: 0;
+      padding: 100px 0 50px;
+      list-style: none;
       display: flex;
-      gap: 2rem;
+      flex-direction: column;
+      align-items: center;
+      transition: left 0.4s ease;
+      z-index: 999;
+    }
+
+    nav ul.show {
+      left: 0;
+    }
+
+    nav ul li {
+      margin: 1.5rem 0;
     }
 
     nav ul li a {
       color: #fff;
       text-decoration: none;
-      font-size: 1.1rem;
-      padding: 0.5rem 0;
+      font-size: 1.8rem;
+      font-weight: bold;
+      padding: 0.5rem 1rem;
       transition: color 0.3s;
     }
 
@@ -96,14 +108,15 @@
       text-align: center;
     }
 
-    h1 { font-size: 2rem; margin: 1rem 0; }
+    h1 { font-size: 2rem; margin: 1.5rem 0; }
     h2 { font-size: 1.5rem; margin-top: 2.5rem; }
 
     .title-image {
       display: block;
       max-width: 100%;
       height: auto;
-      margin: 0 auto 1.5rem;
+      margin: 2rem auto 1.5rem;
+      border-radius: 8px;
     }
 
     /* Video */
@@ -127,67 +140,36 @@
 
     ul, ol { margin-left: 2rem; }
 
-    /* Footer (optional) */
+    /* Footer */
     footer {
       text-align: center;
       padding: 2rem;
       font-size: 0.9rem;
       color: #666;
     }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .hamburger { display: flex; }
-
-      nav ul {
-        position: fixed;
-        top: 70px;
-        left: -100%;
-        width: 100%;
-        height: calc(100vh - 70px);
-        background: #111;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        padding-top: 3rem;
-        transition: left 0.4s ease;
-      }
-
-      nav ul.show { left: 0; }
-
-      nav ul li { margin: 1.5rem 0; }
-    }
-
-    /* Hamburger animation when open */
-    .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-    .hamburger.active span:nth-child(2) { opacity: 0; }
-    .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -7px); }
   </style>
 </head>
 <body>
 
-  <!-- Header with Hamburger Menu -->
-  <header>
-    <div class="nav-container">
-      <a href="#" class="logo">Dungeon Blade</a>
-      <div class="hamburger" id="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-      <nav>
-        <ul id="nav-menu">
-          <li><a href="index.html" class="active">Home</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="game.html">Game</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <!-- Top-Left Hamburger Menu Button -->
+  <div class="hamburger-menu" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <!-- Navigation Menu (hidden by default on mobile) -->
+  <nav>
+    <ul id="nav-menu">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="game.html">Game</a></li>
+    </ul>
+  </nav>
 
   <!-- Main Content -->
   <main>
-    <img src="https://files.catbox.moe/jg1ibd.png" alt="Dungeon Blade Title" class="title-image">
+    <img src="DungeonBladeTitle.png" alt="Dungeon Blade Title" class="title-image">
     <h1>AI Adventure Game</h1>
     <p>Welcome to <strong>Dungeon Blade</strong>, an online RPG where an AI Dungeon Master guides you and your friends through epic quests, battles, and mysteries!</p>
 
@@ -245,7 +227,7 @@
       navMenu.classList.toggle('show');
     });
 
-    // Close menu when clicking a link (mobile)
+    // Close menu when clicking a link
     document.querySelectorAll('#nav-menu a').forEach(link => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('active');
