@@ -5,18 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Tavern – Dungeon Blade</title>
 
-    <!-- Medieval Font -->
+    <!-- Medieval Header Font -->
     <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+    <!-- Clean modern font for chat (similar to Grok) -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
         body{margin:0;padding:0;background:#14191e;color:#cfcfcf;font-family:Arial,sans-serif}
+        *{box-sizing:border-box}
 
         /* ---------- HEADER ---------- */
         #header{
             position:relative;background:#000;
             padding:1rem 1rem 1rem 3.5rem;text-align:center;
         }
-        #header h1,#header h2,#header p{margin:0}
+        #header h1,#header h2{margin:0}
         #header h1{
             color:#fff;font-size:24px;
             font-family:'IM Fell English SC',serif;letter-spacing:1px;
@@ -68,44 +71,101 @@
         .radio-status{font-size:.85rem;color:#cfcfcf}
         .radio-info{font-size:.7rem;color:#cfcfcf;text-align:center;max-width:200px}
 
-        /* ---------- TAVERN CHAT ---------- */
+        /* ---------- TAVERN CHAT – GROK MINIMAL STYLE ---------- */
         #chat-section{
-            max-width:900px;margin:1rem auto;padding:0 1rem;
+            max-width:900px;margin:2rem auto;padding:0 1rem;
         }
         #messages{
-            height:55vh;overflow-y:auto;background:#111;padding:1rem;
-            border:1rem solid #2a1a0d;border-radius:12px;
-            display:flex;flex-direction:column;gap:0.7rem;
-            box-shadow:inset 0 0 20px rgba(0,0,0,.8);
+            height:55vh;
+            overflow-y:auto;
+            background:#0d1117;
+            padding:1.5rem;
+            border:1px solid #30363d;
+            border-radius:8px;
+            display:flex;
+            flex-direction:column;
+            gap:1rem;
+            font-family:'JetBrains Mono', monospace;
+            font-size:0.95rem;
+            line-height:1.5;
         }
         .message{
-            max-width:78%;padding:0.8rem 1.2rem;border-radius:18px;
-            background:#2a2a2a;align-self:flex-start;word-wrap:break-word;
+            max-width:80%;
+            padding:0.9rem 1.2rem;
+            background:#21262d;
+            border-radius:8px;
+            border:1px solid transparent;
+            word-wrap:break-word;
+            align-self:flex-start;
         }
         .message.own{
-            background:#ffd700;color:#000;align-self:flex-end;
+            background:#1e40af;
+            color:#fff;
+            align-self:flex-end;
+            border:none;
         }
+
+        /* Input area – super clean, thin white border, Grok-like */
         #input-area{
-            display:flex;gap:0.5rem;margin-top:1rem;
+            display:flex;
+            gap:0.75rem;
+            margin-top:1rem;
+            align-items:center;
         }
         #messageInput{
-            flex:1;padding:1rem;background:#222;color:#fff;
-            border:2px solid #ffd700;border-radius:12px;font-size:1rem;
+            flex:1;
+            padding:1rem 1.2rem;
+            background:#0d1117;
+            color:#e6edf3;
+            border:1px solid #fff;
+            border-radius:8px;
+            font-family:'JetBrains Mono', monospace;
+            font-size:0.95rem;
+            outline:none;
+            transition:border 0.2s;
+        }
+        #messageInput:focus{
+            border:1px solid #58a6ff;
+            box-shadow:0 0 0 2px rgba(88,166,255,0.2);
+        }
+        #messageInput::placeholder{
+            color:#7d8590;
         }
         #sendBtn{
-            padding:0 2rem;background:#ffd700;color:#000;
-            border:none;border-radius:12px;font-weight:bold;cursor:pointer;
-            font-size:1rem;
+            padding:0 1.8rem;
+            height:48px;
+            background:#238636;
+            color:white;
+            border:none;
+            border-radius:6px;
+            font-family:'JetBrains Mono', monospace;
+            font-weight:500;
+            cursor:pointer;
+            transition:background 0.2s;
         }
-        #sendBtn:hover{background:#ffed4e}
+        #sendBtn:hover{
+            background:#2ea043;
+        }
+
+        /* Scrollbar – clean & minimal */
+        #messages::-webkit-scrollbar{
+            width:6px;
+        }
+        #messages::-webkit-scrollbar-track{
+            background:transparent;
+        }
+        #messages::-webkit-scrollbar-thumb{
+            background:#30363d;
+            border-radius:3px;
+        }
 
         /* ---------- RESPONSIVE ---------- */
         @media (max-width:600px){
             #header{padding:1rem 1rem 1rem 3rem}
             .hamburger{top:.8rem;left:.8rem}
             .radio-player button img{width:100px;height:100px}
-            #messages{height:50vh}
-            #messageInput,#sendBtn{font-size:0.9rem}
+            #messages{height:50vh;padding:1rem}
+            #messageInput{font-size:16px} /* iOS zoom fix */
         }
     </style>
 </head>
@@ -150,7 +210,7 @@
     </div>
 
     <script>
-        // Menu
+        // Menu Toggle
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const menu = document.getElementById('menu');
         hamburgerBtn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('show'); });
@@ -191,6 +251,7 @@
                 msgs.forEach(m => {
                     const div = document.createElement('div');
                     div.className = 'message';
+                    if (m.isOwn) div.classList.add('own'); // assuming backend can mark own messages
                     div.textContent = m.text;
                     messagesDiv.appendChild(div);
                 });
