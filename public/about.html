@@ -3,13 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Adventure Game - Dungeon Blade</title>
+  <title>Dungeon Blade - AI Adventure Game</title>
   <style>
     /* Reset & Base */
-    * { box-sizing: border-box; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
-      padding: 0;
       background-color: #000;
       color: #fff;
       font-family: Arial, Helvetica, sans-serif;
@@ -19,33 +17,30 @@
       flex-direction: column;
     }
 
-    /* Fixed Hamburger Menu in Top-Left */
+    /* Top-Left Hamburger Menu - Matches Tavern exactly */
     .hamburger-menu {
       position: fixed;
-      top: 20px;
-      left: 20px;
+      top: 12px;
+      left: 16px;
       z-index: 1000;
-      display: flex;
-      flex-direction: column;
       cursor: pointer;
-      gap: 6px;
-      padding: 10px;
-      background: rgba(0,0,0,0.7);
-      border-radius: 8px;
-      backdrop-filter: blur(4px);
-      border: 1px solid #333;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background 0.3s;
     }
-
+    .hamburger-menu:hover {
+      background: rgba(255,255,255,0.1);
+    }
     .hamburger-menu span {
-      width: 30px;
-      height: 3px;
+      display: block;
+      width: 26px;
+      height: 2px;
       background: #fff;
+      margin: 5px 0;
       transition: all 0.3s ease;
     }
-
-    /* Hamburger animation when active */
     .hamburger-menu.active span:nth-child(1) {
-      transform: rotate(45deg) translate(8px, 8px);
+      transform: rotate(45deg) translate(6px, 6px);
     }
     .hamburger-menu.active span:nth-child(2) {
       opacity: 0;
@@ -54,16 +49,15 @@
       transform: rotate(-45deg) translate(7px, -6px);
     }
 
-    /* Navigation Menu (Mobile Overlay) */
+    /* Full-screen Mobile Menu */
     nav ul {
       position: fixed;
-      top: 0;
-      left: -100%;
+      top: 0; left: -100%;
       width: 100%;
       height: 100vh;
       background: #111;
       margin: 0;
-      padding: 100px 0 50px;
+      padding: 120px 0 60px;
       list-style: none;
       display: flex;
       flex-direction: column;
@@ -71,52 +65,61 @@
       transition: left 0.4s ease;
       z-index: 999;
     }
-
-    nav ul.show {
-      left: 0;
-    }
+    nav ul.show { left: 0; }
 
     nav ul li {
-      margin: 1.5rem 0;
+      margin: 1.8rem 0;
     }
-
     nav ul li a {
       color: #fff;
       text-decoration: none;
-      font-size: 1.8rem;
+      font-size: 2rem;
       font-weight: bold;
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 1.5rem;
       transition: color 0.3s;
     }
-
     nav ul li a:hover,
     nav ul li a.active {
       color: #00ff99;
     }
 
-    /* Main content */
+    /* Main Content */
     main {
-      max-width: 800px;
-      width: 100%;
-      margin: 2rem auto;
-      padding: 0 1rem;
       flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 1rem;
+      padding-top: 70px; /* Space for fixed hamburger */
     }
 
-    h1, h2 {
-      color: #fff;
-      text-align: center;
-    }
-
-    h1 { font-size: 2rem; margin: 1.5rem 0; }
-    h2 { font-size: 1.5rem; margin-top: 2.5rem; }
-
+    /* Title Image - Smaller & flush to top */
     .title-image {
       display: block;
-      max-width: 100%;
+      width: 90%;
+      max-width: 500px;
       height: auto;
-      margin: 2rem auto 1.5rem;
-      border-radius: 8px;
+      margin: 0 auto;
+      padding-top: 20px; /* Tiny breathing room under hamburger */
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.2rem;
+      margin: 1rem 0 1.5rem;
+      color: #fff;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 1.6rem;
+      margin: 2.5rem 0 1rem;
+      color: #00ff99;
+    }
+
+    p, li {
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
     }
 
     /* Video */
@@ -128,9 +131,8 @@
       max-width: 100%;
       margin: 2rem auto;
       border: 2px solid #333;
-      border-radius: 8px;
+      border-radius: 10px;
     }
-
     .video-container iframe {
       position: absolute;
       top: 0; left: 0;
@@ -138,27 +140,44 @@
       border: none;
     }
 
-    ul, ol { margin-left: 2rem; }
+    ul, ol {
+      margin: 1rem 0;
+      padding-left: 1.5rem;
+    }
+    li { margin-bottom: 0.6rem; }
+
+    /* Bright green links like YouTube */
+    a.patreon-link,
+    a.youtube-link {
+      color: #00ff99 !important;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    a.patreon-link:hover,
+    a.youtube-link:hover {
+      text-decoration: underline;
+    }
 
     /* Footer */
     footer {
       text-align: center;
-      padding: 2rem;
+      padding: 2rem 1rem;
       font-size: 0.9rem;
       color: #666;
+      background: #000;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top-Left Hamburger Menu Button -->
+  <!-- Hamburger Menu (Tavern style) -->
   <div class="hamburger-menu" id="hamburger">
     <span></span>
     <span></span>
     <span></span>
   </div>
 
-  <!-- Navigation Menu (hidden by default on mobile) -->
+  <!-- Mobile Navigation -->
   <nav>
     <ul id="nav-menu">
       <li><a href="index.html" class="active">Home</a></li>
@@ -170,10 +189,10 @@
   <!-- Main Content -->
   <main>
     <img src="DungeonBladeTitle.png" alt="Dungeon Blade Title" class="title-image">
-    <h1>AI Adventure Game</h1>
-    <p>Welcome to <strong>Dungeon Blade</strong>, an online RPG where an AI Dungeon Master guides you and your friends through epic quests, battles, and mysteries!</p>
 
-    <!-- ABOUT Section -->
+    <h1>AI Adventure Game</h1>
+    <p style="text-align:center;">Welcome to <strong>Dungeon Blade</strong>, an online RPG where an AI Dungeon Master guides you and your friends through epic quests, battles, and mysteries!</p>
+
     <h2>About</h2>
     <div class="video-container">
       <iframe src="https://www.youtube.com/embed/MMC8pLxnyPk"
@@ -183,34 +202,26 @@
     </div>
 
     <h2>Overview</h2>
+    <p>Dungeon Blade is an aiTTRPG — an artificially intelligent dungeon master that guides you and other players through role-playing adventures using voice-acted NPCs, ambience, music, and sound effects.</p>
+    <p>Create a character, customize your profile, and jump into the Tavern to chat, plan adventures, or just hang out. Watch live games, join campaigns, or relax with the Bard Radio audio stream.</p>
+    <p>The game and Tavern are in early development. <strong>Patreon supporters get early access!</strong></p>
+    <p style="text-align:center; font-size:1.2rem;">
+      Support on Patreon → <a href="https://www.patreon.com/Michael_North?utm_campaign=creatorshare_fan" target="_blank" class="patreon-link">patreon.com/Michael_North</a>
+    </p>
+
+    <h2>Current Features</h2>
     <ul>
-        <p>Dungeon Blade is an aiTTRPG; in other words, an artificially intelligent dungeon master that will guide you and other players through role playing adventures using voice-acted NPC's, ambience, music, and sound effects. <br>Create a character and customize your profile with a bio, images, and music. activate comments to help set up a  game session with your friends. Once you start a game you'll aquire treasures and grow in power, and fame. <br>Perhaps you would rather just relax in the Tavern and chat others, check-out the on-going game sessions, start a campaign, or just watch and comment on a game live with others. <br>If you are looking for other gamers in your area you can check-out their character profile. If they have zip code enabled you can search for others close by. Other features include the audio stream; adventure game related music and entertainment. <br>The Dungeon Blade game and The Tavern chat room are currently in the early development stage. If you become a Patreon you will be chosen for early access to the game<br> https://www.patreon.com/Michael_North?utm_campaign=creatorshare_fan  </p>
-      <li><strong>Created by:</strong> Next Network Entertainment</li>
-      <li><strong>Development Started:</strong> October 1, 2025</li>
-      <li>Dungeon Blade is an AI-powered TTRPG and social network for players</li>
+      <li>Multiplayer TTRPG with a talking AI Dungeon Master</li>
+      <li>Free character profile (avatar, bio, images, music, comment wall)</li>
+      <li>The Tavern – live chat room + active game roster</li>
+      <li>Bard Radio – live audio stream from the hearth</li>
     </ul>
 
-    <h2>How to Play</h2>
-    <ol>
-      <li>This is the Live Portal.</li>
-      <li>Create your Character Profile → Enter the Tavern → chat, show off your sheet, plan adventures.</li>
-      <li>Join a Game Session from the Active Game Roster or watch from the Peanut Gallery.</li>
-      <li>Level up your character with a true AI that speaks, rolls dice, and uses a massive TTRPG library.</li>
-    </ol>
-
-    <h2>Current Features (Early Development)</h2>
+    <h2>Next Network Entertainment</h2>
     <ul>
-      <li>Multiplayer TTRPG with a talking AI Dungeon Master and ready-made campaigns</li>
-      <li>Free character page (avatar, bio, comment wall with images/music/videos)</li>
-      <li>Tavern chat room to meet players, join/watch games, and live-comment</li>
-    </ul>
-
-    <h2>Next Network Entertainment – Updates</h2>
-    <ul>
-      <li>Website is Live</li>
-      <li>YouTube Channel: <a href="https://www.youtube.com/@nextnetworkent" target="_blank" style="color:#00ff99;">youtube.com/@nextnetworkent</a></li>
-      <li>Simple AI chat bot is Live</li>
-      <li>Tavern Audio Stream is Live</li>
+      <li>YouTube: <a href="https://www.youtube.com/@nextnetworkent" target="_blank" class="youtube-link">youtube.com/@nextnetworkent</a></li>
+      <li>Development started: October 1, 2025</li>
+      <li>Website & Tavern chat: LIVE</li>
     </ul>
   </main>
 
@@ -228,7 +239,6 @@
       navMenu.classList.toggle('show');
     });
 
-    // Close menu when clicking a link
     document.querySelectorAll('#nav-menu a').forEach(link => {
       link.addEventListener('click', () => {
         hamburger.classList.remove('active');
