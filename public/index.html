@@ -7,7 +7,7 @@
 
     <!-- Medieval Header Font -->
     <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
-    <!-- Clean modern font for chat (similar to Grok) -->
+    <!-- Clean modern font for chat -->
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
@@ -71,41 +71,40 @@
         .radio-status{font-size:.85rem;color:#cfcfcf}
         .radio-info{font-size:.7rem;color:#cfcfcf;text-align:center;max-width:200px}
 
-        /* ---------- TAVERN CHAT – GROK MINIMAL STYLE ---------- */
+        /* ---------- TAVERN CHAT – BUBBLE-FREE, WHITE BORDER ---------- */
         #chat-section{
-            max-width:900px;margin:2rem auto;padding:0 1rem;
+            max-width:900px;margin:1.5rem auto;padding:0 1rem;
         }
         #messages{
-            height:55vh;
+            height:50vh;                    /* Reduced height */
             overflow-y:auto;
             background:#0d1117;
-            padding:1.5rem;
-            border:1px solid #30363d;
+            padding:1rem;
+            border:3px solid #ffffff;       /* White 3px border */
             border-radius:8px;
             display:flex;
             flex-direction:column;
-            gap:1rem;
+            gap:0.8rem;
             font-family:'JetBrains Mono', monospace;
             font-size:0.95rem;
             line-height:1.5;
         }
         .message{
-            max-width:80%;
-            padding:0.9rem 1.2rem;
-            background:#21262d;
-            border-radius:8px;
-            border:1px solid transparent;
+            margin:0;
+            padding:0;
+            background:transparent !important;   /* No bubble */
+            border:none !important;
+            border-radius:0 !important;
             word-wrap:break-word;
             align-self:flex-start;
+            color:#e6edf3;
         }
         .message.own{
-            background:#1e40af;
-            color:#fff;
             align-self:flex-end;
-            border:none;
+            color:#a5d8ff;               /* Lighter blue for own messages */
         }
 
-        /* Input area – super clean, thin white border, Grok-like */
+        /* Input area – clean and compact */
         #input-area{
             display:flex;
             gap:0.75rem;
@@ -147,25 +146,25 @@
             background:#2ea043;
         }
 
-        /* Scrollbar – clean & minimal */
-        #messages::-webkit-scrollbar{
-            width:6px;
-        }
-        #messages::-webkit-scrollbar-track{
-            background:transparent;
-        }
+        /* Scrollbar */
+        #messages::-webkit-scrollbar{width:6px}
+        #messages::-webkit-scrollbar-track{background:transparent}
         #messages::-webkit-scrollbar-thumb{
-            background:#30363d;
-            border-radius:3px;
+            background:#30363d;border-radius:3px;
         }
 
-        /* ---------- RESPONSIVE ---------- */
+        /* ---------- MOBILE OPTIMIZATIONS ---------- */
         @media (max-width:600px){
             #header{padding:1rem 1rem 1rem 3rem}
             .hamburger{top:.8rem;left:.8rem}
             .radio-player button img{width:100px;height:100px}
-            #messages{height:50vh;padding:1rem}
-            #messageInput{font-size:16px} /* iOS zoom fix */
+            #messages{
+                height:45vh;        /* Even shorter on phone */
+                padding:0.9rem;
+                font-size:0.93rem;
+            }
+            #messageInput{font-size:16px} /* Prevent iOS zoom */
+            #chat-section{margin:1rem auto}
         }
     </style>
 </head>
@@ -202,7 +201,9 @@
 
     <!-- TAVERN CHAT -->
     <div id="chat-section">
-        <div id="messages"></div>
+        <div id="messages">
+            <!-- Messages will be injected here with no bubbles -->
+        </div>
         <div id="input-area">
             <input type="text" id="messageInput" placeholder="Speak to the room..." autocomplete="off" />
             <button id="sendBtn">Send</button>
@@ -251,7 +252,7 @@
                 msgs.forEach(m => {
                     const div = document.createElement('div');
                     div.className = 'message';
-                    if (m.isOwn) div.classList.add('own'); // assuming backend can mark own messages
+                    if (m.isOwn) div.classList.add('own');
                     div.textContent = m.text;
                     messagesDiv.appendChild(div);
                 });
