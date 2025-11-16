@@ -1,108 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Three Panel Swipe</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coming Soon</title>
   <style>
-    html, body {
+    /* Reset and full-page centering */
+    * {
       margin: 0;
       padding: 0;
-      height: 100%;
-      overflow: hidden;
+      box-sizing: border-box;
     }
-    .container {
+
+    html, body {
+      height: 100%;
+      overflow: hidden;            /* prevents default page scroll */
+    }
+
+    body {
       display: flex;
-      width: 300%;
-      height: 100%;
-      transition: transform 0.3s ease;
-      will-change: transform;
+      align-items: center;         /* vertical center */
+      justify-content: center;     /* horizontal center */
+      background: #000;            /* fallback black background */
     }
-    .panel {
-      width: 100%;
-      height: 100%;
-      flex-shrink: 0;
-      background: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png') center center / cover no-repeat;
+
+    /* Container that allows horizontal scrolling on small screens */
+    .image-container {
+      height: 100vh;               /* full viewport height */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow-x: auto;            /* enables left/right scroll */
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+      scroll-snap-type: x none;    /* explicitly disable any snapping */
     }
-    /* Optional: style for each panel content */
-    .panel > .content {
-      color: white;
-      font-size: 2em;
-      text-align: center;
-      padding: 20px;
+
+    .image-container img {
+      max-height: 100%;            /* never taller than viewport */
+      height: auto;
+      width: auto;
+      min-width: 100vw;            /* forces horizontal overflow on phones */
+      display: block;
     }
   </style>
 </head>
 <body>
-
-<div class="container" id="container">
-  <div class="panel" id="panel-0">
-    <div class="content">Panel 1 (left)</div>
+  <div class="image-container">
+    <img src="http://dungeonblade.onrender.com" alt="Placeholder">
   </div>
-  <div class="panel" id="panel-1">
-    <div class="content">Panel 2 (middle – start here)</div>
-  </div>
-  <div a class="panel" id="panel-2">
-    <div class="content">Panel 3 (right)</div>
-  </div>
-</div>
-
-<script>
-  (function(){
-    const container = document.getElementById('container');
-    const panelCount = 3;
-    let currentIndex = 1; // start in the middle panel
-    let startX = null;
-    let isDragging = false;
-
-    const updatePosition = () => {
-      container.style.transform = `translateX(${ -100 * currentIndex }%)`;
-    };
-    updatePosition();
-
-    const onTouchStart = (evt) => {
-      startX = evt.touches ? evt.touches[0].clientX : evt.clientX;
-      isDragging = true;
-      container.style.transition = ''; // cancel transition during drag
-    };
-
-    const onTouchMove = (evt) => {
-      if (!isDragging) return;
-      const x = evt.touches ? evt.touches[0].clientX : evt.clientX;
-      const deltaX = x - startX;
-      // move container in real time (optional)
-      container.style.transform = `translateX(${ -100 * currentIndex + (deltaX / window.innerWidth * 100) }%)`;
-    };
-
-    const onTouchEnd = (evt) => {
-      if (!isDragging) return;
-      isDragging = false;
-      const x = evt.changedTouches ? evt.changedTouches[0].clientX : evt.clientX;
-      const deltaX = x - startX;
-      // minimal threshold, say 20% width to count as swipe
-      const threshold = window.innerWidth * 0.2;
-      if (deltaX > threshold && currentIndex > 0) {
-        currentIndex--;
-      } else if (deltaX < -threshold && currentIndex < panelCount - 1) {
-        currentIndex++;
-      }
-      container.style.transition = 'transform 0.3s ease';
-      updatePosition();
-    };
-
-    // Add listeners
-    container.addEventListener('touchstart', onTouchStart, {passive: true});
-    container.addEventListener('touchmove', onTouchMove, {passive: true});
-    container.addEventListener('touchend', onTouchEnd);
-    // For mouse drag fallback
-    container.addEventListener('mousedown', onTouchStart);
-    container.addEventListener('mousemove', onTouchMove);
-    container.addEventListener('mouseup', onTouchEnd);
-
-    // Prevent default when dragging
-    container.addEventListener('dragstart', (e) => e.preventDefault());
-  })();
-</script>
-
 </body>
 </html>
