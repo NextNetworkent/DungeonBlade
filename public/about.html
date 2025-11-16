@@ -153,11 +153,12 @@
 <body>
 
   <!-- Hamburger Menu (Tavern style) -->
-  <div class="hamburger-menu" id="hamburger">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
+  // Menu
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const menu = document.getElementById('menu');
+        hamburgerBtn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('show'); });
+        document.addEventListener('click', e => { if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target)) menu.classList.remove('show'); });
+        menu.addEventListener('click', e => e.stopPropagation());
 
   <!-- Mobile Navigation -->
   <nav>
