@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Tavern – Dungeon Blade</title>
 
-    <!-- Medieval Header Font -->
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
-    <!-- Clean modern font for chat -->
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
@@ -71,16 +70,16 @@
         .radio-status{font-size:.85rem;color:#cfcfcf}
         .radio-info{font-size:.7rem;color:#cfcfcf;text-align:center;max-width:200px}
 
-        /* ---------- TAVERN CHAT – BUBBLE-FREE, WHITE BORDER ---------- */
+        /* ---------- TAVERN CHAT ---------- */
         #chat-section{
             max-width:900px;margin:1.5rem auto;padding:0 1rem;
         }
         #messages{
-            height:50vh;                    /* Reduced height */
+            height:50vh;
             overflow-y:auto;
             background:#0d1117;
             padding:1rem;
-            border:3px solid #ffffff;       /* White 3px border */
+            border:3px solid #ffffff;
             border-radius:8px;
             display:flex;
             flex-direction:column;
@@ -89,22 +88,37 @@
             font-size:0.95rem;
             line-height:1.5;
         }
+
+        /* Regular messages – clean & flat */
         .message{
-            margin:0;
-            padding:0;
-            background:transparent !important;   /* No bubble */
-            border:none !important;
-            border-radius:0 !important;
+            margin:0;padding:0;
+            background:transparent;
+            color:#e6edf3;
             word-wrap:break-word;
             align-self:flex-start;
-            color:#e6edf3;
         }
         .message.own{
             align-self:flex-end;
-            color:#a5d8ff;               /* Lighter blue for own messages */
+            color:#a5d8ff;
         }
 
-        /* Input area – clean and compact */
+        /* Permanent Welcome Message – Special Styling */
+        .message.welcome{
+            align-self:center;
+            text-align:center;
+            font-size:1.1rem;
+            font-weight:500;
+            color:#ffd700;
+            background:linear-gradient(90deg, rgba(30,64,175,0.4), rgba(124,58,237,0.4));
+            padding:1rem 1.5rem;
+            border-radius:12px;
+            border:2px solid #ffd700;
+            box-shadow:0 0 20px rgba(255,215,0,0.25);
+            max-width:90%;
+            margin:0.5rem 0 1rem;
+        }
+
+        /* Input area */
         #input-area{
             display:flex;
             gap:0.75rem;
@@ -127,9 +141,7 @@
             border:1px solid #58a6ff;
             box-shadow:0 0 0 2px rgba(88,166,255,0.2);
         }
-        #messageInput::placeholder{
-            color:#7d8590;
-        }
+        #messageInput::placeholder{color:#7d8590}
         #sendBtn{
             padding:0 1.8rem;
             height:48px;
@@ -142,29 +154,22 @@
             cursor:pointer;
             transition:background 0.2s;
         }
-        #sendBtn:hover{
-            background:#2ea043;
-        }
+        #sendBtn:hover{background:#2ea043}
 
         /* Scrollbar */
         #messages::-webkit-scrollbar{width:6px}
         #messages::-webkit-scrollbar-track{background:transparent}
-        #messages::-webkit-scrollbar-thumb{
-            background:#30363d;border-radius:3px;
-        }
+        #messages::-webkit-scrollbar-thumb{background:#30363d;border-radius:3px}
 
-        /* ---------- MOBILE OPTIMIZATIONS ---------- */
+        /* Mobile */
         @media (max-width:600px){
             #header{padding:1rem 1rem 1rem 3rem}
             .hamburger{top:.8rem;left:.8rem}
             .radio-player button img{width:100px;height:100px}
-            #messages{
-                height:45vh;        /* Even shorter on phone */
-                padding:0.9rem;
-                font-size:0.93rem;
-            }
-            #messageInput{font-size:16px} /* Prevent iOS zoom */
+            #messages{height:45vh;padding:0.9rem;font-size:0.93rem}
+            #messageInput{font-size:16px}
             #chat-section{margin:1rem auto}
+            .message.welcome{font-size:1rem;padding:0.9rem 1.2rem}
         }
     </style>
 </head>
@@ -195,15 +200,12 @@
         <small class="radio-info">Live Chat Room - No Login Required</small>
         <audio id="everlookAudio" preload="metadata" crossorigin>
             <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
-            <source src="https://icecast.radiofrance.fr/franceinfo-midfi.mp3" type="audio/mpeg">
         </audio>
     </div>
 
     <!-- TAVERN CHAT -->
     <div id="chat-section">
-        <div id="messages">
-            <!-- Messages will be injected here with no bubbles -->
-        </div>
+        <div id="messages"></div>
         <div id="input-area">
             <input type="text" id="messageInput" placeholder="Speak to the room..." autocomplete="off" />
             <button id="sendBtn">Send</button>
@@ -211,7 +213,7 @@
     </div>
 
     <script>
-        // Menu Toggle
+        // Menu
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const menu = document.getElementById('menu');
         hamburgerBtn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('show'); });
@@ -249,25 +251,36 @@
                 const res = await fetch(`${backendUrl}/messages`);
                 const msgs = await res.json();
                 messagesDiv.innerHTML = '';
+
                 msgs.forEach(m => {
                     const div = document.createElement('div');
                     div.className = 'message';
-                    if (m.isOwn) div.classList.add('own');
                     div.textContent = m.text;
+
+                    // Special styling for the permanent welcome message
+                    if (m.id === 'welcome-001') {
+                        div.classList.add('welcome');
+                    }
+
                     messagesDiv.appendChild(div);
                 });
+
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            } catch(e) {}
+            } catch(e) {
+                console.error("Failed to load messages:", e);
+            }
         }
 
         async function sendMessage() {
             const text = input.value.trim();
             if (!text) return;
+
             await fetch(`${backendUrl}/messages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text })
             });
+
             input.value = '';
             loadMessages();
         }
@@ -275,6 +288,7 @@
         document.getElementById('sendBtn').addEventListener('click', sendMessage);
         input.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
 
+        // Load messages on start + every 5 seconds
         loadMessages();
         setInterval(loadMessages, 5000);
     </script>
