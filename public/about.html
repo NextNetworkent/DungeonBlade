@@ -18,36 +18,18 @@
     }
 
     /* Top-Left Hamburger Menu - Matches Tavern exactly */
-    .hamburger-menu {
-      position: fixed;
-      top: 12px;
-      left: 16px;
-      z-index: 1000;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 50%;
-      transition: background 0.3s;
-    }
-    .hamburger-menu:hover {
-      background: rgba(255,255,255,0.1);
-    }
-    .hamburger-menu span {
-      display: block;
-      width: 26px;
-      height: 2px;
-      background: #fff;
-      margin: 5px 0;
-      transition: all 0.3s ease;
-    }
-    .hamburger-menu.active span:nth-child(1) {
-      transform: rotate(45deg) translate(6px, 6px);
-    }
-    .hamburger-menu.active span:nth-child(2) {
-      opacity: 0;
-    }
-    .hamburger-menu.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(7px, -6px);
-    }
+    .#menu{
+            display:none;position:absolute;top:4.5rem;left:1rem;
+            background:#000;list-style:none;padding:.5rem;margin:0;
+            border:1px solid #2a323a;border-radius:8px;
+            box-shadow:0 0 10px rgba(0,0,0,.4);width:fit-content;z-index:999;
+        }
+        #menu.show{display:block}
+        #menu a{
+            color:#cfcfcf;text-decoration:none;padding:.5rem 1rem;
+            display:block;white-space:nowrap;
+        }
+        #menu a:hover{background:#2a323a}
 
     /* Full-screen Mobile Menu */
     nav ul {
