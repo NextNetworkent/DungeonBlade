@@ -102,20 +102,19 @@
             color:#a5d8ff;
         }
 
-        /* Permanent Welcome Message – Special Styling */
+        /* Welcome message – now plain text, exactly like normal messages */
         .message.welcome{
-            align-self:center;
-            text-align:center;
-            font-size:1.1rem;
-            font-weight:500;
-            color:#ffd700;
-            background:linear-gradient(90deg, rgba(30,64,175,0.4), rgba(124,58,237,0.4));
-            padding:1rem 1.5rem;
-            border-radius:12px;
-            border:2px solid #ffd700;
-            box-shadow:0 0 20px rgba(255,215,0,0.25);
-            max-width:90%;
-            margin:0.5rem 0 1rem;
+            /* Removed all special styling – it inherits from .message */
+            align-self:flex-start;     /* same as regular messages */
+            text-align:left;           /* not centered */
+            font-size:inherit;
+            font-weight:normal;
+            color:#e6edf3;             /* same color as other messages */
+            background:transparent;
+            padding:0;
+            border:none;
+            box-shadow:none;
+            margin:0;
         }
 
         /* Input area */
@@ -169,7 +168,6 @@
             #messages{height:45vh;padding:0.9rem;font-size:0.93rem}
             #messageInput{font-size:16px}
             #chat-section{margin:1rem auto}
-            .message.welcome{font-size:1rem;padding:0.9rem 1.2rem}
         }
     </style>
 </head>
@@ -257,7 +255,7 @@
                     div.className = 'message';
                     div.textContent = m.text;
 
-                    // Special styling for the permanent welcome message
+                    // Still identify the welcome message (in case you want to style it again later)
                     if (m.id === 'welcome-001') {
                         div.classList.add('welcome');
                     }
