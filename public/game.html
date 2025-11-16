@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coming Soon</title>
+  <title>Dungeon Blade - AI Game Master</title>
   <style>
-    /* Reset and full-page centering */
+    /* Reset */
     * {
       margin: 0;
       padding: 0;
@@ -14,40 +14,74 @@
 
     html, body {
       height: 100%;
-      overflow: hidden;            /* prevents default page scroll */
+      overflow: hidden; /* no page scroll */
     }
 
     body {
-      display: flex;
-      align-items: center;         /* vertical center */
-      justify-content: center;     /* horizontal center */
-      background: #000;            /* fallback black background */
+      background: #000; /* fallback color */
     }
 
-    /* Container that allows horizontal scrolling on small screens */
-    .image-container {
-      height: 100vh;               /* full viewport height */
+    /* Full-screen background that always covers vertically */
+    .bg {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      min-width: 100vw;
+      min-height: 100vh;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      background: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png') 
+                  center center / cover no-repeat;
+      z-index: -1;
+    }
+
+    /* Optional: put your game UI on top of the background */
+    .content {
+      position: relative;           /* stays above the background */
+      width: 100vw;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow-x: auto;            /* enables left/right scroll */
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
-      scroll-snap-type: x none;    /* explicitly disable any snapping */
+      pointer-events: none;          /* remove if you have clickable UI */
     }
 
-    .image-container img {
-      max-height: 100%;            /* never taller than viewport */
-      height: auto;
-      width: auto;
-      min-width: 100vw;            /* forces horizontal overflow on phones */
-      display: block;
+    .content > * {
+      pointer-events: auto;          /* re-enable for actual UI elements */
+    }
+
+    /* Example placeholder for your game interface (remove/replace as needed) */
+    .game-interface {
+      width: 90%;
+      max-width: 1400px;
+      aspect-ratio: 16 / 9;         /* adjust to your actual UI aspect ratio */
+      background: rgba(0, 0, 0, 0.4);
+      border: 3px solid #0ff;
+      border-radius: 12px;
+      color: #0ff;
+      font-family: monospace;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-shadow: 0 0 10px #0ff;
     }
   </style>
 </head>
 <body>
-  <div class="image-container">
-    <img src="https://dungeonblade.onrender.com/DungeonBladeBG1.png" alt="Placeholder">
+
+  <!-- Full-screen centered & vertically-filled background -->
+  <div class="bg"></div>
+
+  <!-- Your actual game content goes here -->
+  <div class="content">
+    <div class="game-interface">
+      AI Game Master<br>
+      <small>(Your game UI will go here)</small>
+    </div>
   </div>
+
 </body>
 </html>
