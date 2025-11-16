@@ -1,148 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>Dungeon Blade - Game</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Three Panel Swipe</title>
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
-      overflow: hidden;
-      height: 100%;
-      width: 100%;
-      font-family: Arial, sans-serif;
-      background: black;
-    }
-
-    /* Sliding Panels Container */
-    .panel-wrapper {
-      width: 100%;
       height: 100%;
       overflow: hidden;
-      position: relative;
     }
-
-    .panel-container {
+    .container {
       display: flex;
-      height: 100%;
       width: 300%;
-      overflow-x: scroll;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .panel-container::-webkit-scrollbar {
-      display: none;
-    }
-
-    .panel {
-      width: 100vw;
-      height: 100vh;
-      flex-shrink: 0;
-      scroll-snap-align: center;
-      background-size: cover;
-      background-position: center;
-    }
-
-    #center-panel {
-      background-image: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png');
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-
-    .title {
-      font-size: 2.5em;
-      color: white;
-      text-shadow: 2px 2px 6px black;
-    }
-
-    /* Hamburger Menu */
-    .hamburger {
-      position: absolute;
-      top: 15px;
-      left: 15px;
-      font-size: 32px;
-      cursor: pointer;
-      z-index: 20;
-      color: white;
-      text-shadow: 2px 2px 5px black;
-    }
-
-    /* Slide-out menu */
-    .menu {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 220px;
       height: 100%;
-      background: rgba(0,0,0,0.85);
-      transform: translateX(-100%);
-      transition: 0.3s;
-      padding-top: 70px;
-      z-index: 30;
+      transition: transform 0.3s ease;
+      will-change: transform;
     }
-
-    .menu a {
-      display: block;
-      padding: 16px;
+    .panel {
+      width: 100%;
+      height: 100%;
+      flex-shrink: 0;
+      background: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png') center center / cover no-repeat;
+    }
+    /* Optional: style for each panel content */
+    .panel > .content {
       color: white;
-      text-decoration: none;
-      font-size: 1.3em;
+      font-size: 2em;
+      text-align: center;
+      padding: 20px;
     }
-
-    .menu.show {
-      transform: translateX(0);
-    }
-
   </style>
 </head>
 <body>
 
-  <div class="hamburger" onclick="toggleMenu()">&#9776;</div>
-
-  <div id="sideMenu" class="menu">
-    <a href="index.html">Home</a>
-    <a href="about.html">About</a>
-    <a href="game.html">Game</a>
+<div class="container" id="container">
+  <div class="panel" id="panel-0">
+    <div class="content">Panel 1 (left)</div>
   </div>
-
-  <div class="panel-wrapper">
-    <div id="panelContainer" class="panel-container">
-      <div class="panel" id="left-panel"></div>
-
-      <div class="panel" id="center-panel">
-        <div class="title">Dungeon Blade</div>
-      </div>
-
-      <div class="panel" id="right-panel"></div>
-    </div>
+  <div class="panel" id="panel-1">
+    <div class="content">Panel 2 (middle – start here)</div>
   </div>
+  <div a class="panel" id="panel-2">
+    <div class="content">Panel 3 (right)</div>
+  </div>
+</div>
 
-  <script>
-    function toggleMenu() {
-      document.getElementById('sideMenu').classList.toggle('show');
-    }
+<script>
+  (function(){
+    const container = document.getElementById('container');
+    const panelCount = 3;
+    let currentIndex = 1; // start in the middle panel
+    let startX = null;
+    let isDragging = false;
 
-    // Force center on load (Android friendly)
-    window.addEventListener('load', () => {
-      const container = document.getElementById('panelContainer');
-      setTimeout(() => {
-        container.scrollLeft = window.innerWidth;
-      }, 80); // Delay ensures Android renders first
-    });
+    const updatePosition = () => {
+      container.style.transform = `translateX(${ -100 * currentIndex }%)`;
+    };
+    updatePosition();
 
-    // Re-center on orientation change
-    window.addEventListener('orientationchange', () => {
-      setTimeout(() => {
-        const container = document.getElementById('panelContainer');
-        container.scrollLeft = window.innerWidth;
-      }, 200);
-    });
-  </script>
+    const onTouchStart = (evt) => {
+      startX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+      isDragging = true;
+      container.style.transition = ''; // cancel transition during drag
+    };
+
+    const onTouchMove = (evt) => {
+      if (!isDragging) return;
+      const x = evt.touches ? evt.touches[0].clientX : evt.clientX;
+      const deltaX = x - startX;
+      // move container in real time (optional)
+      container.style.transform = `translateX(${ -100 * currentIndex + (deltaX / window.innerWidth * 100) }%)`;
+    };
+
+    const onTouchEnd = (evt) => {
+      if (!isDragging) return;
+      isDragging = false;
+      const x = evt.changedTouches ? evt.changedTouches[0].clientX : evt.clientX;
+      const deltaX = x - startX;
+      // minimal threshold, say 20% width to count as swipe
+      const threshold = window.innerWidth * 0.2;
+      if (deltaX > threshold && currentIndex > 0) {
+        currentIndex--;
+      } else if (deltaX < -threshold && currentIndex < panelCount - 1) {
+        currentIndex++;
+      }
+      container.style.transition = 'transform 0.3s ease';
+      updatePosition();
+    };
+
+    // Add listeners
+    container.addEventListener('touchstart', onTouchStart, {passive: true});
+    container.addEventListener('touchmove', onTouchMove, {passive: true});
+    container.addEventListener('touchend', onTouchEnd);
+    // For mouse drag fallback
+    container.addEventListener('mousedown', onTouchStart);
+    container.addEventListener('mousemove', onTouchMove);
+    container.addEventListener('mouseup', onTouchEnd);
+
+    // Prevent default when dragging
+    container.addEventListener('dragstart', (e) => e.preventDefault());
+  })();
+</script>
 
 </body>
 </html>
