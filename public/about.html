@@ -17,37 +17,8 @@
       flex-direction: column;
     }
 
-    /* Top-Left Hamburger Menu - Matches Tavern exactly */
-    .hamburger-menu {
-      position: fixed;
-      top: 12px;
-      left: 16px;
-      z-index: 1000;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 50%;
-      transition: background 0.3s;
-    }
-    .hamburger-menu:hover {
-      background: rgba(255,255,255,0.1);
-    }
-    .hamburger-menu span {
-      display: block;
-      width: 26px;
-      height: 2px;
-      background: #fff;
-      margin: 5px 0;
-      transition: all 0.3s ease;
-    }
-    .hamburger-menu.active span:nth-child(1) {
-      transform: rotate(45deg) translate(6px, 6px);
-    }
-    .hamburger-menu.active span:nth-child(2) {
-      opacity: 0;
-    }
-    .hamburger-menu.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(7px, -6px);
-    }
+    
+    
 
     /* Full-screen Mobile Menu */
     nav ul {
@@ -169,13 +140,6 @@
   </style>
 </head>
 <body>
-
-  <!-- Hamburger Menu (Tavern style) -->
-  <div class="hamburger-menu" id="hamburger">
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
 
   <!-- Mobile Navigation -->
   <nav>
