@@ -66,31 +66,24 @@
       width: 100%;
       margin: 0 auto;
       padding: 0 1rem;
-      padding-top: 90px; /* Increased to make room for the new fixed-style header */
+      padding-top: 90px; /* Space for fixed-style header */
     }
 
-    /* Title Image - Smaller & flush to top */
+    /* Title Image - now at the bottom */
     .title-image {
       display: block;
       width: 90%;
       max-width: 500px;
       height: auto;
-      margin: 0 auto;
-      padding-top: 20px;
+      margin: 3rem auto 2rem;
     }
 
-    h1 {
-      text-align: center;
-      font-size: 2.2rem;
-      margin: 1rem 0 1.5rem;
-      color: #fff;
-    }
-
+    /* Section headings */
     h2 {
-      text-align: center;
       font-size: 1.6rem;
       margin: 2.5rem 0 1rem;
       color: #00ff99;
+      text-align: center;
     }
 
     p, li {
@@ -122,7 +115,7 @@
     }
     li { margin-bottom: 0.6rem; }
 
-    /* Bright green links like YouTube */
+    /* Bright green links */
     a.patreon-link,
     a.youtube-link {
       color: #00ff99 !important;
@@ -143,7 +136,7 @@
       background: #000;
     }
 
-    /* Mobile adjustments for header */
+    /* Mobile adjustments */
     @media (max-width:600px){
         #header{padding:1rem 1rem 1rem 3rem}
         .hamburger{top:.8rem;left:.8rem}
@@ -153,12 +146,13 @@
 </head>
 <body>
 
-  <!-- Header & Menu (exact copy from Tavern homepage) -->
+  <!-- Header & Menu (Tavern style) -->
   <div id="header">
       <div class="hamburger" id="hamburgerBtn">
           <span></span><span></span><span></span>
       </div>
       <ul id="menu">
+">
           <li><a href="/">Tavern</a></li>
           <li><a href="/about.html">About</a></li>
           <li><a href="/game.html">Game</a></li>
@@ -167,11 +161,11 @@
       <h2>Adventure Game</h2>
   </div>
 
-  <!-- Main Content (unchanged) -->
+  <!-- Main Content -->
   <main>
-    <img src="DungeonBladeTitle.png" alt="Dungeon Blade Title" class="title-image">
-
-    <p style="text-align:center;">Welcome to <strong>Dungeon Blade</strong>, an online RPG where an AI Dungeon Master guides you <br>and your friends through epic quests, battles, and mysteries!</p>
+    <p style="text-align:center; margin-top: 1rem;">
+      Welcome to <strong>Dungeon Blade</strong>, an online RPG where an AI Dungeon Master guides you <br>and your friends through epic quests, battles, and mysteries!
+    </p>
 
     <h2>About</h2>
     <div class="video-container">
@@ -203,13 +197,16 @@
       <li>Development started: October 1, 2025</li>
       <li>Website & Tavern chat: LIVE</li>
     </ul>
+
+    <!-- Title image moved to the bottom -->
+    <img src="DungeonBladeTitle.png" alt="Dungeon Blade Title" class="title-image">
   </main>
 
   <footer>
     © 2025 Next Network Entertainment • Dungeon Blade
   </footer>
 
-  <!-- Menu Toggle Script (from Tavern) -->
+  <!-- Menu Toggle Script -->
   <script>
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const menu = document.getElementById('menu');
