@@ -59,6 +59,17 @@
     }
     #menu a:hover{background:#2a323a}
 
+    /* Logo that fills the gap between header and content */
+    .logo-fill {
+      width: 100%;
+      max-height: 70vh;           /* Limits how tall it can get on large screens */
+      object-fit: contain;        /* Keeps aspect ratio, no stretching/distortion */
+      object-position: center;
+      display: block;
+      margin: 0 auto;
+      background-color: #000;     /* In case image has transparency */
+    }
+
     /* Main Content */
     main {
       flex: 1;
@@ -66,10 +77,10 @@
       width: 100%;
       margin: 0 auto;
       padding: 0 1rem;
-      padding-top: 90px; /* Space for fixed-style header */
+      /* Removed the big padding-top; the logo now creates the space */
     }
 
-    /* Title Image - now at the bottom */
+    /* Title Image - still at the bottom */
     .title-image {
       display: block;
       width: 90%;
@@ -140,7 +151,7 @@
     @media (max-width:600px){
         #header{padding:1rem 1rem 1rem 3rem}
         .hamburger{top:.8rem;left:.8rem}
-        main{padding-top:80px}
+        .logo-fill { max-height: 50vh; }
     }
   </style>
 </head>
@@ -160,9 +171,12 @@
       <h2>Adventure Game</h2>
   </div>
 
+  <!-- Logo that fills the empty space -->
+  <img src="DungeonBladeLogo1.png" alt="Dungeon Blade Logo" class="logo-fill">
+
   <!-- Main Content -->
   <main>
-    <p style="text-align:center; margin-top: 1rem;">
+    <p style="text-align:center; margin-top: 2rem;">
       Welcome to <strong>Dungeon Blade</strong>, an online RPG where an AI Dungeon Master guides you <br>and your friends through epic quests, battles, and mysteries!
     </p>
 
@@ -197,7 +211,7 @@
       <li>Website & Tavern chat: LIVE</li>
     </ul>
 
-    <!-- Title image moved to the bottom -->
+    <!-- Title image still at the bottom -->
     <img src="DungeonBladeTitle.png" alt="Dungeon Blade Title" class="title-image">
   </main>
 
