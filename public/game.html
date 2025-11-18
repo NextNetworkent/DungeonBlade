@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dungeon Blade</title>
 
-  <!-- Tavern font from Google Fonts -->
+  <!-- Medieval fantasy font: Uncial Antiqua (free from Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Tavern:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
 
+  <style>
   <style>
     * {
       margin: 0;
@@ -25,7 +26,6 @@
     body {
       background: #000;
       position: relative;
-      font-family: 'Tavern', serif;
     }
 
     .bg {
@@ -81,58 +81,62 @@
       justify-content: center;
       text-align: center;
       text-shadow: 0 0 10px #f00;
-      margin-bottom: 80px; /* space for bottom buttons */
+      padding: 20px;
     }
 
-    /* Perfect Tavern logo match */
+    /* Medieval fantasy title - smaller & gorgeous */
     .title {
-      font-family: 'Tavern', serif;
-      font-weight: 900;
-      font-size: 4.5rem; /* keeps visual size identical */
-      color: #ffffff;
-      letter-spacing: 3px;
-      line-height: 1;
-      margin-bottom: 0.1em;
-      text-shadow: 
+      font-family: 'Uncial Antiqua', cursive;
+      font-size: 3.2rem;           /* much smaller - fits perfectly on mobile too */
+      color: #ffddaa;
+      letter-spacing: 4px;
+      line-height: 1.1;
+      margin-bottom: 0.3em;
+      text-shadow:
         -2px -2px 0 #000,
         2px -2px 0 #000,
         -2px 2px 0 #000,
         2px 2px 0 #000,
-        0 0 20px #ffcc00,
-        0 0 35px #ffcc00;
+        0 0 15px #ffaa00,
+        0 0 25px #ff8800;
     }
 
-    /* Bottom navigation buttons */
+    /* Smaller buttons (~30% reduced) */
     .bottom-nav {
       position: fixed;
-      bottom: 80px;           /* adjust to sit perfectly over the BG buttons */
+      bottom: 78px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 120px;             /* spacing to match background buttons */
+      gap: 85px;                   /* reduced spacing for smaller buttons */
       z-index: 10;
-      pointer-events: auto;
     }
 
     .nav-btn {
       background: transparent;
       color: #a0efff;
-      font-family: 'Tavern', serif;
-      font-weight: 700;
-      font-size: 1.8rem;
-      padding: 12px 32px;
+      font-family: 'Uncial Antiqua', cursive;
+      font-size: 1.3rem;           /* ~30% smaller */
+      padding: 8px 22px;          /* reduced padding */
       border: 1px solid #a0efff;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
-      text-shadow: 0 0 10px #a0efff;
-      box-shadow: 0 0 15px rgba(160, 239, 255, 0.4);
+      text-shadow: 0 0 8px #a0efff;
+      box-shadow: 0 0 12px rgba(160, 239, 255, 0.4);
       transition: all 0.3s ease;
     }
 
     .nav-btn:hover {
-      background: rgba(160, 239, 255, 0.1);
-      box-shadow: 0 0 25px rgba(160, 239, 255, 0.7);
-      transform: translateY(-3px);
+      background: rgba(160, 239, 255, 0.15);
+      box-shadow: 0 0 20px rgba(160, 239, 255, 0.7);
+      transform: translateY(-2px);
+    }
+
+    /* Responsive fine-tuning for very small screens */
+    @media (max-width: 480px) {
+      .title { font-size: 2.8rem; }
+      .nav-btn { font-size: 1.1rem; padding: 6px 18px; }
+      .bottom-nav { gap: 70px; bottom: 75px; }
     }
   </style>
 </head>
@@ -147,7 +151,7 @@
       <small>coming soon</small>
     </div>
 
-    <!-- Bottom navigation buttons -->
+    <!-- Home & About buttons -->
     <div class="bottom-nav">
       <button class="nav-btn" onclick="location.href='/'">Home</button>
       <button class="nav-btn" onclick="location.href='/about'">About</button>
