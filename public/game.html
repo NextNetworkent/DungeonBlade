@@ -4,30 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dungeon Blade</title>
-
   <!-- Medieval fantasy font: Uncial Antiqua (free from Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
-
-  <style>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-
     html, body {
       height: 100%;
       overflow: hidden;
     }
-
     body {
       background: #000;
       position: relative;
     }
-
     .bg {
       position: fixed;
       top: 50%;
@@ -37,11 +31,10 @@
       width: auto;
       height: auto;
       transform: translate(-50%, -50%);
-      background: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png') 
+      background: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png')
                   center center / cover no-repeat;
       z-index: -1;
     }
-
     #particles {
       position: fixed;
       top: 0; left: 0;
@@ -50,7 +43,6 @@
       pointer-events: none;
       z-index: 0;
     }
-
     .content {
       position: relative;
       width: 100vw;
@@ -62,16 +54,13 @@
       pointer-events: none;
       z-index: 1;
     }
-
     .content > * { pointer-events: auto; }
-
     .game-interface {
       width: 90%;
       max-width: 1400px;
       aspect-ratio: 16 / 9;
-      background: rgba(0, 0, 0, 0.4);
-      border: 3px solid #f00;
-      border-radius: 12px;
+      background: transparent;
+      border: none;
       color: #f00;
       font-family: monospace;
       font-size: 2rem;
@@ -83,11 +72,10 @@
       text-shadow: 0 0 10px #f00;
       padding: 20px;
     }
-
     /* Medieval fantasy title - smaller & gorgeous */
     .title {
       font-family: 'Uncial Antiqua', cursive;
-      font-size: 3.2rem;           /* much smaller - fits perfectly on mobile too */
+      font-size: 3.2rem; /* much smaller - fits perfectly on mobile too */
       color: #ffddaa;
       letter-spacing: 4px;
       line-height: 1.1;
@@ -100,7 +88,6 @@
         0 0 15px #ffaa00,
         0 0 25px #ff8800;
     }
-
     /* Smaller buttons (~30% reduced) */
     .bottom-nav {
       position: fixed;
@@ -108,16 +95,15 @@
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 85px;                   /* reduced spacing for smaller buttons */
+      gap: 85px; /* reduced spacing for smaller buttons */
       z-index: 10;
     }
-
     .nav-btn {
       background: transparent;
       color: #a0efff;
       font-family: 'Uncial Antiqua', cursive;
-      font-size: 1.3rem;           /* ~30% smaller */
-      padding: 8px 22px;          /* reduced padding */
+      font-size: 1.3rem; /* ~30% smaller */
+      padding: 8px 22px; /* reduced padding */
       border: 1px solid #a0efff;
       border-radius: 6px;
       cursor: pointer;
@@ -125,13 +111,11 @@
       box-shadow: 0 0 12px rgba(160, 239, 255, 0.4);
       transition: all 0.3s ease;
     }
-
     .nav-btn:hover {
       background: rgba(160, 239, 255, 0.15);
       box-shadow: 0 0 20px rgba(160, 239, 255, 0.7);
       transform: translateY(-2px);
     }
-
     /* Responsive fine-tuning for very small screens */
     @media (max-width: 480px) {
       .title { font-size: 2.8rem; }
@@ -141,38 +125,31 @@
   </style>
 </head>
 <body>
-
   <div class="bg"></div>
   <canvas id="particles"></canvas>
-
   <div class="content">
     <div class="game-interface">
       <div class="title">Dungeon Blade</div>
       <small>coming soon</small>
     </div>
-
     <!-- Home & About buttons -->
     <div class="bottom-nav">
       <button class="nav-btn" onclick="location.href='/index.html'">Home</button>
       <button class="nav-btn" onclick="location.href='/about.html'">About</button>
     </div>
   </div>
-
   <script>
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
-    
+   
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
-
     const particlesArray = [];
     const numberOfParticles = 18;
-
     class Particle {
       constructor() { this.reset(); }
       reset() {
@@ -196,31 +173,26 @@
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
-
         ctx.shadowBlur = 8;
         ctx.shadowColor = '#ffaa00';
         ctx.fillStyle = `rgba(255, 180, 0, ${this.opacity * 0.6})`;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
         ctx.fill();
-
         ctx.shadowBlur = 0;
       }
     }
-
     function init() {
       particlesArray.length = 0;
       for (let i = 0; i < numberOfParticles; i++) {
         particlesArray.push(new Particle());
       }
     }
-
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particlesArray.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animate);
     }
-
     init();
     animate();
   </script>
