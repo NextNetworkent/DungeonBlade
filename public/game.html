@@ -14,14 +14,15 @@
 
     html, body {
       height: 100%;
-      overflow: hidden; /* no page scroll */
+      overflow: hidden;
     }
 
     body {
-      background: #000; /* fallback color */
+      background: #000;
+      position: relative;
     }
 
-    /* Full-screen background that always covers vertically */
+    /* Full-screen background */
     .bg {
       position: fixed;
       top: 50%;
@@ -36,26 +37,34 @@
       z-index: -1;
     }
 
-    /* Optional: put your game UI on top of the background */
+    /* Particle container */
+    #particles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0; /* sits between background and UI */
+    }
+
+    /* Game UI */
     .content {
-      position: relative;           /* stays above the background */
+      position: relative;
       width: 100vw;
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      pointer-events: none;          /* remove if you have clickable UI */
+      pointer-events: none;
+      z-index: 1;
     }
 
-    .content > * {
-      pointer-events: auto;          /* re-enable for actual UI elements */
-    }
+    .content > * { pointer-events: auto; }
 
-    /* Example placeholder for your game interface (remove/replace as needed) */
     .game-interface {
       width: 90%;
       max-width: 1400px;
-      aspect-ratio: 16 / 9;         /* adjust to your actual UI aspect ratio */
+      aspect-ratio: 16 / 9;
       background: rgba(0, 0, 0, 0.4);
       border: 3px solid #0ff;
       border-radius: 12px;
@@ -63,6 +72,7 @@
       font-family: monospace;
       font-size: 2rem;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
@@ -72,10 +82,13 @@
 </head>
 <body>
 
-  <!-- Full-screen centered & vertically-filled background -->
+  <!-- Full-screen background -->
   <div class="bg"></div>
 
-  <!-- Your actual game content goes here -->
+  <!-- White orb particle effect -->
+  <canvas id="particles"></canvas>
+
+  <!-- Game content -->
   <div class="content">
     <div class="game-interface">
       Dungeon Blade<br>
@@ -83,5 +96,77 @@
     </div>
   </div>
 
+  <script>
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    const particlesArray = [];
+    const numberOfParticles = 80; // adjust for density
+
+    class Particle {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 4 + 1;        // small orbs (1-5px)
+        this.speedX = Math.random() * 1.5 - 0.75; // faster horizontal drift
+        this.speedY = Math.random() * 2 + 0.8;    // falling motion, faster
+        this.opacity = Math.random() * 0.6 + 0.4;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        // subtle floating/wind effect
+        this.speedX += (Math.random() - 0.5) * 0.1;
+
+        if (this.y > canvas.height + 10 || this.x < -10 || this.x > canvas.width + 10) {
+          this.reset();
+          this.y = -10; // start just above the top
+        }
+      }
+      draw() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // soft glow
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#ffffff';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    function init() {
+      particlesArray.length = 0;
+      for (let i = 0; i < numberOfParticles; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    init();
+    animate();
+  </script>
 </body>
 </html>
