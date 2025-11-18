@@ -3,150 +3,169 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dungeon Blade • Coming Soon</title>
-
-  <!-- Same fantasy header font as your homepage -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&display=swap" rel="stylesheet">
-
+  <title>Dungeon Blade</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     html, body {
       height: 100%;
       overflow: hidden;
-      background: #000;
     }
+
+    body {
+      background: #000;
+      position: relative;
+    }
+
+    /* Full-screen background */
     .bg {
       position: fixed;
-      top: 50%; left: 50%;
+      top: 50%;
+      left: 50%;
       min-width: 100vw;
       min-height: 100vh;
+      width: auto;
+      height: auto;
       transform: translate(-50%, -50%);
-      background: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png') center/cover no-repeat;
+      background: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png') 
+                  center center / cover no-repeat;
       z-index: -1;
     }
+
+    /* Particle container */
     #particles {
       position: fixed;
       top: 0; left: 0;
-      width: 100%; height: 100%;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
-      z-index: 0;
+      z-index: 0; /* sits between background and UI */
     }
+
+    /* Game UI */
     .content {
-      width: 100vw; height: 100vh;
+      position: relative;
+      width: 100vw;
+      height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       pointer-events: none;
       z-index: 1;
     }
+
     .content > * { pointer-events: auto; }
 
     .game-interface {
       width: 90%;
       max-width: 1400px;
       aspect-ratio: 16 / 9;
-      background: rgba(0,0,0,0.45);
-      border: 3px solid #ff0000;              /* Bright red border */
-      border-radius: 14px;
-      padding: 3rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 3px solid #f00;           /* ← changed to red */
+      border-radius: 12px;
+      color: #f00;                      /* ← changed to red */
+      font-family: monospace;
+      font-size: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
-      color: #ff0000;                          /* Bright red text */
-      font-family: 'Cinzel Decorative', cursive;
-      
-      /* Clean, strong red glow (no flicker) */
-      text-shadow: 
-        0 0 10px #ff0000,
-        0 0 20px #ff0000,
-        0 0 40px #ff0000,
-        0 0 80px rgba(255, 0, 0, 0.8);
-    }
-
-    .title {
-      font-size: 9rem;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      line-height: 1;
-    }
-
-    .subtitle {
-      font-family: 'Cinzel Decorative', cursive;
-      font-size: 2.2rem;
-      opacity: 0.95;
-      margin-top: 1.5rem;
-      display: block;
-      text-shadow: 
-        0 0 10px #ff0000,
-        0 0 20px #ff0000;
+      text-shadow: 0 0 10px #f00;       /* ← changed to red glow */
     }
   </style>
 </head>
 <body>
 
+  <!-- Full-screen background -->
   <div class="bg"></div>
+
+  <!-- White orb particle effect -->
   <canvas id="particles"></canvas>
 
+  <!-- Game content -->
   <div class="content">
     <div class="game-interface">
-      <div class="title">Dungeon Blade</div>
-      <span class="subtitle">coming soon</span>
+      Dungeon Blade<br>
+      <small>coming soon</small>
     </div>
   </div>
 
-  <!-- Unchanged ember particle script (keeps the rising sparks) -->
   <script>
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
     
-    const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
+    });
 
-    const particles = [];
-    const particleCount = 18;
+    const particlesArray = [];
+    const numberOfParticles = 80; // adjust for density
 
     class Particle {
-      constructor() { this.reset(); }
+      constructor() {
+        this.reset();
+      }
       reset() {
         this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 20;
-        this.size = Math.random() * 4 + 1.5;
-        this.speedY = -(Math.random() * 2 + 1.2);
-        this.speedX = Math.random() * 1.4 - 0.7;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 4 + 1;        // small orbs (1-5px)
+        this.speedX = Math.random() * 1.5 - 0.75; // faster horizontal drift
+        this.speedY = Math.random() * 2 + 0.8;    // falling motion, faster
         this.opacity = Math.random() * 0.6 + 0.4;
       }
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
-        this.speedX += (Math.random() - 0.5) * 0.15;
-        if (this.y < canvas.height * 0.3) this.opacity *= 0.96;
-        if (this.y < -20 || this.opacity < 0.05) this.reset();
+
+        // subtle floating/wind effect
+        this.speedX += (Math.random() - 0.5) * 0.1;
+
+        if (this.y > canvas.height + 10 || this.x < -10 || this.x > canvas.width + 10) {
+          this.reset();
+          this.y = -10; // start just above the top
+        }
       }
       draw() {
-        const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
-        gradient.addColorStop(0, `rgba(255, 140, 0, ${this.opacity})`);
-        gradient.addColorStop(0.4, `rgba(255, 100, 0, ${this.opacity * 0.7})`);
-        gradient.addColorStop(1, `rgba(255, 60, 0, 0)`);
-        ctx.fillStyle = gradient;
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
-        ctx.fillStyle = `rgba(255, 180, 80, ${this.opacity})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
+
+        // soft glow
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#ffffff';
         ctx.fill();
+        ctx.shadowBlur = 0;
       }
     }
 
-    for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+    function init() {
+      particlesArray.length = 0;
+      for (let i = 0; i < numberOfParticles; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => { p.update(); p.draw(); });
+      particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+      });
       requestAnimationFrame(animate);
     }
+
+    init();
     animate();
   </script>
 </body>
