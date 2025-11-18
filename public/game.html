@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dungeon Blade • Ember Effect</title>
+
+  <!-- Fantasy header font (same as homepage) -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&display=swap" rel="stylesheet">
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -37,19 +41,114 @@
       z-index: 1;
     }
     .content > * { pointer-events: auto; }
+
     .game-interface {
       width: 90%;
       max-width: 1400px;
       aspect-ratio: 16 / 9;
-      background: rgba(0,0,0,0.4);
-      border: 3px solid #0ff;
-      border-radius: 12px;
-      color: #0ff;
-      font-family: monospace;
-      font-size: 2.5rem;
+      background: rgba(0,0,0,0.45);
+      border: 2px solid transparent; /* thin border */
+      border-radius: 14px;
+      padding: 3rem;
       text-align: center;
-      text-shadow: 0 0 12px #0ff;
-      padding: 2rem;
+      position: relative;
+      color: #ff9500;
+      font-family: 'Cinzel Decorative', cursive;
+      
+      /* Fiery flickering text */
+      text-shadow: 
+        0 0 20px #fff,
+        0 0 30px #ff4400,
+        0 0 40px #ff6200,
+        0 0 60px #ff2200,
+        0 0 80px #ff0000,
+        0 0 100px #ff0000;
+      animation: textFlicker 1.8s infinite alternate, hueShift 5s infinite;
+    }
+
+    /* Main title */
+    .title {
+      font-size: 9rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      line-height: 1;
+    }
+
+    /* Coming soon subtitle */
+    .subtitle {
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 2rem;
+      opacity: 0.9;
+      margin-top: 1rem;
+      display: block;
+      animation: textFlicker 2.2s infinite alternate, hueShift 6s infinite;
+    }
+
+    /* Fiery animated border using multiple box-shadows */
+    .game-interface::before {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 18px;
+      padding: 4px;
+      background: transparent;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+      box-shadow: 
+        0 0 20px #ff4400,
+        0 0 35px #ff6200,
+        0 0 50px #ff2200,
+        0 0 70px #ff0000,
+        inset 0 0 30px rgba(255, 80, 0, 0.6);
+      animation: borderFlicker 1.6s infinite alternate, hueShift 4s infinite;
+    }
+
+    /* Flicker keyframes for text and border */
+    @keyframes textFlicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { 
+        text-shadow: 
+          0 0 20px #fff,
+          0 0 30px #ff4400,
+          0 0 40px #ff6200,
+          0 0 60px #ff2200,
+          0 0 80px #ff0000,
+          0 0 100px #ff0000;
+      }
+      20%, 24%, 55% { 
+        text-shadow: 
+          0 0 10px #fff,
+          0 0 15px #ff4400,
+          0 0 20px #ff6200,
+          0 0 30px #ff2200,
+          0 0 40px #ff0000;
+      }
+    }
+
+    @keyframes borderFlicker {
+      0%, 18%, 22%, 25%, 53%, 57%, 100% {
+        box-shadow: 
+          0 0 20px #ff4400,
+          0 0 35px #ff6200,
+          0 0 50px #ff2200,
+          0 0 70px #ff0000,
+          inset 0 0 30px rgba(255, 80, 0, 0.6);
+      }
+      20%, 24%, 55% {
+        box-shadow: 
+          0 0 10px #ff4400,
+          0 0 18px #ff6200,
+          0 0 25px #ff2200,
+          0 0 35px #ff0000,
+          inset 0 0 15px rgba(255, 80, 0, 0.4);
+      }
+    }
+
+    @keyframes hueShift {
+      0%   { filter: hue-rotate(0deg) brightness(1); }
+      50%  { filter: hue-rotate(25deg) brightness(1.1); }
+      100% { filter: hue-rotate(0deg) brightness(1); }
     }
   </style>
 </head>
@@ -60,11 +159,12 @@
 
   <div class="content">
     <div class="game-interface">
-      Dungeon Blade<br>
-      <small style="font-size:1rem; opacity:0.9;">coming soon</small>
+      <div class="title">Dungeon Blade</div>
+      <span class="subtitle">coming soon</span>
     </div>
   </div>
 
+  <!-- Your existing ember particle script (unchanged) -->
   <script>
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
@@ -77,48 +177,34 @@
     window.addEventListener('resize', resize);
 
     const particles = [];
-    const particleCount = 18; // ~20% of the original 80
+    const particleCount = 18;
 
     class Particle {
-      constructor() {
-        this.reset();
-      }
+      constructor() { this.reset(); }
       reset() {
         this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 20; // start just below screen
-        this.size = Math.random() * 4 + 1.5; // 1.5–5.5px
-        this.speedY = -(Math.random() * 2 + 1.2); // upward speed (faster rise)
-        this.speedX = Math.random() * 1.4 - 0.7; // gentle side-to-side drift
+        this.y = canvas.height + 20;
+        this.size = Math.random() * 4 + 1.5;
+        this.speedY = -(Math.random() * 2 + 1.2);
+        this.speedX = Math.random() * 1.4 - 0.7;
         this.opacity = Math.random() * 0.6 + 0.4;
       }
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
-
-        // subtle wind sway
         this.speedX += (Math.random() - 0.5) * 0.15;
-
-        // fade out near the top
-        if (this.y < canvas.height * 0.3) {
-          this.opacity *= 0.96;
-        }
-
-        if (this.y < -20 || this.opacity < 0.05) {
-          this.reset();
-        }
+        if (this.y < canvas.height * 0.3) this.opacity *= 0.96;
+        if (this.y < -20 || this.opacity < 0.05) this.reset();
       }
       draw() {
         const gradient = ctx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size * 3);
-        gradient.addColorStop(0, `rgba(255, 140, 0, ${this.opacity})`);     // bright orange center
+        gradient.addColorStop(0, `rgba(255, 140, 0, ${this.opacity})`);
         gradient.addColorStop(0.4, `rgba(255, 100, 0, ${this.opacity * 0.7})`);
-        gradient.addColorStop(1, `rgba(255, 60, 0, 0)`);                    // fades to transparent
-
+        gradient.addColorStop(1, `rgba(255, 60, 0, 0)`);
         ctx.fillStyle = gradient;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size * 3, 0, Math.PI * 2);
         ctx.fill();
-
-        // tiny solid core
         ctx.fillStyle = `rgba(255, 180, 80, ${this.opacity})`;
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size * 0.8, 0, Math.PI * 2);
@@ -126,19 +212,13 @@
       }
     }
 
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(new Particle());
-    }
+    for (let i = 0; i < particleCount; i++) particles.push(new Particle());
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => {
-        p.update();
-        p.draw();
-      });
+      particles.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animate);
     }
-
     animate();
   </script>
 </body>
