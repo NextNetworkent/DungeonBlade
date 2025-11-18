@@ -15,8 +15,8 @@
 
         /* ---------- HEADER ---------- */
         #header{
-            position:fixed;top:0;left:0;right:0;z-index:998;
-            background:#000;padding:1rem 1rem 1rem 3.5rem;text-align:center;
+            position:relative;background:#000;
+            padding:1rem 1rem 1rem 3.5rem;text-align:center;
         }
         #header h1,#header h2{margin:0}
         #header h1{
@@ -50,28 +50,25 @@
         }
         #menu a:hover{background:#2a323a}
 
-        /* ---------- RADIO BUTTON (now tiny top-right fixed) ---------- */
-        #radioToggle{
-            position:fixed;top:1rem;right:1rem;z-index:997;
+        /* ---------- RADIO PLAYER ---------- */
+        .radio-player{
+            background:#000;padding:.75rem 1rem;
+            display:flex;flex-direction:column;align-items:center;gap:.6rem;
+        }
+        .radio-player button{
             background:transparent;border:none;cursor:pointer;padding:8px;
-            border-radius:50%;transition:background .2s;
-            width:48px;height:48px;
+            border-radius:50%;transition:transform .2s, background .2s;
         }
-        #radioToggle:hover{
-            background:rgba(255,255,255,.1);
+        .radio-player button:hover{
+            background:rgba(255,255,255,.1);transform:scale(1.05);
         }
-        #radioToggle img{
-            width:40px;height:40px;pointer-events:none;
-            border:3px solid #ffd700;     /* gold ring */
-            border-radius:50%;
-            box-shadow:0 0 10px rgba(255,215,0,.4);
+        .radio-player button img{
+            width:125px;height:125px;pointer-events:none;
+            border:3px solid #fff;border-radius:50%;
+            box-shadow:0 0 15px rgba(255,255,255,.4);
         }
-
-        /* ---------- MAIN CONTENT OFFSET (so header doesn't cover it) ---------- */
-        body > .radio-player,
-        body > #chat-section{
-            margin-top:80px; /* space for fixed header + radio button */
-        }
+        .radio-status{font-size:.85rem;color:#cfcfcf}
+        .radio-info{font-size:.7rem;color:#cfcfcf;text-align:center;max-width:200px}
 
         /* ---------- TAVERN CHAT ---------- */
         #chat-section{
@@ -105,13 +102,14 @@
             color:#a5d8ff;
         }
 
-        /* Welcome message – plain text like normal messages */
+        /* Welcome message – now plain text, exactly like normal messages */
         .message.welcome{
-            align-self:flex-start;
-            text-align:left;
+            /* Removed all special styling – it inherits from .message */
+            align-self:flex-start;     /* same as regular messages */
+            text-align:left;           /* not centered */
             font-size:inherit;
             font-weight:normal;
-            color:#e6edf3;
+            color:#e6edf3;             /* same color as other messages */
             background:transparent;
             padding:0;
             border:none;
@@ -162,23 +160,20 @@
         #messages::-webkit-scrollbar-track{background:transparent}
         #messages::-webkit-scrollbar-thumb{background:#30363d;border-radius:3px}
 
-        /* Mobile adjustments */
+        /* Mobile */
         @media (max-width:600px){
             #header{padding:1rem 1rem 1rem 3rem}
             .hamburger{top:.8rem;left:.8rem}
-            #radioToggle{top:.8rem;right:.8rem}
-            #radioToggle img{width:36px;height:36px}
+            .radio-player button img{width:100px;height:100px}
             #messages{height:45vh;padding:0.9rem;font-size:0.93rem}
             #messageInput{font-size:16px}
             #chat-section{margin:1rem auto}
-            body > .radio-player,
-            body > #chat-section{margin-top:70px}
         }
     </style>
 </head>
 <body>
 
-    <!-- Fixed Header (flush with top) -->
+    <!-- Header -->
     <div id="header">
         <div class="hamburger" id="hamburgerBtn">
             <span></span><span></span><span></span>
@@ -192,13 +187,14 @@
         <h2>Where Legends Gather</h2>
     </div>
 
-    <!-- Tiny fixed radio button in top-right (no text, gold ring) -->
-    <button id="radioToggle" aria-pressed="false">
-        <img id="radioIcon" src="https://cdn-icons-png.flaticon.com/512/727/727218.png" alt="Radio">
-    </button>
-
-    <!-- Hidden radio player (only for description, no visible elements) -->
-    <div class="radio-player" style="display:none;">
+    <!-- Radio Player -->
+    <div class="radio-player">
+        <div style="display:flex;align-items:center;gap:.6rem;">
+            <button id="radioToggle" aria-pressed="false">
+                <img id="radioIcon" src="https://cdn-icons-png.flaticon.com/512/727/727218.png" alt="Play Radio">
+            </button>
+            <span id="radioStatus" class="radio-status"></span>
+        </div>
         <small class="radio-info">Live Chat Room - No Login Required</small>
         <audio id="everlookAudio" preload="metadata" crossorigin>
             <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
@@ -222,9 +218,10 @@
         document.addEventListener('click', e => { if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target)) menu.classList.remove('show'); });
         menu.addEventListener('click', e => e.stopPropagation());
 
-        // Radio (same functionality, now controlled by the tiny fixed button)
+        // Radio
         const audio = document.getElementById('everlookAudio');
         const toggleBtn = document.getElementById('radioToggle');
+        const status = document.getElementById('radioStatus');
         const radioIcon = document.getElementById('radioIcon');
 
         toggleBtn.addEventListener('click', () => {
@@ -232,15 +229,17 @@
                 audio.play().then(() => {
                     radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727245.png';
                     toggleBtn.setAttribute('aria-pressed', 'true');
-                }).catch(() => {});
+                    status.textContent = 'Playing...';
+                }).catch(() => status.textContent = 'Error');
             } else {
                 audio.pause();
                 radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727218.png';
                 toggleBtn.setAttribute('aria-pressed', 'false');
+                status.textContent = 'Paused';
             }
         });
 
-        // Chat (unchanged)
+        // Chat
         const backendUrl = 'https://dungeonblade.onrender.com';
         const messagesDiv = document.getElementById('messages');
         const input = document.getElementById('messageInput');
@@ -256,6 +255,7 @@
                     div.className = 'message';
                     div.textContent = m.text;
 
+                    // Still identify the welcome message (in case you want to style it again later)
                     if (m.id === 'welcome-001') {
                         div.classList.add('welcome');
                     }
