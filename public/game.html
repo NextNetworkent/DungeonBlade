@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dungeon Blade • Ember Effect</title>
+  <title>Dungeon Blade • Coming Soon</title>
 
-  <!-- Fantasy header font (same as homepage) -->
+  <!-- Same fantasy header font as your homepage -->
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&display=swap" rel="stylesheet">
 
   <style>
@@ -32,7 +32,6 @@
       z-index: 0;
     }
     .content {
-      position: relative;
       width: 100vw; height: 100vh;
       display: flex;
       align-items: center;
@@ -47,108 +46,37 @@
       max-width: 1400px;
       aspect-ratio: 16 / 9;
       background: rgba(0,0,0,0.45);
-      border: 2px solid transparent; /* thin border */
+      border: 3px solid #ff0000;              /* Bright red border */
       border-radius: 14px;
       padding: 3rem;
       text-align: center;
-      position: relative;
-      color: #ff9500;
+      color: #ff0000;                          /* Bright red text */
       font-family: 'Cinzel Decorative', cursive;
       
-      /* Fiery flickering text */
+      /* Clean, strong red glow (no flicker) */
       text-shadow: 
-        0 0 20px #fff,
-        0 0 30px #ff4400,
-        0 0 40px #ff6200,
-        0 0 60px #ff2200,
-        0 0 80px #ff0000,
-        0 0 100px #ff0000;
-      animation: textFlicker 1.8s infinite alternate, hueShift 5s infinite;
+        0 0 10px #ff0000,
+        0 0 20px #ff0000,
+        0 0 40px #ff0000,
+        0 0 80px rgba(255, 0, 0, 0.8);
     }
 
-    /* Main title */
     .title {
       font-size: 9rem;
       font-weight: 900;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       line-height: 1;
     }
 
-    /* Coming soon subtitle */
     .subtitle {
       font-family: 'Cinzel Decorative', cursive;
-      font-size: 2rem;
-      opacity: 0.9;
-      margin-top: 1rem;
+      font-size: 2.2rem;
+      opacity: 0.95;
+      margin-top: 1.5rem;
       display: block;
-      animation: textFlicker 2.2s infinite alternate, hueShift 6s infinite;
-    }
-
-    /* Fiery animated border using multiple box-shadows */
-    .game-interface::before {
-      content: '';
-      position: absolute;
-      inset: -6px;
-      border-radius: 18px;
-      padding: 4px;
-      background: transparent;
-      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-      box-shadow: 
-        0 0 20px #ff4400,
-        0 0 35px #ff6200,
-        0 0 50px #ff2200,
-        0 0 70px #ff0000,
-        inset 0 0 30px rgba(255, 80, 0, 0.6);
-      animation: borderFlicker 1.6s infinite alternate, hueShift 4s infinite;
-    }
-
-    /* Flicker keyframes for text and border */
-    @keyframes textFlicker {
-      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { 
-        text-shadow: 
-          0 0 20px #fff,
-          0 0 30px #ff4400,
-          0 0 40px #ff6200,
-          0 0 60px #ff2200,
-          0 0 80px #ff0000,
-          0 0 100px #ff0000;
-      }
-      20%, 24%, 55% { 
-        text-shadow: 
-          0 0 10px #fff,
-          0 0 15px #ff4400,
-          0 0 20px #ff6200,
-          0 0 30px #ff2200,
-          0 0 40px #ff0000;
-      }
-    }
-
-    @keyframes borderFlicker {
-      0%, 18%, 22%, 25%, 53%, 57%, 100% {
-        box-shadow: 
-          0 0 20px #ff4400,
-          0 0 35px #ff6200,
-          0 0 50px #ff2200,
-          0 0 70px #ff0000,
-          inset 0 0 30px rgba(255, 80, 0, 0.6);
-      }
-      20%, 24%, 55% {
-        box-shadow: 
-          0 0 10px #ff4400,
-          0 0 18px #ff6200,
-          0 0 25px #ff2200,
-          0 0 35px #ff0000,
-          inset 0 0 15px rgba(255, 80, 0, 0.4);
-      }
-    }
-
-    @keyframes hueShift {
-      0%   { filter: hue-rotate(0deg) brightness(1); }
-      50%  { filter: hue-rotate(25deg) brightness(1.1); }
-      100% { filter: hue-rotate(0deg) brightness(1); }
+      text-shadow: 
+        0 0 10px #ff0000,
+        0 0 20px #ff0000;
     }
   </style>
 </head>
@@ -164,7 +92,7 @@
     </div>
   </div>
 
-  <!-- Your existing ember particle script (unchanged) -->
+  <!-- Unchanged ember particle script (keeps the rising sparks) -->
   <script>
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
