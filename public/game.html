@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dungeon Blade</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden; /* no page scroll */
+    }
+
+    body {
+      background: #000; /* fallback color */
+    }
+
+    /* Full-screen background that always covers vertically */
+    .bg {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      min-width: 100vw;
+      min-height: 100vh;
+      width: auto;
+      height: auto;
+      transform: translate(-50%, -50%);
+      background: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png') 
+                  center center / cover no-repeat;
+      z-index: -1;
+    }
+
+    /* Optional: put your game UI on top of the background */
+    .content {
+      position: relative;           /* stays above the background */
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;          /* remove if you have clickable UI */
+    }
+
+    .content > * {
+      pointer-events: auto;          /* re-enable for actual UI elements */
+    }
+
+    /* Example placeholder for your game interface (remove/replace as needed) */
+    .game-interface {
+      width: 90%;
+      max-width: 1400px;
+      aspect-ratio: 16 / 9;         /* adjust to your actual UI aspect ratio */
+      background: rgba(0, 0, 0, 0.4);
+      border: 3px solid #0ff;
+      border-radius: 12px;
+      color: #0ff;
+      font-family: monospace;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      text-shadow: 0 0 10px #0ff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full-screen centered & vertically-filled background -->
+  <div class="bg"></div>
+
+  <!-- Your actual game content goes here -->
+  <div class="content">
+    <div class="game-interface">
+      Dungeon Blade<br>
+      <small>coming soon</small>
+    </div>
+  </div>
+
+</body>
+</html>
