@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dungeon Blade</title>
 
-  <!-- Load the Tavern font from Google Fonts (free & identical match) -->
+  <!-- Tavern font from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tavern:wght@400;700;900&display=swap" rel="stylesheet">
@@ -25,6 +25,7 @@
     body {
       background: #000;
       position: relative;
+      font-family: 'Tavern', serif;
     }
 
     .bg {
@@ -55,6 +56,7 @@
       width: 100vw;
       height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       pointer-events: none;
@@ -71,7 +73,7 @@
       border: 3px solid #f00;
       border-radius: 12px;
       color: #f00;
-      font-family: monospace;           /* kept for "coming soon" */
+      font-family: monospace;
       font-size: 2rem;
       display: flex;
       flex-direction: column;
@@ -79,15 +81,58 @@
       justify-content: center;
       text-align: center;
       text-shadow: 0 0 10px #f00;
+      margin-bottom: 80px; /* space for bottom buttons */
     }
 
-    /* ONLY "Dungeon Blade" uses Tavern */
+    /* Perfect Tavern logo match */
     .title {
       font-family: 'Tavern', serif;
-      font-weight: 900;                 /* matches the bold look from your logo */
-      letter-spacing: 2px;
+      font-weight: 900;
+      font-size: 4.5rem; /* keeps visual size identical */
+      color: #ffffff;
+      letter-spacing: 3px;
       line-height: 1;
-      margin-bottom: 0.2em;
+      margin-bottom: 0.1em;
+      text-shadow: 
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000,
+        2px 2px 0 #000,
+        0 0 20px #ffcc00,
+        0 0 35px #ffcc00;
+    }
+
+    /* Bottom navigation buttons */
+    .bottom-nav {
+      position: fixed;
+      bottom: 80px;           /* adjust to sit perfectly over the BG buttons */
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 120px;             /* spacing to match background buttons */
+      z-index: 10;
+      pointer-events: auto;
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: #a0efff;
+      font-family: 'Tavern', serif;
+      font-weight: 700;
+      font-size: 1.8rem;
+      padding: 12px 32px;
+      border: 1px solid #a0efff;
+      border-radius: 8px;
+      cursor: pointer;
+      text-shadow: 0 0 10px #a0efff;
+      box-shadow: 0 0 15px rgba(160, 239, 255, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(160, 239, 255, 0.1);
+      box-shadow: 0 0 25px rgba(160, 239, 255, 0.7);
+      transform: translateY(-3px);
     }
   </style>
 </head>
@@ -100,6 +145,12 @@
     <div class="game-interface">
       <div class="title">Dungeon Blade</div>
       <small>coming soon</small>
+    </div>
+
+    <!-- Bottom navigation buttons -->
+    <div class="bottom-nav">
+      <button class="nav-btn" onclick="location.href='/'">Home</button>
+      <button class="nav-btn" onclick="location.href='/about'">About</button>
     </div>
   </div>
 
@@ -119,9 +170,7 @@
     const numberOfParticles = 18;
 
     class Particle {
-      constructor() {
-        this.reset();
-      }
+      constructor() { this.reset(); }
       reset() {
         this.x = Math.random() * canvas.width;
         this.y = canvas.height + 10;
@@ -134,16 +183,12 @@
         this.x += this.speedX;
         this.y += this.speedY;
         this.speedX += (Math.random() - 0.5) * 0.08;
-
-        if (this.y < -20 || this.x < -20 || this.x > canvas.width + 20) {
-          this.reset();
-        }
+        if (this.y < -20 || this.x < -20 || this.x > canvas.width + 20) this.reset();
       }
       draw() {
         ctx.fillStyle = `rgba(255, 140, 0, ${this.opacity})`;
         ctx.shadowBlur = 20;
         ctx.shadowColor = '#ff8c00';
-        
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -168,10 +213,7 @@
 
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesArray.forEach(p => {
-        p.update();
-        p.draw();
-      });
+      particlesArray.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animate);
     }
 
