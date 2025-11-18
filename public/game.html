@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dungeon Blade</title>
+
+  <!-- Load the Tavern font from Google Fonts (free & identical match) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tavern:wght@400;700;900&display=swap" rel="stylesheet">
+
   <style>
     * {
       margin: 0;
@@ -65,7 +71,7 @@
       border: 3px solid #f00;
       border-radius: 12px;
       color: #f00;
-      font-family: monospace;
+      font-family: monospace;           /* kept for "coming soon" */
       font-size: 2rem;
       display: flex;
       flex-direction: column;
@@ -73,6 +79,15 @@
       justify-content: center;
       text-align: center;
       text-shadow: 0 0 10px #f00;
+    }
+
+    /* ONLY "Dungeon Blade" uses Tavern */
+    .title {
+      font-family: 'Tavern', serif;
+      font-weight: 900;                 /* matches the bold look from your logo */
+      letter-spacing: 2px;
+      line-height: 1;
+      margin-bottom: 0.2em;
     }
   </style>
 </head>
@@ -83,7 +98,7 @@
 
   <div class="content">
     <div class="game-interface">
-      Dungeon Blade<br>
+      <div class="title">Dungeon Blade</div>
       <small>coming soon</small>
     </div>
   </div>
@@ -101,7 +116,7 @@
     });
 
     const particlesArray = [];
-    const numberOfParticles = 18; // minimal but still magical
+    const numberOfParticles = 18;
 
     class Particle {
       constructor() {
@@ -109,27 +124,23 @@
       }
       reset() {
         this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 10;               // start just below the bottom
-        this.size = Math.random() * 5 + 2;          // 2–7px orbs
-        this.speedX = Math.random() * 1.5 - 0.75;    // gentle horizontal drift
-        this.speedY = Math.random() * -2 - 0.8;     // upward motion (negative = up)
+        this.y = canvas.height + 10;
+        this.size = Math.random() * 5 + 2;
+        this.speedX = Math.random() * 1.5 - 0.75;
+        this.speedY = Math.random() * -2 - 0.8;
         this.opacity = Math.random() * 0.6 + 0.3;
       }
       update() {
         this.x += this.speedX;
         this.y += this.speedY;
-
-        // very subtle wind sway
         this.speedX += (Math.random() - 0.5) * 0.08;
 
-        // when it leaves the top → respawn at bottom
         if (this.y < -20 || this.x < -20 || this.x > canvas.width + 20) {
           this.reset();
         }
       }
       draw() {
-        // orange ember color with glow
-        ctx.fillStyle = `rgba(255, 140, 0, ${this.opacity})`;     // deep orange
+        ctx.fillStyle = `rgba(255, 140, 0, ${this.opacity})`;
         ctx.shadowBlur = 20;
         ctx.shadowColor = '#ff8c00';
         
@@ -137,7 +148,6 @@
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
 
-        // second pass for stronger inner glow
         ctx.shadowBlur = 8;
         ctx.shadowColor = '#ffaa00';
         ctx.fillStyle = `rgba(255, 180, 0, ${this.opacity * 0.6})`;
