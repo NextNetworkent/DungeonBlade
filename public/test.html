@@ -5,19 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Snow on Background</title>
 
+  <!-- THIS IS WHAT MAKES THE PHONE'S BROWSER BARS BLACK -->
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />
+  <!-- You can also just use one line if you always want black: -->
+  <!-- <meta name="theme-color" content="#000000" /> -->
+
   <style>
-    /* Full-screen page with background image and black border */
     body {
       margin: 0;
       height: 100vh;
       background: url('test.jpg') no-repeat center/cover;
       overflow: hidden;
       position: relative;
-      border: 10px solid black;   /* ← BLACK BORDER */
+      border: 10px solid black;   /* Your black border stays */
       box-sizing: border-box;
     }
 
-    /* Transparent overlay box for snow */
     .snow-box {
       position: absolute;
       top: 0;
