@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: #000; /* black background to better see snow */
+      overflow: hidden;
+      position: relative;
+    }
+
+    .snowflake {
+      position: absolute;
+      top: -10px; /* start just above the top */
+      color: white;
+      font-size: 1em;
+      user-select: none;
+      pointer-events: none;
+      animation-name: fall;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    // Number of snowflakes
+    const numFlakes = 100;
+
+    for (let i = 0; i < numFlakes; i++) {
+      const flake = document.createElement('div');
+      flake.className = 'snowflake';
+      flake.innerHTML = '❄';  // snowflake character
+      // randomize starting horizontal position
+      flake.style.left = Math.random() * 100 + 'vw';
+      // randomize size
+      const size = Math.random() * 1.5 + 0.5;
+      flake.style.fontSize = size + 'em';
+      // randomize animation duration
+      flake.style.animationDuration = (Math.random() * 5 + 5) + 's';
+      // randomize delay so they don’t all start at once
+      flake.style.animationDelay = Math.random() * 5 + 's';
+      // randomize opacity
+      flake.style.opacity = Math.random();
+
+      document.body.appendChild(flake);
+    }
+  </script>
+</body>
+</html>
