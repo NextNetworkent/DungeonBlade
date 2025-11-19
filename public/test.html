@@ -2,77 +2,120 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Snow on Background</title>
-
-  <!-- THIS IS WHAT MAKES THE PHONE'S BROWSER BARS BLACK -->
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
-  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: light)" />
-  <!-- You can also just use one line if you always want black: -->
-  <!-- <meta name="theme-color" content="#000000" /> -->
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Snow Box</title>
   <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: url('test.jpg') no-repeat center/cover;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    html, body {
+      height: 100%;
       overflow: hidden;
-      position: relative;
-      border: 10px solid black;   /* Your black border stays */
-      box-sizing: border-box;
     }
 
+    body {
+      background: #000 url('test.jpg') center/cover no-repeat fixed;
+      font-family: sans-serif;
+    }
+
+    /* Snow container - centered square */
     .snow-box {
       position: absolute;
-      top: 0;
-      left: 0;
+      top: 50%;
+      left: 50%;
+      width: 85vw;
+      height: 85vw;
+      max-width: 400px;
+      max-height: 400px;
+      transform: translate(-50%, -50%);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0, 0, 0,  0.8);
+      border: 4px solid rgba(255, 255, 255, 0.2);
+    }
+
+    canvas {
+      position: absolute;
+      top: 0; left: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
-    }
-
-    .snowflake {
-      position: absolute;
-      top: -10px;
-      color: white;
-      font-size: 1em;
-      user-select: none;
-      pointer-events: none;
-      animation-name: fall;
-      animation-iteration-count: infinite;
-      animation-timing-function: linear;
-    }
-
-    @keyframes fall {
-      to {
-        transform: translateY(110vh) rotate(360deg);
-      }
     }
   </style>
 </head>
 <body>
 
-  <div class="snow-box" id="snow-box"></div>
+  <div class="snow-box">
+    <canvas id="snow"></canvas>
+  </div>
 
   <script>
-    const snowBox = document.getElementById('snow-box');
-    const numFlakes = 100;
-
-    for (let i = 0; i < numFlakes; i++) {
-      const flake = document.createElement('div');
-      flake.className = 'snowflake';
-      flake.innerHTML = '❄';
-
-      flake.style.left = Math.random() * 100 + 'vw';
-      const size = Math.random() * 1.5 + 0.5;
-      flake.style.fontSize = size + 'em';
-      flake.style.animationDuration = (Math.random() * 5 + 5) + 's';
-      flake.style.animationDelay = Math.random() * 5 + 's';
-      flake.style.opacity = Math.random();
-
-      snowBox.appendChild(flake);
+    const canvas = document.getElementById('snow');
+    const ctx = canvas.getContext('2d');
+    
+    // Make canvas match the size of the box
+    function resize() {
+      const box = document.querySelector('.snow-box');
+      canvas.width = box.clientWidth;
+      canvas.height = box.clientHeight;
     }
-  </script>
+    resize();
+    window.addEventListener('resize', resize);
 
+    const snowflakes = [];
+    const flakeCount = 80; // nice gentle snow inside the box
+
+    class Flake {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = -10;
+        this.size = Math.random() * 3 + 1.5; // 1.5 - 4.5px
+        this.speedY = Math.random() * 1.5 + 0.8;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.opacity = Math.random() * 0.6 + 0.4;
+        this.swing = Math.random() * 4;
+        this.swingPhase = Math.random() * Math.PI * 2;
+      }
+      update() {
+        this.swingPhase += 0.04;
+        this.x += this.speedX + Math.sin(this.swingPhase) * 0.8;
+        this.y += this.speedY;
+
+        if (this.y > canvas.height + 10) {
+          this.reset();
+        }
+      }
+      draw() {
+        ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // soft glow
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#fff';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    // Create snowflakes
+    for (let i = 0; i < flakeCount; i++) {
+      flakes.push(new Flake());
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      flakes.forEach(flake => {
+        flake.update();
+        flake.draw();
+      });
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+  </script>
 </body>
 </html>
