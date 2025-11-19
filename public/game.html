@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dungeon Blade</title>
-  <!-- Medieval fantasy font: Uncial Antiqua (free from Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
@@ -55,31 +54,18 @@
       z-index: 1;
     }
     .content > * { pointer-events: auto; }
-    .game-interface {
-      width: 90%;
-      max-width: 1400px;
-      aspect-ratio: 16 / 9;
-      background: transparent;
-      border: none;
-      color: #f00;
-      font-family: monospace;
-      font-size: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+
+    .title-container {
+      position: relative;
       text-align: center;
-      text-shadow: 0 0 10px #f00;
-      padding: 20px;
+      margin-bottom: 2vh;
     }
-    /* Medieval fantasy title - smaller & gorgeous */
     .title {
       font-family: 'Uncial Antiqua', cursive;
-      font-size: 3.2rem; /* much smaller - fits perfectly on mobile too */
+      font-size: 3.2rem;
       color: #ffddaa;
       letter-spacing: 4px;
       line-height: 1.1;
-      margin-bottom: 0.3em;
       text-shadow:
         -2px -2px 0 #000,
         2px -2px 0 #000,
@@ -88,22 +74,35 @@
         0 0 15px #ffaa00,
         0 0 25px #ff8800;
     }
-    /* Smaller buttons (~30% reduced) */
+    .forged-text {
+      position: absolute;
+      top: 105%;           /* pushes it down into the glowing panel below the title */
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Uncial Antiqua', cursive;
+      font-size: 1.4rem;
+      color: #ff3333;
+      text-shadow: 0 0 12px #ff0000;
+      white-space: nowrap;
+      width: 100%;
+    }
+
+    /* Buttons aligned with the two bottom background slots */
     .bottom-nav {
-      position: fixed;
-      bottom: 78px;
+      position: absolute;
+      bottom: 13.5vh;      /* fine-tuned to sit inside the ornate slots */
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 85px; /* reduced spacing for smaller buttons */
+      gap: 18vw;           /* perfect spacing for the two slots on all screen sizes */
       z-index: 10;
     }
     .nav-btn {
       background: transparent;
       color: #a0efff;
       font-family: 'Uncial Antiqua', cursive;
-      font-size: 1.3rem; /* ~30% smaller */
-      padding: 8px 22px; /* reduced padding */
+      font-size: 1.3rem;
+      padding: 8px 24px;
       border: 1px solid #a0efff;
       border-radius: 6px;
       cursor: pointer;
@@ -114,13 +113,19 @@
     .nav-btn:hover {
       background: rgba(160, 239, 255, 0.15);
       box-shadow: 0 0 20px rgba(160, 239, 255, 0.7);
-      transform: translateY(-2px);
+      transform: translateY(-3px);
     }
-    /* Responsive fine-tuning for very small screens */
+
+    /* Mobile adjustments */
     @media (max-width: 480px) {
       .title { font-size: 2.8rem; }
-      .nav-btn { font-size: 1.1rem; padding: 6px 18px; }
-      .bottom-nav { gap: 70px; bottom: 75px; }
+      .forged-text { font-size: 1.2rem; top: 108%; }
+      .nav-btn { font-size: 1.1rem; padding: 6px 20px; }
+      .bottom-nav { gap: 16vw; bottom: 12.5vh; }
+    }
+    @media (max-height: 700px) {
+      .bottom-nav { bottom: 11vh; }
+      .forged-text { top: 102%; }
     }
   </style>
 </head>
@@ -128,28 +133,30 @@
   <div class="bg"></div>
   <canvas id="particles"></canvas>
   <div class="content">
-    <div class="game-interface">
+    <div class="title-container">
       <div class="title">Dungeon Blade</div>
-      <small>...being forged</small>
+      <div class="forged-text">...being forged</div>
     </div>
-    <!-- Home & About buttons -->
+
     <div class="bottom-nav">
       <button class="nav-btn" onclick="location.href='/index.html'">Home</button>
       <button class="nav-btn" onclick="location.href='/about.html'">About</button>
     </div>
   </div>
+
   <script>
     const canvas = document.getElementById('particles');
     const ctx = canvas.getContext('2d');
-   
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
+
     const particlesArray = [];
     const numberOfParticles = 18;
+
     class Particle {
       constructor() { this.reset(); }
       reset() {
@@ -182,6 +189,7 @@
         ctx.shadowBlur = 0;
       }
     }
+
     function init() {
       particlesArray.length = 0;
       for (let i = 0; i < numberOfParticles; i++) {
