@@ -6,7 +6,7 @@
     <title>The Tavern – Dungeon Blade</title>
 
     <!-- Fonts -->
-    <_texts href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
@@ -20,14 +20,14 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            z-index: -2;          /* behind everything */
+            z-index: -2;
         }
 
-        /* ---------- FIXED HEADER (flush with top) ---------- */
+        /* ---------- FIXED HEADER ---------- */
         #header{
             position:fixed;top:0;left:0;right:0;z-index:1000;
             background:#000;padding:1rem 4.5rem 1rem 4.5rem;text-align:center;
-            height:70px; /* consistent height */
+            height:70px;
         }
         #header h1,#header h2{margin:0}
         #header h1{
@@ -39,7 +39,7 @@
             font-family:'IM Fell English SC',serif;letter-spacing:.5px;
         }
 
-        /* Hamburger menu (top-left) */
+        /* Hamburger menu */
         .hamburger{
             position:absolute;top:1rem;left:1rem;cursor:pointer;z-index:1001;
         }
@@ -62,35 +62,59 @@
         }
         #menu a:hover{background:#2a323a}
 
-        /* ---------- TINY RADIO BUTTON (top-right, always visible) ---------- */
-        #radioToggle{
+        /* ---------- MUSIC TOGGLE BUTTON (gold circle with orange flame + blue musical note) ---------- */
+        #musicToggle{
             position:fixed;
             top:0.8rem;
             right:0.8rem;
-            z-index:1001; /* above header */
+            z-index:1001;
             background:transparent;
             border:none;
             cursor:pointer;
-            padding:8px;
+            padding:0;
+            width:56px;
+            height:56px;
             border-radius:50%;
-            width:48px;
-            height:48px;
-            transition:background .2s;
+            transition:transform .2s, background .2s;
         }
-        #radioToggle:hover{
+        #musicToggle:hover{
+            transform:scale(1.1);
             background:rgba(255,255,255,.1);
         }
-        #radioToggle img{
-            width:40px;
-            height:40px;
-            pointer-events:none;
-            border:3px solid #ffd700; /* gold ring */
+
+        /* Gold circle with orange flame background */
+        #musicToggle::before{
+            content:"";
+            position:absolute;
+            inset:0;
+            background:#ffd700;
             border-radius:50%;
-            box-shadow:0 0 12px rgba(255,215,0,.5);
+            box-shadow:0 0 20px rgba(255,215,0,.8);
         }
 
-        /* Push everything below the fixed header */
-        body > *:not(#header):not(#radioToggle){
+        /* Orange flame logo (using SVG directly so no extra file needed) */
+        #musicToggle::after{
+            content:"";
+            position:absolute;
+            inset:6px;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff8c00'%3E%3Cpath d='M12 2a5 5 0 0 0-5 5c0 2.09 1.03 3.86 2.32 5.68C7.2 14.4 4 15.5 4 18c0 2.76 2.24 5 5 5 2.76 0 5-2.24 5-5 0-1.37-1.03-2.79-2.68-4.32C13.8 11.14 15 8.86 15 7a3 3 0 0 0-6 0c0 1.29.61 2.43 1.5 3.18C10.89 8.43 11 6.73 11 5a1 1 0 0 1 2 0c0 2.08-1.02 3.85-2.3 5.68C11.8 9.96 13 8.56 13 7a1 1 0 0 1 2 0c0 3.33-2.47 5.83-5 6.93V22h2v-2h2v-2h-4v2h2v2h-2v2h6v-2h-2v-2h2v-2h-2v-2c2.76 0 5-2.24 5-5 0-3.33-3.03-5.57-5.68-6.68C13.97 3.86 13 4.91 13 6a1 1 0 0 1-2 0c0-2.21 1.79-4 4-4 1.66 0 3 1.34 3 3 0 2.76-1.79 5-4 5z'/%3E%3C/svg%3E") center/70% no-repeat;
+            border-radius:50%;
+        }
+
+        /* Blue musical note (default = playing) */
+        .music-note{
+            position:absolute;
+            inset:0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:28px;
+            pointer-events:none;
+            transition:color .3s;
+        }
+
+        /* Push content below header */
+        body > *:not(#header):not(#musicToggle){
             margin-top:80px;
         }
 
@@ -148,14 +172,13 @@
         @media (max-width:600px){
             #header{padding:1rem 4rem 1rem 4rem;height:64px;}
             .hamburger{top:0.8rem;left:0.8rem;}
-            #radioToggle{top:0.6rem;right:0.6rem;}
-            #radioToggle img{width:36px;height:36px;border-width:2.5px;}
-            body > *:not(#header):not(#radioToggle){margin-top:70px;}
+            #musicToggle{top:0.6rem;right:0.6rem;width:50px;height:50px;}
+            body > *:not(#header):not(#musicToggle){margin-top:70px;}
             #messages{height:45vh;padding:0.9rem;font-size:0.93rem;}
             #messageInput{font-size:16px;}
         }
 
-        /* ---------- PARTICLE EFFECT (exact same as original page) ---------- */
+        /* Particle canvas */
         #particles{
             position:fixed;top:0;left:0;width:100%;height:100%;
             pointer-events:none;z-index:0;
@@ -167,7 +190,6 @@
     <!-- Full-screen looping video background -->
     <video id="bg-video" autoplay muted loop playsinline>
         <source src="https://files.catbox.moe/5ik3ev.mp4" type="video/mp4">
-        Your browser does not support the video tag.
     </video>
 
     <!-- Fixed Header -->
@@ -184,18 +206,18 @@
         <h2>Where Legends Gather</h2>
     </div>
 
-    <!-- Tiny fixed radio button (top-right) -->
-    <button id="radioToggle" aria-pressed="false">
-        <img id="radioIcon" src="https://cdn-icons-png.flaticon.com/512/727/727218.png" alt="Radio">
+    <!-- Music toggle button (gold circle + orange flame + blue musical note) -->
+    <button id="musicToggle" aria-label="Toggle music">
+        <div class="music-note">♪</div>
     </button>
 
-    <!-- PARTICLE CANVAS (added) -->
-    <canvas id="particles"></canvas>
-
-    <!-- Hidden audio element (functionality only) -->
-    <audio id="everlookAudio" preload="metadata" crossorigin>
-        <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
+    <!-- Hidden audio element (your requested track, autoplays and loops) -->
+    <audio id="tavernMusic" loop preload="auto">
+        <source src="https://files.catbox.moe/thuwtd.mp3" type="audio/mpeg">
     </audio>
+
+    <!-- Particle canvas -->
+    <canvas id="particles"></canvas>
 
     <!-- TAVERN CHAT -->
     <div id="chat-section">
@@ -207,33 +229,37 @@
     </div>
 
     <script>
-        // ======== ORIGINAL SCRIPTS (unchanged) ========
-        // Menu
+        // ======== MENU (unchanged) ========
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const menu = document.getElementById('menu');
         hamburgerBtn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('show'); });
         document.addEventListener('click', e => { if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target)) menu.classList.remove('show'); });
         menu.addEventListener('click', e => e.stopPropagation());
 
-        // Radio
-        const audio = document.getElementById('everlookAudio');
-        const toggleBtn = document.getElementById('radioToggle');
-        const radioIcon = document.getElementById('radioIcon');
+        // ======== MUSIC TOGGLE WITH YOUR REQUESTED DESIGN ========
+        const music = document.getElementById('tavernMusic');
+        const toggleBtn = document.getElementById('musicToggle');
+        const note = toggleBtn.querySelector('.music-note');
+
+        // Start playing automatically when page loads (most browsers allow if user has interacted before, otherwise first click will start it)
+        music.volume = 0.6;
+        music.play().catch(() => {}); // silently ignore if autoplay blocked
 
         toggleBtn.addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play().then(() => {
-                    radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727245.png';
-                    toggleBtn.setAttribute('aria-pressed', 'true');
-                }).catch(() => {});
+            if (music.paused) {
+                music.play();
+                note.style.color = '#00ff00';   // green when playing
             } else {
-                audio.pause();
-                radioIcon.src = 'https://cdn-icons-png.flaticon.com/512/727/727218.png';
-                toggleBtn.setAttribute('aria-pressed', 'false');
+                music.pause();
+                note.style.color = '#ff0000';   // red when muted (you mentioned "if there is an arrow" → interpreted as muted/off state)
             }
         });
 
-        // Chat
+        // Optional: change color to green immediately if autoplay succeeded
+        music.addEventListener('play', () => note.style.color = '#00ff00');
+        music.addEventListener('pause', () => note.style.color = '#ff0000');
+
+        // ======== CHAT (unchanged) ========
         const backendUrl = 'https://dungeonblade.onrender.com';
         const messagesDiv = document.getElementById('messages');
         const input = document.getElementById('messageInput');
@@ -274,18 +300,19 @@
         loadMessages();
         setInterval(loadMessages, 5000);
 
-        // ======== EXACT SAME EMBER PARTICLE EFFECT FROM THE ORIGINAL PAGE ========
+        // ======== ORIGINAL EMBER PARTICLE EFFECT (unchanged) ========
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
-       
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         window.addEventListener('resize', () => {
           canvas.width = window.innerWidth;
           canvas.height = window.innerHeight;
         });
+
         const particlesArray = [];
         const numberOfParticles = 18;
+
         class Particle {
           constructor() { this.reset(); }
           reset() {
@@ -318,6 +345,7 @@
             ctx.shadowBlur = 0;
           }
         }
+
         function init() {
           particlesArray.length = 0;
           for (let i = 0; i < numberOfParticles; i++) {
