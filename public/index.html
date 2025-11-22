@@ -65,30 +65,36 @@
             border-radius:50%;
             width:48px;
             height:48px;
-            transition:background .2s;
+            outline:none;
+            -webkit-tap-highlight-color:transparent; /* Removes mobile tap highlight */
         }
-        #radioToggle:hover{
-            background:rgba(255,255,255,.1);
+        /* Kill any hover/focus/active visual feedback on the <button> itself */
+        #radioToggle:hover,
+        #radioToggle:focus,
+        #radioToggle:active {
+            background:transparent !important;
+            box-shadow:none !important;
+            outline:none !important;
         }
 
-        /* The gold ring + inner circle with musical note */
+        /* The gold ring + inner circle with musical note — untouched glow on the ring */
         .radio-icon {
             width:40px;
             height:40px;
             border:3px solid #ffd700;
             border-radius:50%;
-            box-shadow:0 0 12px rgba(255,215,0,.5);
+            box-shadow:0 0 12px rgba(255,215,0,.5);   /* ← your original ring glow, kept! */
             display:flex;
             align-items:center;
             justify-content:center;
             font-size:24px;
-            background:#000; /* black background */
-            transition:background 0.3s, color 0.3s;
+            background:#000;
+            transition: color 0.3s;                  /* only the note color changes */
         }
-        /* States */
-        .radio-icon.off   { background:#000; color:#fff; }   /* white note */
-        .radio-icon.on    { background:#000; color:#00ff00; } /* green note */
-        .radio-icon.error { background:#000; color:#ff0000; } /* red note */
+        /* Pure states — only the musical note color changes */
+        .radio-icon.off   { color:#fff; }     /* white note */
+        .radio-icon.on    { color:#00ff00; }  /* green note */
+        .radio-icon.error { color:#ff0000; }  /* red note */
 
         /* Push everything below the fixed header */
         body > *:not(#header):not(#radioToggle){
@@ -235,7 +241,6 @@
                     });
             } else {
                 audio.pause();
-                // If it was ever played successfully, show red when paused; otherwise white
                 if (toggleBtn.getAttribute('aria-pressed') === 'true') {
                     iconDiv.className = 'radio-icon error'; // red when paused after playing
                 } else {
@@ -245,7 +250,6 @@
             }
         });
 
-        // Optional: reset to white if stream ends or errors after being on
         audio.addEventListener('error', () => {
             iconDiv.className = 'radio-icon error';
         });
