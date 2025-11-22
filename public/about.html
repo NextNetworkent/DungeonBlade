@@ -152,29 +152,6 @@
         .hamburger{top:.8rem;left:.8rem}
         .logo-fill { max-height: 50vh; }
     }
-
-    /* ==== FIREPLACE SOUND + MUTE BUTTON ==== */
-    #fireplace-audio {
-      display: none; /* hidden audio element */
-    }
-    #mute-btn {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-      z-index: 9999;
-      background: rgba(0,0,0,0.6);
-      border: 1px solid #444;
-      color: #fff;
-      padding: 6px 10px;
-      font-size: 12px;
-      cursor: pointer;
-      border-radius: 4px;
-      user-select: none;
-    }
-    #mute-btn.muted {
-      color: #888;
-      text-decoration: line-through;
-    }
   </style>
 </head>
 <body>
@@ -192,15 +169,6 @@
       <h1>Dungeon Blade</h1>
       <h2>Adventure Game</h2>
   </div>
-
-  <!-- Tiny mute button (top-right) -->
-  <div id="mute-btn"MUTE</div>
-
-  <!-- Autoplaying fire crackling sound (looped) -->
-  <audio id="fireplace-audio" loop>
-    <source src="https://files.catbox.moe/thuwtd.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
 
   <!-- Logo that fills the empty space -->
   <img src="DungeonBladeLogo1.png" alt="Dungeon Blade Logo" class="logo-fill">
@@ -230,9 +198,9 @@
     <h2>Features</h2>
     <ul>
       <li>Multiplayer TTRPG with a talking AI Dungeon Master and a music, ambience, and sound effects bot</li>
-      <li>Customizable character profile page with avatar, bio, image gallery, music, and comment wall</li>
-      <li>Live chat room with real-time roster of active games and watch or join option</li>
-      <li>24/7 Audio Stream and Media Archives</li>
+      <li>a customizable character profile page with avatar, bio, image gallery, music, and comment wall</li>
+      <li>The Tavern Live chat room with active game roster of active games with watch ot join options</li>
+      <li>Bard Radio Live stream and other stuff</li>
     </ul>
 
     <h2>Next Network Entertainment</h2>
@@ -263,31 +231,6 @@
             menu.classList.remove('show'); 
     });
     menu.addEventListener('click', e => e.stopPropagation());
-  </script>
-
-  <!-- Fireplace sound autoplay + mute button script -->
-  <script>
-    const audio = document.getElementById('fireplace-audio');
-    const muteBtn = document.getElementById('mute-btn');
-
-    // Start playing as soon as possible (autoplay policy requires user gesture on some browsers, but this works on most after load)
-    audio.play().catch(() => { /* silently ignore if autoplay blocked */ });
-
-    // Loop is already set in HTML, but ensure it
-    audio.loop = true;
-
-    // Mute/unmute toggle
-    muteBtn.addEventListener('click', () => {
-      if (audio.muted) {
-        audio.muted = false;
-        muteBtn.classList.remove('muted');
-        muteBtn.textContent = '🔊 MUTE FIRE';
-      } else {
-        audio.muted = true;
-        muteBtn.classList.add('muted');
-        muteBtn.textContent = '🔇 FIRE MUTED';
-      }
-    });
   </script>
 </body>
 </html>
