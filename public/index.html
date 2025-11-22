@@ -3,30 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Tavern – Dungeon Blade</title>
+    <title>The Tavern – Dungeon Blade (Christmas Edition)</title>
 
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel' rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
-        body{margin:0;padding:0;background:#14191e;color:#cfcfcf;font-family:Arial,sans-serif}
+        body{
+            margin:0;
+            padding:0;
+            background: #0f1419 url('xmas_bg1.jpg') center center fixed;
+            background-size: cover;
+            color:#cfcfcf;
+            font-family:Arial,sans-serif;
+            min-height: 100vh;
+        }
         *{box-sizing:border-box}
+
+        /* Dark overlay so text stays readable on bright/snowy background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.55);
+            pointer-events: none;
+            z-index: -1;
+        }
 
         /* ---------- FIXED HEADER (flush with top) ---------- */
         #header{
             position:fixed;top:0;left:0;right:0;z-index:1000;
-            background:#000;padding:1rem 4.5rem 1rem 4.5rem;text-align:center;
+            background:rgba(0,0,0,0.85);  /* semi-transparent for better blending with bg */
+            backdrop-filter: blur(6px);
+            padding:1rem 4.5rem 1rem 4.5rem;
+            text-align:center;
             height:70px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         #header h1,#header h2{margin:0}
         #header h1{
             color:#fff;font-size:24px;
             font-family:'IM Fell English SC',serif;letter-spacing:1px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
         #header h2{
             color:#ffd700;font-size:18px;
             font-family:'IM Fell English SC',serif;letter-spacing:.5px;
+            text-shadow: 0 0 8px rgba(255,215,0,0.4);
         }
 
         /* Hamburger menu (top-left) */
@@ -36,14 +60,16 @@
         .hamburger span{
             display:block;width:25px;height:3px;background:#fff;
             margin:5px 0;transition:.3s;
+            box-shadow: 0 0 5px rgba(255,255,255,0.5);
         }
 
         /* Menu dropdown */
         #menu{
             display:none;position:absolute;top:4.5rem;left:1rem;
-            background:#000;list-style:none;padding:.5rem;margin:0;
+            background:rgba(0,0,0,0.9);list-style:none;padding:.5rem;margin:0;
             border:1px solid #2a323a;border-radius:8px;
-            box-shadow:0 0 10px rgba(0,0,0,.4);width:fit-content;z-index:1001;
+            box-shadow:0 0 15px rgba(0,0,0,.6);width:fit-content;z-index:1001;
+            backdrop-filter: blur(6px);
         }
         #menu.show{display:block}
         #menu a{
@@ -66,9 +92,8 @@
             width:48px;
             height:48px;
             outline:none;
-            -webkit-tap-highlight-color:transparent; /* Removes mobile tap highlight */
+            -webkit-tap-highlight-color:transparent;
         }
-        /* Kill any hover/focus/active visual feedback on the <button> itself */
         #radioToggle:hover,
         #radioToggle:focus,
         #radioToggle:active {
@@ -77,24 +102,22 @@
             outline:none !important;
         }
 
-        /* The gold ring + inner circle with musical note — untouched glow on the ring */
         .radio-icon {
             width:40px;
             height:40px;
             border:3px solid #ffd700;
             border-radius:50%;
-            box-shadow:0 0 12px rgba(255,215,0,.5);   /* ← your original ring glow, kept! */
+            box-shadow:0 0 12px rgba(255,215,0,.7);
             display:flex;
             align-items:center;
             justify-content:center;
             font-size:24px;
             background:#000;
-            transition: color 0.3s;                  /* only the note color changes */
+            transition: color 0.3s;
         }
-        /* Pure states — only the musical note color changes */
-        .radio-icon.off   { color:#fff; }     /* white note */
-        .radio-icon.on    { color:#00ff00; }  /* green note */
-        .radio-icon.error { color:#ff0000; }  /* red note */
+        .radio-icon.off   { color:#fff; }
+        .radio-icon.on    { color:#00ff00; }
+        .radio-icon.error { color:#ff0000; }
 
         /* Push everything below the fixed header */
         body > *:not(#header):not(#radioToggle){
@@ -108,9 +131,10 @@
         #messages{
             height:50vh;
             overflow-y:auto;
-            background:#0d1117;
+            background:rgba(13,17,23,0.85);  /* semi-transparent dark for better readability on bg */
+            backdrop-filter: blur(6px);
             padding:1rem;
-            border:3px solid #ffffff;
+            border:3px solid rgba(255,255,255,0.3);
             border-radius:8px;
             display:flex;
             flex-direction:column;
@@ -133,11 +157,16 @@
             display:flex;gap:0.75rem;margin-top:1rem;align-items:center;
         }
         #messageInput{
-            flex:1;padding:1rem 1.2rem;background:#0d1117;color:#e6edf3;
-            border:1px solid #fff;border-radius:8px;font-family:'JetBrains Mono', monospace;
+            flex:1;padding:1rem 1.2rem;background:rgba(13,17,23,0.85);color:#e6edf3;
+            border:1px solid rgba(255,255,255,0.3);border-radius:8px;
+            font-family:'JetBrains Mono', monospace;
             font-size:0.95rem;outline:none;transition:border 0.2s;
+            backdrop-filter: blur(4px);
         }
-        #messageInput:focus{border:1px solid #58a6ff;box-shadow:0 0 0 2px rgba(88,166,255,0.2);}
+        #messageInput:focus{
+            border:1px solid #58a6ff;
+            box-shadow:0 0 0 2px rgba(88,166,255,0.3);
+        }
         #messageInput::placeholder{color:#7d8590}
         #sendBtn{
             padding:0 1.8rem;height:48px;background:#238636;color:white;border:none;
@@ -162,7 +191,7 @@
             #messageInput{font-size:16px;}
         }
 
-        /* ---------- PARTICLE EFFECT ---------- */
+        /* ---------- PARTICLE EFFECT (still embers, but now Christmas-themed glow) ---------- */
         #particles{
             position:fixed;top:0;left:0;width:100%;height:100%;
             pointer-events:none;z-index:0;
@@ -193,7 +222,7 @@
     <!-- Click sound effect -->
     <audio id="clickSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-retro-notification-1596.mp9"></audio>
 
-    <!-- PARTICLE CANVAS -->
+    <!-- PARTICLE CANVAS (still falling embers – they look great with a Christmas background!) -->
     <canvas id="particles"></canvas>
 
     <!-- Hidden audio element (radio stream) -->
@@ -211,7 +240,7 @@
     </div>
 
     <script>
-        // ======== ORIGINAL SCRIPTS (unchanged except radio part) ========
+        // ======== ALL ORIGINAL SCRIPTS UNCHANGED (menu, radio, chat, particles) ========
         // Menu
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const menu = document.getElementById('menu');
@@ -219,7 +248,7 @@
         document.addEventListener('click', e => { if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target)) menu.classList.remove('show'); });
         menu.addEventListener('click', e => e.stopPropagation());
 
-        // Radio + new icon logic
+        // Radio + icon logic
         const audio = document.getElementById('everlookAudio');
         const toggleBtn = document.getElementById('radioToggle');
         const iconDiv = document.querySelector('.radio-icon');
@@ -232,19 +261,19 @@
             if (audio.paused) {
                 audio.play()
                     .then(() => {
-                        iconDiv.className = 'radio-icon on';     // green note
+                        iconDiv.className = 'radio-icon on';
                         toggleBtn.setAttribute('aria-pressed', 'true');
                     })
                     .catch(err => {
-                        iconDiv.className = 'radio-icon error';  // red note on error
+                        iconDiv.className = 'radio-icon error';
                         console.error("Playback failed:", err);
                     });
             } else {
                 audio.pause();
                 if (toggleBtn.getAttribute('aria-pressed') === 'true') {
-                    iconDiv.className = 'radio-icon error'; // red when paused after playing
+                    iconDiv.className = 'radio-icon error';
                 } else {
-                    iconDiv.className = 'radio-icon off';  // white if never played
+                    iconDiv.className = 'radio-icon off';
                 }
                 toggleBtn.setAttribute('aria-pressed', 'false');
             }
@@ -254,7 +283,7 @@
             iconDiv.className = 'radio-icon error';
         });
 
-        // Chat (unchanged)
+        // Chat
         const backendUrl = 'https://dungeonblade.onrender.com';
         const messagesDiv = document.getElementById('messages');
         const input = document.getElementById('messageInput');
@@ -295,7 +324,7 @@
         loadMessages();
         setInterval(loadMessages, 5000);
 
-        // ======== EMBER PARTICLE EFFECT (unchanged) ========
+        // Ember particle effect (kept – looks magical with Christmas background)
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
        
