@@ -72,9 +72,8 @@
             width:48px;
             height:48px;
             outline:none;
-            -webkit-tap-highlight-color:transparent; /* Removes mobile tap highlight */
+            -webkit-tap-highlight-color:transparent;
         }
-        /* Kill any hover/focus/active visual feedback on the <button> itself */
         #radioToggle:hover,
         #radioToggle:focus,
         #radioToggle:active {
@@ -83,24 +82,22 @@
             outline:none !important;
         }
 
-        /* The gold ring + inner circle with musical note — untouched glow on the ring */
         .radio-icon {
             width:40px;
             height:40px;
             border:3px solid #ffd700;
             border-radius:50%;
-            box-shadow:0 0 12px rgba(255,215,0,.5);   /* ← your original ring glow, kept! */
+            box-shadow:0 0 12px rgba(255,215,0,.5);
             display:flex;
             align-items:center;
             justify-content:center;
             font-size:24px;
             background:#000;
-            transition: color 0.3s;                  /* only the note color changes */
+            transition: color 0.3s;
         }
-        /* Pure states — only the musical note color changes */
-        .radio-icon.off   { color:#fff; }     /* white note */
-        .radio-icon.on    { color:#00ff00; }  /* green note */
-        .radio-icon.error { color:#ff0000; }  /* red note */
+        .radio-icon.off   { color:#fff; }
+        .radio-icon.on    { color:#00ff00; }
+        .radio-icon.error { color:#ff0000; }
 
         /* Push everything below the fixed header */
         body > *:not(#header):not(#radioToggle){
@@ -152,12 +149,27 @@
         }
         #sendBtn:hover{background:#2ea043}
 
+        /* ---------- ORB GIF (centered under chat box) ---------- */
+        #orb-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        #orb-container img {
+            width: 80px;        /* small size */
+            height: 80px;
+            object-fit: contain;
+            image-rendering: pixelated;  /* keeps it crisp if it's pixel art */
+            opacity: 0.9;
+        }
+
         /* Scrollbar */
         #messages::-webkit-scrollbar{width:6px}
         #messages::-webkit-scrollbar-track{background:transparent}
         #messages::-webkit-scrollbar-thumb{background:#30363d;border-radius:3px}
 
-        /* Mobile */
+        /* Mobile adjustments */
         @media (max-width:600px){
             #header{padding:1rem 4rem 1rem 4rem;height:64px;}
             .hamburger{top:0.8rem;left:0.8rem;}
@@ -166,6 +178,10 @@
             body > *:not(#header):not(#radioToggle){margin-top:70px;}
             #messages{height:45vh;padding:0.9rem;font-size:0.93rem;}
             #messageInput{font-size:16px;}
+            #orb-container img {
+                width: 60px;
+                height: 60px;
+            }
         }
 
         /* ---------- PARTICLE EFFECT ---------- */
@@ -214,6 +230,11 @@
             <input type="text" id="messageInput" placeholder="Speak to the room..." autocomplete="off" />
             <button id="sendBtn">Send</button>
         </div>
+
+        <!-- ORB GIF centered below the chat box -->
+        <div id="orb-container">
+            <img src="orb.gif" alt="Mysterious Orb">
+        </div>
     </div>
 
     <script>
@@ -238,19 +259,19 @@
             if (audio.paused) {
                 audio.play()
                     .then(() => {
-                        iconDiv.className = 'radio-icon on';     // green note
+                        iconDiv.className = 'radio-icon on';
                         toggleBtn.setAttribute('aria-pressed', 'true');
                     })
                     .catch(err => {
-                        iconDiv.className = 'radio-icon error';  // red note on error
+                        iconDiv.className = 'radio-icon error';
                         console.error("Playback failed:", err);
                     });
             } else {
                 audio.pause();
                 if (toggleBtn.getAttribute('aria-pressed') === 'true') {
-                    iconDiv.className = 'radio-icon error'; // red when paused after playing
+                    iconDiv.className = 'radio-icon error';
                 } else {
-                    iconDiv.className = 'radio-icon off';  // white if never played
+                    iconDiv.className = 'radio-icon off';
                 }
                 toggleBtn.setAttribute('aria-pressed', 'false');
             }
