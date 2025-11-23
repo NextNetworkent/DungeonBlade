@@ -3,14 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dungeon Blade Game</title>
+  <title>About Dungeon Blade Online Adventure Game</title>
 
-  <!-- Fonts used in the Tavern header -->
   <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
-    /* Reset & Base */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background-color: #000;
@@ -22,10 +20,12 @@
       flex-direction: column;
     }
 
-    /* ---------- HEADER (from Tavern) ---------- */
+    /* ---------- HEADER & MENU – now 100% identical spacing to homepage ---------- */
     #header{
-        position:relative;background:#000;
-        padding:1rem 1rem 1rem 3.5rem;text-align:center;
+        position: relative;
+        background:#000;
+        padding:1rem 4.5rem 1rem 4.5rem;   /* desktop same as homepage */
+        text-align:center;
     }
     #header h1,#header h2{margin:0}
     #header h1{
@@ -38,125 +38,71 @@
     }
 
     .hamburger{
-        position:absolute;top:1rem;left:1rem;cursor:pointer;z-index:1000;
+        position:absolute;top:1rem;left:1rem;cursor:pointer;z-index:1001;
     }
     .hamburger span{
         display:block;width:25px;height:3px;background:#fff;
         margin:5px 0;transition:.3s;
     }
 
-    /* ---------- MENU (from Tavern) ---------- */
+    /* MENU – tightened exactly like homepage */
     #menu{
-        display:none;position:absolute;top:4.5rem;left:1rem;
-        background:#000;list-style:none;padding:.5rem;margin:0;
-        border:1px solid #2a323a;border-radius:8px;
-        box-shadow:0 0 10px rgba(0,0,0,.4);width:fit-content;z-index:999;
+        display:none;
+        position:absolute;
+        top:4.5rem;
+        left:1rem;
+        background:#000;
+        list-style:none;
+        padding:0.2rem 0;               /* ← critical change (was .5rem) */
+        margin:0;
+        border:1px solid #2a323a;
+        border-radius:8px;
+        box-shadow:0 0 10px rgba(0,0,0,.4);
+        width:fit-content;
+        z-index:1001;
     }
     #menu.show{display:block}
     #menu a{
-        color:#cfcfcf;text-decoration:none;padding:.5rem 1rem;
-        display:block;white-space:nowrap;
+        color:#cfcfcf;
+        text-decoration:none;
+        padding:.5rem 1rem;
+        display:block;
+        white-space:nowrap;
+        line-height:1.4;                /* ← forces tight rows like homepage */
     }
     #menu a:hover{background:#2a323a}
 
-    /* Logo that fills the gap between header and content */
-    .logo-fill {
-      width: 100%;
-      max-height: 70vh;           /* Limits how tall it can get on large screens */
-      object-fit: contain;        /* Keeps aspect ratio, no stretching/distortion */
-      object-position: center;
-      display: block;
-      margin: 0 auto;
-      background-color: #000;     /* In case image has transparency */
-    }
-
-    /* Main Content */
-    main {
-      flex: 1;
-      max-width: 900px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 0 1rem;
-    }
-
-    /* Title Image - still at the bottom */
-    .title-image {
-      display: block;
-      width: 90%;
-      max-width: 500px;
-      height: auto;
-      margin: 3rem auto 2rem;
-    }
-
-    /* Section headings */
-    h2 {
-      font-size: 1.6rem;
-      margin: 2.5rem 0 1rem;
-      color: #00ff99;
-      text-align: center;
-    }
-
-    p, li {
-      font-size: 1.05rem;
-      margin-bottom: 1rem;
-    }
-
-    /* Video */
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
-      overflow: hidden;
-      max-width: 100%;
-      margin: 2rem auto;
-      border: 2px solid #333;
-      border-radius: 10px;
-    }
-    .video-container iframe {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      border: none;
-    }
-
-    ul, ol {
-      margin: 1rem 0;
-      padding-left: 1.5rem;
-    }
-    li { margin-bottom: 0.6rem; }
-
-    /* Bright green links */
-    a.patreon-link,
-    a.youtube-link {
-      color: #00ff99 !important;
-      font-weight: bold;
-      text-decoration: none;
-    }
-    a.patreon-link:hover,
-    a.youtube-link:hover {
-      text-decoration: underline;
-    }
-
-    /* Footer */
-    footer {
-      text-align: center;
-      padding: 2rem 1rem;
-      font-size: 0.9rem;
-      color: #666;
-      background: #000;
-    }
-
-    /* Mobile adjustments */
+    /* Mobile – exact same values as homepage */
     @media (max-width:600px){
-        #header{padding:1rem 1rem 1rem 3rem}
-        .hamburger{top:.8rem;left:.8rem}
-        .logo-fill { max-height: 50vh; }
+        #header{
+            padding:1rem 4rem 1rem 4rem;   /* exact homepage mobile padding */
+            height:64px;                   /* optional but matches */
+        }
+        .hamburger{top:0.8rem;left:0.8rem;}
+        #menu{
+            top:4.1rem;                    /* tiny adjustment so it lines up perfectly */
+            padding:0.15rem 0;             /* even tighter on very small screens if you want */
+        }
     }
+
+    /* ---- rest of your styles unchanged ---- */
+    .logo-fill {width:100%;max-height:70vh;object-fit:contain;display:block;margin:0 auto;background:#000;}
+    main {flex:1;max-width:900px;width:100%;margin:0 auto;padding:0 1rem;}
+    .title-image {display:block;width:90%;max-width:500px;height:auto;margin:3rem auto 2rem;}
+    h2 {font-size:1.6rem;margin:2.5rem 0 1rem;color:#00ff99;text-align:center;}
+    p, li {font-size:1.05rem;margin-bottom:1rem;}
+    .video-container {position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:2rem auto;border:2px solid #333;border-radius:10px;}
+    .video-container iframe {position:absolute;top:0;left:0;width:100%;height:100%;border:none;}
+    ul, ol {margin:1rem 0;padding-left:1.5rem;}
+    li {margin-bottom:0.6rem;}
+    a.patreon-link, a.youtube-link {color:#00ff99 !important;font-weight:bold;text-decoration:none;}
+    a.patreon-link:hover, a.youtube-link:hover {text-decoration:underline;}
+    footer {text-align:center;padding:2rem 1rem;font-size:0.9rem;color:#666;background:#000;}
+    @media (max-width:600px){.logo-fill {max-height:50vh;}}
   </style>
 </head>
 <body>
 
-  <!-- Header & Menu (Tavern style) -->
   <div id="header">
       <div class="hamburger" id="hamburgerBtn">
           <span></span><span></span><span></span>
@@ -170,10 +116,8 @@
       <h2>Adventure Game</h2>
   </div>
 
-  <!-- Logo that fills the empty space -->
   <img src="DungeonBladeLogo1.png" alt="Dungeon Blade Logo" class="logo-fill">
 
-  <!-- Main Content -->
   <main>
     <p style="text-align:center; margin-top: 2rem;">
       Welcome to <strong>Dungeon Blade</strong>, an online RPG where an AI Dungeon Master guides you <br>and your friends through epic quests, battles, and mysteries!
@@ -187,6 +131,7 @@
               allowfullscreen></iframe>
     </div>
 
+    <!-- rest of your content unchanged -->
     <h2>Overview</h2>
     <p>Dungeon Blade is an aiTTRPG — an artificially intelligent dungeon master that guides you and other players through role-playing adventures using voice-acted NPCs, ambience, music, and sound effects.</p>
     <p>Create a character, customize your profile, and jump into the Tavern to chat, plan adventures, or just hang out. Watch live games, join campaigns, or relax with the Bard Radio audio stream.</p>
@@ -210,15 +155,11 @@
       <li>Website & Tavern chat: LIVE</li>
     </ul>
 
-    <!-- Title image at the bottom - changed to dungeonblade1.png -->
     <img src="dungeonblade1.png" alt="Dungeon Blade Title" class="title-image">
   </main>
 
-  <footer>
-    © 2025 Next Network Entertainment • Dungeon Blade
-  </footer>
+  <footer>© 2025 Next Network Entertainment • Dungeon Blade</footer>
 
-  <!-- Menu Toggle Script -->
   <script>
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const menu = document.getElementById('menu');
