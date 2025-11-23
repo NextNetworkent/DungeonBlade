@@ -20,15 +20,12 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      background: #000 url('xmas_bg1.jpg') center center fixed; /* optional: same festive bg as Tavern */
-      background-size: cover;
     }
 
-    /* ---------- FIXED HEADER (now identical to homepage) ---------- */
+    /* ---------- HEADER (from Tavern) ---------- */
     #header{
-        position:fixed;top:0;left:0;right:0;z-index:1000;
-        background:#000;padding:1rem 4.5rem 1rem 4.5rem;text-align:center;
-        height:70px;
+        position:relative;background:#000;
+        padding:1rem 1rem 1rem 3.5rem;text-align:center;
     }
     #header h1,#header h2{margin:0}
     #header h1{
@@ -41,19 +38,19 @@
     }
 
     .hamburger{
-        position:absolute;top:1rem;left:1rem;cursor:pointer;z-index:1001;
+        position:absolute;top:1rem;left:1rem;cursor:pointer;z-index:1000;
     }
     .hamburger span{
         display:block;width:25px;height:3px;background:#fff;
         margin:5px 0;transition:.3s;
     }
 
-    /* ---------- MENU (exact same as homepage) ---------- */
+    /* ---------- MENU (from Tavern) ---------- */
     #menu{
         display:none;position:absolute;top:4.5rem;left:1rem;
         background:#000;list-style:none;padding:.5rem;margin:0;
         border:1px solid #2a323a;border-radius:8px;
-        box-shadow:0 0 10px rgba(0,0,0,.4);width:fit-content;z-index:1001;
+        box-shadow:0 0 10px rgba(0,0,0,.4);width:fit-content;z-index:999;
     }
     #menu.show{display:block}
     #menu a{
@@ -62,20 +59,15 @@
     }
     #menu a:hover{background:#2a323a}
 
-    /* Push everything below the fixed header (critical fix) */
-    body > *:not(#header){
-        margin-top:80px;
-    }
-
     /* Logo that fills the gap between header and content */
     .logo-fill {
       width: 100%;
-      max-height: 70vh;
-      object-fit: contain;
+      max-height: 70vh;           /* Limits how tall it can get on large screens */
+      object-fit: contain;        /* Keeps aspect ratio, no stretching/distortion */
       object-position: center;
       display: block;
       margin: 0 auto;
-      background-color: #000;
+      background-color: #000;     /* In case image has transparency */
     }
 
     /* Main Content */
@@ -87,6 +79,7 @@
       padding: 0 1rem;
     }
 
+    /* Title Image - still at the bottom */
     .title-image {
       display: block;
       width: 90%;
@@ -95,6 +88,7 @@
       margin: 3rem auto 2rem;
     }
 
+    /* Section headings */
     h2 {
       font-size: 1.6rem;
       margin: 2.5rem 0 1rem;
@@ -107,6 +101,7 @@
       margin-bottom: 1rem;
     }
 
+    /* Video */
     .video-container {
       position: relative;
       padding-bottom: 56.25%;
@@ -130,6 +125,7 @@
     }
     li { margin-bottom: 0.6rem; }
 
+    /* Bright green links */
     a.patreon-link,
     a.youtube-link {
       color: #00ff99 !important;
@@ -141,6 +137,7 @@
       text-decoration: underline;
     }
 
+    /* Footer */
     footer {
       text-align: center;
       padding: 2rem 1rem;
@@ -149,18 +146,17 @@
       background: #000;
     }
 
-    /* Mobile – now identical to homepage */
+    /* Mobile adjustments */
     @media (max-width:600px){
-        #header{padding:1rem 4rem 1rem 4rem;height:64px;}
-        .hamburger{top:0.8rem;left:0.8rem;}
-        body > *:not(#header){margin-top:70px;}
+        #header{padding:1rem 1rem 1rem 3rem}
+        .hamburger{top:.8rem;left:.8rem}
         .logo-fill { max-height: 50vh; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header & Menu (now fixed + identical to Tavern) -->
+  <!-- Header & Menu (Tavern style) -->
   <div id="header">
       <div class="hamburger" id="hamburgerBtn">
           <span></span><span></span><span></span>
@@ -214,6 +210,7 @@
       <li>Website & Tavern chat: LIVE</li>
     </ul>
 
+    <!-- Title image at the bottom - changed to dungeonblade1.png -->
     <img src="dungeonblade1.png" alt="Dungeon Blade Title" class="title-image">
   </main>
 
@@ -221,7 +218,7 @@
     © 2025 Next Network Entertainment • Dungeon Blade
   </footer>
 
-  <!-- Menu Toggle Script (unchanged) -->
+  <!-- Menu Toggle Script -->
   <script>
     const hamburgerBtn = document.getElementById('hamburgerBtn');
     const menu = document.getElementById('menu');
