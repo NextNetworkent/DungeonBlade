@@ -149,19 +149,38 @@
         }
         #sendBtn:hover{background:#2ea043}
 
-        /* ---------- ORB GIF (centered under chat box) ---------- */
+        /* ---------- ORB GIF (half size + MAGIC text overlay) ---------- */
         #orb-container {
             display: flex;
             justify-content: center;
             margin-top: 2rem;
             padding-bottom: 2rem;
+            position: relative;
         }
-        #orb-container img {
-            width: 80px;        /* small size */
-            height: 80px;
+        #orb-wrapper {
+            position: relative;
+            width: 40px;   /* half of original 80px */
+            height: 40px;
+        }
+        #orb-wrapper img {
+            width: 100%;
+            height: 100%;
             object-fit: contain;
-            image-rendering: pixelated;  /* keeps it crisp if it's pixel art */
+            image-rendering: pixelated;
             opacity: 0.9;
+        }
+        .orb-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffd700;
+            font-family: 'IM Fell English SC', serif;
+            font-size: 14px;
+            font-weight: bold;
+            text-shadow: 0 0 8px #000, 0 0 12px #ff8c00;
+            pointer-events: none;
+            user-select: none;
         }
 
         /* Scrollbar */
@@ -178,9 +197,12 @@
             body > *:not(#header):not(#radioToggle){margin-top:70px;}
             #messages{height:45vh;padding:0.9rem;font-size:0.93rem;}
             #messageInput{font-size:16px;}
-            #orb-container img {
-                width: 60px;
-                height: 60px;
+            #orb-wrapper {
+                width: 30px;
+                height: 30px;
+            }
+            .orb-text {
+                font-size: 11px;
             }
         }
 
@@ -231,9 +253,12 @@
             <button id="sendBtn">Send</button>
         </div>
 
-        <!-- ORB GIF centered below the chat box -->
+        <!-- ORB GIF with MAGIC text overlay -->
         <div id="orb-container">
-            <img src="orb.gif" alt="Mysterious Orb">
+            <div id="orb-wrapper">
+                <img src="orb.gif" alt="Mysterious Orb">
+                <div class="orb-text">MAGIC</div>
+            </div>
         </div>
     </div>
 
