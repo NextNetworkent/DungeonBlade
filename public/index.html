@@ -19,7 +19,7 @@
             background-size: cover;
         }
 
-        /* ---------- FIXED HEADER ---------- */
+        /* ---------- FIXED HEADER (flush with top) ---------- */
         #header{
             position:fixed;top:0;left:0;right:0;z-index:1000;
             background:#000;padding:1rem 4.5rem 1rem 4.5rem;text-align:center;
@@ -35,7 +35,7 @@
             font-family:'IM Fell English SC',serif;letter-spacing:.5px;
         }
 
-        /* Hamburger menu */
+        /* Hamburger menu (top-left) */
         .hamburger{
             position:absolute;top:1rem;left:1rem;cursor:pointer;z-index:1001;
         }
@@ -58,79 +58,109 @@
         }
         #menu a:hover{background:#2a323a}
 
-        /* ---------- TINY RADIO BUTTON ---------- */
+        /* ---------- TINY RADIO BUTTON (top-right, always visible) ---------- */
         #radioToggle{
-            position:fixed;top:0.8rem;right:0.8rem;z-index:1001;
-            background:transparent;border:none;cursor:pointer;
-            padding:8px;border-radius:50%;width:48px;height:48px;
-            outline:none;-webkit-tap-highlight-color:transparent;
+            position:fixed;
+            top:0.8rem;
+            right:0.8rem;
+            z-index:1001;
+            background:transparent;
+            border:none;
+            cursor:pointer;
+            padding:8px;
+            border-radius:50%;
+            width:48px;
+            height:48px;
+            outline:none;
+            -webkit-tap-highlight-color:transparent;
         }
-        #radioToggle:hover,#radioToggle:focus,#radioToggle:active{
-            background:transparent !important;box-shadow:none !important;outline:none !important;
+        #radioToggle:hover,
+        #radioToggle:focus,
+        #radioToggle:active {
+            background:transparent !important;
+            box-shadow:none !important;
+            outline:none !important;
         }
 
-        .radio-icon{
-            width:40px;height:40px;border:3px solid #ffd700;border-radius:50%;
-            box-shadow:0 0 12px rgba(255,215,0,.5);display:flex;align-items:center;
-            justify-content:center;font-size:24px;background:#000;transition:color .3s;
+        .radio-icon {
+            width:40px;
+            height:40px;
+            border:3px solid #ffd700;
+            border-radius:50%;
+            box-shadow:0 0 12px rgba(255,215,0,.5);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:24px;
+            background:#000;
+            transition: color 0.3s;
         }
-        .radio-icon.off{color:#fff}.radio-icon.on{color:#00ff00}.radio-icon.error{color:#ff0000}
+        .radio-icon.off   { color:#fff; }
+        .radio-icon.on    { color:#00ff00; }
+        .radio-icon.error { color:#ff0000; }
 
-        /* Push content below header */
-        body > *:not(#header):not(#radioToggle){margin-top:80px;}
+        /* Push everything below the fixed header */
+        body > *:not(#header):not(#radioToggle){
+            margin-top:80px;
+        }
 
         /* ---------- TAVERN CHAT ---------- */
         #chat-section{
             max-width:900px;margin:1.5rem auto;padding:0 1rem;
         }
         #messages{
-            height:50vh;overflow-y:auto;background:#0d1117;padding:1rem;
-            border:3px solid #ffffff;border-radius:8px;display:flex;flex-direction:column;
-            gap:0.8rem;font-family:'JetBrains Mono',monospace;font-size:0.95rem;line-height:1.5;
+            height:50vh;
+            overflow-y:auto;
+            background:#0d1117;
+            padding:1rem;
+            border:3px solid #ffffff;
+            border-radius:8px;
+            display:flex;
+            flex-direction:column;
+            gap:0.8rem;
+            font-family:'JetBrains Mono', monospace;
+            font-size:0.95rem;
+            line-height:1.5;
         }
-        .message{margin:0;padding:0;background:transparent;color:#e6edf3;word-wrap:break-word;align-self:flex-start;}
-        .message.own{align-self:flex-end;color:#a5d8ff;}
-        .message.welcome{align-self:flex-start;color:#e6edf3;}
 
-        #input-area{display:flex;gap:0.75rem;margin-top:1rem;align-items:center;}
+        .message{
+            margin:0;padding:0;background:transparent;color:#e6edf3;word-wrap:break-word;align-self:flex-start;
+        }
+        .message.own{align-self:flex-end;color:#a5d8ff;}
+        .message.welcome{
+            align-self:flex-start;text-align:left;font-size:inherit;font-weight:normal;
+            color:#e6edf3;background:transparent;padding:0;border:none;box-shadow:none;margin:0;
+        }
+
+        #input-area{
+            display:flex;gap:0.75rem;margin-top:1rem;align-items:center;
+        }
         #messageInput{
             flex:1;padding:1rem 1.2rem;background:#0d1117;color:#e6edf3;
-            border:1px solid #fff;border-radius:8px;font-family:'JetBrains Mono',monospace;
-            font-size:0.95rem;outline:none;transition:border .2s;
+            border:1px solid #fff;border-radius:8px;font-family:'JetBrains Mono', monospace;
+            font-size:0.95rem;outline:none;transition:border 0.2s;
         }
         #messageInput:focus{border:1px solid #58a6ff;box-shadow:0 0 0 2px rgba(88,166,255,0.2);}
         #messageInput::placeholder{color:#7d8590}
         #sendBtn{
             padding:0 1.8rem;height:48px;background:#238636;color:white;border:none;
-            border-radius:6px;font-family:'JetBrains Mono',monospace;font-weight:500;
-            cursor:pointer;transition:background .2s;
+            border-radius:6px;font-family:'JetBrains Mono', monospace;font-weight:500;
+            cursor:pointer;transition:background 0.2s;
         }
         #sendBtn:hover{background:#2ea043}
 
-        /* ---------- ORB + MAGIC LABEL (40% smaller, text above) ---------- */
+        /* ---------- ORB GIF (centered under chat box) ---------- */
         #orb-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
             margin-top: 2rem;
             padding-bottom: 2rem;
-            gap: 8px; /* space between text and orb */
-        }
-        .magic-label {
-            color: #ffd700;
-            font-family: 'IM Fell English SC', serif;
-            font-size: 18px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-shadow: 0 0 10px #ff8c00, 0 0 20px #000;
-            margin: 0;
         }
         #orb-container img {
-            width: 48px;   /* 80px × 0.6 = 48px → 40% smaller */
-            height: 48px;
+            width: 80px;        /* small size */
+            height: 80px;
             object-fit: contain;
-            image-rendering: pixelated;
+            image-rendering: pixelated;  /* keeps it crisp if it's pixel art */
             opacity: 0.9;
         }
 
@@ -148,10 +178,9 @@
             body > *:not(#header):not(#radioToggle){margin-top:70px;}
             #messages{height:45vh;padding:0.9rem;font-size:0.93rem;}
             #messageInput{font-size:16px;}
-            .magic-label {font-size: 16px;}
             #orb-container img {
-                width: 36px;   /* mobile: 60px × 0.6 = 36px */
-                height: 36px;
+                width: 60px;
+                height: 60px;
             }
         }
 
@@ -178,14 +207,18 @@
         <h2>Where Legends Gather</h2>
     </div>
 
-    <!-- Radio button -->
+    <!-- Tiny fixed radio button (top-right) -->
     <button id="radioToggle" aria-pressed="false">
         <div class="radio-icon off">♪</div>
     </button>
 
-    <!-- Audio elements -->
+    <!-- Click sound effect -->
     <audio id="clickSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-retro-notification-1596.mp9"></audio>
+
+    <!-- PARTICLE CANVAS -->
     <canvas id="particles"></canvas>
+
+    <!-- Hidden audio element (radio stream) -->
     <audio id="everlookAudio" preload="metadata" crossorigin>
         <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
     </audio>
@@ -198,22 +231,22 @@
             <button id="sendBtn">Send</button>
         </div>
 
-        <!-- MAGIC text above the smaller orb -->
+        <!-- ORB GIF centered below the chat box -->
         <div id="orb-container">
-            <div class="magic-label"><br> <br> </div>
             <img src="orb.gif" alt="Mysterious Orb">
         </div>
     </div>
 
     <script>
-        // Menu toggle
+        // ======== ORIGINAL SCRIPTS (unchanged except radio part) ========
+        // Menu
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const menu = document.getElementById('menu');
         hamburgerBtn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('show'); });
-        document.addEventListener('click', e => { if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target)) menu.class воно.remove('show'); });
+        document.addEventListener('click', e => { if (!hamburgerBtn.contains(e.target) && !menu.contains(e.target)) menu.classList.remove('show'); });
         menu.addEventListener('click', e => e.stopPropagation());
 
-        // Radio toggle
+        // Radio + new icon logic
         const audio = document.getElementById('everlookAudio');
         const toggleBtn = document.getElementById('radioToggle');
         const iconDiv = document.querySelector('.radio-icon');
@@ -222,22 +255,33 @@
         toggleBtn.addEventListener('click', () => {
             clickSound.currentTime = 0;
             clickSound.play();
+
             if (audio.paused) {
-                audio.play().then(() => {
-                    iconDiv.className = 'radio-icon on';
-                    toggleBtn.setAttribute('aria-pressed', 'true');
-                }).catch(err => {
-                    iconDiv.className = 'radio-icon error';
-                    console.error("Playback failed:", err);
-                });
+                audio.play()
+                    .then(() => {
+                        iconDiv.className = 'radio-icon on';
+                        toggleBtn.setAttribute('aria-pressed', 'true');
+                    })
+                    .catch(err => {
+                        iconDiv.className = 'radio-icon error';
+                        console.error("Playback failed:", err);
+                    });
             } else {
                 audio.pause();
-                iconDiv.className = 'radio-icon off';
+                if (toggleBtn.getAttribute('aria-pressed') === 'true') {
+                    iconDiv.className = 'radio-icon error';
+                } else {
+                    iconDiv.className = 'radio-icon off';
+                }
                 toggleBtn.setAttribute('aria-pressed', 'false');
             }
         });
 
-        // Chat functionality (unchanged)
+        audio.addEventListener('error', () => {
+            iconDiv.className = 'radio-icon error';
+        });
+
+        // Chat (unchanged)
         const backendUrl = 'https://dungeonblade.onrender.com';
         const messagesDiv = document.getElementById('messages');
         const input = document.getElementById('messageInput');
@@ -250,12 +294,14 @@
                 msgs.forEach(m => {
                     const div = document.createElement('div');
                     div.className = 'message';
-                    if (m.id === 'welcome-001') div.classList.add('welcome');
                     div.textContent = m.text;
+                    if (m.id === 'welcome-001') div.classList.add('welcome');
                     messagesDiv.appendChild(div);
                 });
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            } catch(e) { console.error(e); }
+            } catch(e) {
+                console.error("Failed to load messages:", e);
+            }
         }
 
         async function sendMessage() {
@@ -276,54 +322,60 @@
         loadMessages();
         setInterval(loadMessages, 5000);
 
-        // Particle effect (unchanged)
+        // ======== EMBER PARTICLE EFFECT (unchanged) ========
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
+       
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
         });
-
         const particlesArray = [];
         const numberOfParticles = 18;
-
         class Particle {
-            constructor() { this.reset(); }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height + 10;
-                this.size = Math.random() * 5 + 2;
-                this.speedX = Math.random() * 1.5 - 0.75;
-                this.speedY = Math.random() * -2 - 0.8;
-                this.opacity = Math.random() * 0.6 + 0.3;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.speedX += (Math.random() - 0.5) * 0.08;
-                if (this.y < -20 || this.x < -20 || this.x > canvas.width + 20) this.reset();
-            }
-            draw() {
-                ctx.fillStyle = `rgba(255,140,0,${this.opacity})`;
-                ctx.shadowBlur = 20; ctx.shadowColor = '#ff8c00';
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill();
-                ctx.shadowBlur = 8; ctx.shadowColor = '#ffaa00';
-                ctx.fillStyle = `rgba(255,180,0,${this.opacity*0.6})`;
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.size*0.6, 0, Math.PI*2); ctx.fill();
-                ctx.shadowBlur = 0;
-            }
+          constructor() { this.reset(); }
+          reset() {
+            this.x = Math.random() * canvas.width;
+            this.y = canvas.height + 10;
+            this.size = Math.random() * 5 + 2;
+            this.speedX = Math.random() * 1.5 - 0.75;
+            this.speedY = Math.random() * -2 - 0.8;
+            this.opacity = Math.random() * 0.6 + 0.3;
+          }
+          update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.speedX += (Math.random() - 0.5) * 0.08;
+            if (this.y < -20 || this.x < -20 || this.x > canvas.width + 20) this.reset();
+          }
+          draw() {
+            ctx.fillStyle = `rgba(255, 140, 0, ${this.opacity})`;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = '#ff8c00';
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = '#ffaa00';
+            ctx.fillStyle = `rgba(255, 180, 0, ${this.opacity * 0.6})`;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
         }
-
         function init() {
-            particlesArray.length = 0;
-            for (let i = 0; i < numberOfParticles; i++) particlesArray.push(new Particle());
+          particlesArray.length = 0;
+          for (let i = 0; i < numberOfParticles; i++) {
+            particlesArray.push(new Particle());
+          }
         }
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particlesArray.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animate);
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          particlesArray.forEach(p => { p.update(); p.draw(); });
+          requestAnimationFrame(animate);
         }
         init();
         animate();
