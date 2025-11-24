@@ -152,15 +152,25 @@
         /* ---------- ORB GIF (centered under chat box) ---------- */
         #orb-container {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
             margin-top: 2rem;
             padding-bottom: 2rem;
         }
+        #orb-container .magic-text {
+            font-family: 'IM Fell English SC', serif;
+            font-size: 1.6rem;
+            color: #ffd700;
+            margin-bottom: 0.8rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(255,215,0,0.6);
+        }
         #orb-container img {
-            width: 80px;        /* small size */
-            height: 80px;
+            width: 48px;        /* 40% smaller than original 80px */
+            height: 48px;
             object-fit: contain;
-            image-rendering: pixelated;  /* keeps it crisp if it's pixel art */
+            image-rendering: pixelated;
             opacity: 0.9;
         }
 
@@ -179,8 +189,8 @@
             #messages{height:45vh;padding:0.9rem;font-size:0.93rem;}
             #messageInput{font-size:16px;}
             #orb-container img {
-                width: 60px;
-                height: 60px;
+                width: 36px;   /* 40% smaller than original mobile 60px */
+                height: 36px;
             }
         }
 
@@ -233,6 +243,7 @@
 
         <!-- ORB GIF centered below the chat box -->
         <div id="orb-container">
+            <div class="magic-text">magic</div>
             <img src="orb.gif" alt="Mysterious Orb">
         </div>
     </div>
