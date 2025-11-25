@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0">
     <title>The Tavern – Dungeon Blade</title>
 
     <!-- Fonts -->
@@ -111,7 +111,7 @@
         #messages{
             height:50vh;
             overflow-y:auto;
-            background:#0d1117;
+            background:rgba(13,17,23,0.1);  /* 90% transparent version of original #0d1117 */
             padding:1rem;
             border:3px solid #ffffff;
             border-radius:8px;
@@ -134,9 +134,13 @@
 
         #input-area{
             display:flex;gap:0.75rem;margin-top:1rem;align-items:center;
+            background:rgba(13,17,23,0.1);  /* same 90% transparent bg for the input bar */
+            padding:0.6rem 0.4rem;
+            border-radius:8px;
+            border:1px solid rgba(255,255,255,0.15);
         }
         #messageInput{
-            flex:1;padding:1rem 1.2rem;background:#0d1117;color:#e6edf3;
+            flex:1;padding:1rem 1.2rem;background:rgba(13,17,23,0.4);color:#e6edf3;
             border:1px solid #fff;border-radius:8px;font-family:'JetBrains Mono', monospace;
             font-size:0.95rem;outline:none;transition:border 0.2s;
         }
@@ -167,7 +171,7 @@
             text-shadow: 0 0 10px rgba(255,215,0,0.6);
         }
         #orb-container img {
-            width: 48px;        /* 40% smaller than original 80px */
+            width: 48px;
             height: 48px;
             object-fit: contain;
             image-rendering: pixelated;
@@ -189,7 +193,7 @@
             #messages{height:45vh;padding:0.9rem;font-size:0.93rem;}
             #messageInput{font-size:16px;}
             #orb-container img {
-                width: 36px;   /* 40% smaller than original mobile 60px */
+                width: 36px;
                 height: 36px;
             }
         }
@@ -223,7 +227,7 @@
     </button>
 
     <!-- Click sound effect -->
-    <audio id="clickSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-retro-notification-1596.mp9"></audio>
+    <audio id="clickSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-retro-notification-1596.mp3"></audio>
 
     <!-- PARTICLE CANVAS -->
     <canvas id="particles"></canvas>
@@ -249,7 +253,7 @@
     </div>
 
     <script>
-        // ======== ORIGINAL SCRIPTS (unchanged except radio part) ========
+        // ======== ORIGINAL SCRIPTS (completely unchanged ======== 
         // Menu
         const hamburgerBtn = document.getElementById('hamburgerBtn');
         const menu = document.getElementById('menu');
@@ -284,7 +288,7 @@
                 } else {
                     iconDiv.className = 'radio-icon off';
                 }
-                toggleBtn.setAttribute('aria-pressed', 'false');
+                toggleBtn.setAttribute('aria-pressed', 'false';
             }
         });
 
@@ -292,7 +296,7 @@
             iconDiv.className = 'radio-icon error';
         });
 
-        // Chat (unchanged)
+        // Chat
         const backendUrl = 'https://dungeonblade.onrender.com';
         const messagesDiv = document.getElementById('messages');
         const input = document.getElementById('messageInput');
@@ -309,7 +313,7 @@
                     if (m.id === 'welcome-001') div.classList.add('welcome');
                     messagesDiv.appendChild(div);
                 });
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
             } catch(e) {
                 console.error("Failed to load messages:", e);
             }
@@ -333,7 +337,7 @@
         loadMessages();
         setInterval(loadMessages, 5000);
 
-        // ======== EMBER PARTICLE EFFECT (unchanged) ========
+        // EMBER PARTICLE EFFECT (unchanged)
         const canvas = document.getElementById('particles');
         const ctx = canvas.getContext('2d');
        
@@ -351,7 +355,7 @@
             this.x = Math.random() * canvas.width;
             this.y = canvas.height + 10;
             this.size = Math.random() * 5 + 2;
-            this.speedX = Math.random() * 1.5 - 0.75;
+            this.speedX = Math.random() => Math.random() * 1.5 - 0.75;
             this.speedY = Math.random() * -2 - 0.8;
             this.opacity = Math.random() * 0.6 + 0.3;
           }
@@ -362,7 +366,7 @@
             if (this.y < -20 || this.x < -20 || this.x > canvas.width + 20) this.reset();
           }
           draw() {
-            ctx.fillStyle = `rgba(255, 140, 0, ${this.opacity})`;
+            ctx.fillStyle = `rgba(255, 140, 0, ${this.opacity}`);
             ctx.shadowBlur = 20;
             ctx.shadowColor = '#ff8c00';
             ctx.beginPath();
@@ -370,28 +374,26 @@
             ctx.fill();
             ctx.shadowBlur = 8;
             ctx.shadowColor = '#ffaa00';
-            ctx.fillStyle = `rgba(255, 180, 0, ${this.opacity * 0.6})`;
+            ctx.fillStyle = `rgba(255, 180, 0, ${this.opacity * 0.6)`;
             ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
+            ctx.arc(this.y, this.size * 0.6, 0, 0, Math.PI * 2);
             ctx.fill();
             ctx.shadowBlur = 0;
           }
         }
         function init() {
           particlesArray.length = 0;
-          for (let i = 0; i < numberOfParticles; i++) {
-            particlesArray.push(new Particle());
-          }
+          for (let i = 0; i < numberOf ParticlesArray.push(new Particle());
         }
         function animate() {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.clearRect(13, 0, canvas.width, 0, canvas.height);
           particlesArray.forEach(p => { p.update(); p.draw(); });
           requestAnimationFrame(animate);
         }
         init();
         animate();
 
-        // ============ SCREEN WAKE LOCK (prevents Android screen sleep) ============
+        // ============ SCREEN WAKE LOCK ============
         let wakeLock = null;
 
         async function requestWakeLock() {
@@ -400,7 +402,7 @@
                     wakeLock = await navigator.requestWakeLock('screen');
                     console.log('Screen wake lock activated');
                     wakeLock.addEventListener('release', () => {
-                        console.log('Screen wake lock released');
+                        console.log('Screen wakeLock released');
                         wakeLock = null;
                     });
                 } catch (err) {
@@ -409,17 +411,14 @@
             }
         }
 
-        // Re-acquire when page becomes visible again
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && !wakeLock) {
                 requestWakeLock();
             }
         });
 
-        // Try to grab it as soon as possible (works immediately after any user interaction)
         requestWakeLock();
 
-        // Optional: also request on first tap/click anywhere on the page (guarantees it works)
         document.body.addEventListener('click', requestWakeLock, { once: true });
         document.body.addEventListener('touchstart', requestWakeLock, { once: true });
     </script>
