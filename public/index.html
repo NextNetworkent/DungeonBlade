@@ -390,6 +390,38 @@
         }
         init();
         animate();
+
+        // ============ SCREEN WAKE LOCK (prevents Android screen sleep) ============
+        let wakeLock = null;
+
+        async function requestWakeLock() {
+            if ('requestWakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.requestWakeLock('screen');
+                    console.log('Screen wake lock activated');
+                    wakeLock.addEventListener('release', () => {
+                        console.log('Screen wake lock released');
+                        wakeLock = null;
+                    });
+                } catch (err) {
+                    console.error('Wake lock failed:', err.name, err.message);
+                }
+            }
+        }
+
+        // Re-acquire when page becomes visible again
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && !wakeLock) {
+                requestWakeLock();
+            }
+        });
+
+        // Try to grab it as soon as possible (works immediately after any user interaction)
+        requestWakeLock();
+
+        // Optional: also request on first tap/click anywhere on the page (guarantees it works)
+        document.body.addEventListener('click', requestWakeLock, { once: true });
+        document.body.addEventListener('touchstart', requestWakeLock, { once: true });
     </script>
 </body>
 </html>
