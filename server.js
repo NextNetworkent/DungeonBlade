@@ -8,7 +8,7 @@ let messages = [];
 
 // === ADD THIS: Persistent Welcome Message ===
 const WELCOME_MESSAGE = {
-  text: "Welcome to the Boar's Breath Tavern Live Chatroom. Say hello. No login required. ",
+  text: "Welcome to the Boar's Breath Tavern. No login required. ",
   timestamp: new Date().toISOString(),
   id: "welcome-001"  // fixed ID so we can detect it
 };
