@@ -85,8 +85,15 @@
         }
     }
 
-    /* ---- rest of your styles unchanged ---- */
-    .logo-fill {width:100%;max-height:70vh;object-fit:contain;display:block;margin:0 auto;background:#000;}
+    /* ---- Changed logo size only ---- */
+    .logo-fill {
+        width: 280px;           /* much smaller fixed width */
+        height: auto;
+        display: block;
+        margin: 1.5rem auto 0; /* reduced top margin */
+        background: #000;
+    }
+
     main {flex:1;max-width:900px;width:100%;margin:0 auto;padding:0 1rem;}
     .title-image {display:block;width:90%;max-width:500px;height:auto;margin:3rem auto 2rem;}
     h2 {font-size:1.6rem;margin:2.5rem 0 1rem;color:#00ff99;text-align:center;}
@@ -98,7 +105,6 @@
     a.patreon-link, a.youtube-link {color:#00ff99 !important;font-weight:bold;text-decoration:none;}
     a.patreon-link:hover, a.youtube-link:hover {text-decoration:underline;}
     footer {text-align:center;padding:2rem 1rem;font-size:0.9rem;color:#666;background:#000;}
-    @media (max-width:600px){.logo-fill {max-height:50vh;}}
   </style>
 </head>
 <body>
@@ -116,6 +122,7 @@
       <h2>Adventure Game</h2>
   </div>
 
+  <!-- Logo is now much smaller -->
   <img src="DungeonBladeLogo1.png" alt="Dungeon Blade Logo" class="logo-fill">
 
   <main>
@@ -131,7 +138,6 @@
               allowfullscreen></iframe>
     </div>
 
-    <!-- rest of your content unchanged -->
     <h2>Overview</h2>
     <p>Dungeon Blade is an aiTTRPG — an artificially intelligent dungeon master that guides you and other players through role-playing adventures using voice-acted NPCs, ambience, music, and sound effects.</p>
     <p>Create a character, customize your profile, and jump into the Tavern to chat, plan adventures, or just hang out. Watch live games, join campaigns, or relax with the Bard Radio audio stream.</p>
