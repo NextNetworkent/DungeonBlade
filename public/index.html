@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Tavern – Dungeon Blade</title>
+    <title>The Dungeon Blade Tavern</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap" rel="stylesheet">
@@ -104,12 +104,20 @@
             margin-top:80px;
         }
 
+        /* ---------- YOUTUBE PLAYLIST (above chat) ---------- */
+        #youtube-player{
+            max-width:900px;
+            margin:1.5rem auto;
+            padding:0 1rem;
+            aspect-ratio:16/9;
+        }
+
         /* ---------- TAVERN CHAT ---------- */
         #chat-section{
-            max-width:900px;margin:1.5rem auto;padding:0 1rem;
+            max-width:900px;margin:0 auto 1.5rem auto;padding:0 1rem;
         }
         #messages{
-            height:50vh;
+            height:25vh;
             overflow-y:auto;
             background:#0d1117;
             padding:1rem;
@@ -119,7 +127,7 @@
             flex-direction:column;
             gap:0.8rem;
             font-family:'JetBrains Mono', monospace;
-            font-size:0.95rem;
+            font-size:0.80rem;
             line-height:1.5;
         }
 
@@ -138,7 +146,7 @@
         #messageInput{
             flex:1;padding:1rem 1.2rem;background:#0d1117;color:#e6edf3;
             border:1px solid #fff;border-radius:8px;font-family:'JetBrains Mono', monospace;
-            font-size:0.95rem;outline:none;transition:border 0.2s;
+            font-size:0.80rem;outline:none;transition:border 0.2s;
         }
         #messageInput:focus{border:1px solid #58a6ff;box-shadow:0 0 0 2px rgba(88,166,255,0.2);}
         #messageInput::placeholder{color:#7d8590}
@@ -148,21 +156,6 @@
             cursor:pointer;transition:background 0.2s;
         }
         #sendBtn:hover{background:#2ea043}
-
-        /* ---------- ORB GIF (centered under chat box) ---------- */
-        #orb-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 2rem;
-            padding-bottom: 2rem;
-        }
-        #orb-container img {
-            width: 80px;        /* small size */
-            height: 80px;
-            object-fit: contain;
-            image-rendering: pixelated;  /* keeps it crisp if it's pixel art */
-            opacity: 0.9;
-        }
 
         /* Scrollbar */
         #messages::-webkit-scrollbar{width:6px}
@@ -176,12 +169,8 @@
             #radioToggle{top:0.6rem;right:0.6rem;}
             .radio-icon{width:36px;height:36px;border-width:2.5px;font-size:22px;}
             body > *:not(#header):not(#radioToggle){margin-top:70px;}
-            #messages{height:45vh;padding:0.9rem;font-size:0.93rem;}
+            #messages{height:22.5vh;font-size:0.78rem;}
             #messageInput{font-size:16px;}
-            #orb-container img {
-                width: 60px;
-                height: 60px;
-            }
         }
 
         /* ---------- PARTICLE EFFECT ---------- */
@@ -204,7 +193,7 @@
             <li><a href="/game.html">Game</a></li>
         </ul>
         <h1>The Tavern</h1>
-        <h2>Where Legends Gather</h2>
+        <h2>Where Heroes Gather</h2>
     </div>
 
     <!-- Tiny fixed radio button (top-right) -->
@@ -213,7 +202,7 @@
     </button>
 
     <!-- Click sound effect -->
-    <audio id="clickSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-retro-notification-1596.mp9"></audio>
+    <audio id="clickSound" preload="auto" src="https://assets.mixkit.co/sfx/preview/mixkit-unlock-game-retro-notification-1596.mp3"></audio>
 
     <!-- PARTICLE CANVAS -->
     <canvas id="particles"></canvas>
@@ -223,17 +212,22 @@
         <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
     </audio>
 
+    <!-- YOUTUBE PLAYLIST - NOW REPLACES THE ORB, AUTOPLAYS WITH SOUND ON -->
+    <div id="youtube-player">
+        <iframe 
+            src="https://www.youtube.com/embed/videoseries?list=PLtQPKmsul0-nxE6dE4e6tLZeDcMbAsF6G&autoplay=1&mute=0&loop=1&playlist=PLtQPKmsul0-nxE6dE4e6tLZeDcMbAsF6G&rel=0&controls=1&modestbranding=1" 
+            frameborder="0" 
+            allow="autoplay; encrypted-media; picture-in-picture" 
+            allowfullscreen>
+        </iframe>
+    </div>
+
     <!-- TAVERN CHAT -->
     <div id="chat-section">
         <div id="messages"></div>
         <div id="input-area">
-            <input type="text" id="messageInput" placeholder="Speak to the room..." autocomplete="off" />
-            <button id="sendBtn">Send</button>
-        </div>
-
-        <!-- ORB GIF centered below the chat box -->
-        <div id="orb-container">
-            <img src="orb.gif" alt="Mysterious Orb">
+            <input type="text" id="messageInput" placeholder=">>" autocomplete="off" />
+            <button id="sendBtn">Say</button>
         </div>
     </div>
 
@@ -379,6 +373,35 @@
         }
         init();
         animate();
+
+        // ============ SCREEN WAKE LOCK (prevents Android screen sleep) ============
+        let wakeLock = null;
+
+        async function requestWakeLock() {
+            if ('wakeLock' in navigator) {
+                try {
+                    wakeLock = await navigator.wakeLock.request('screen');
+                    console.log('Screen wake lock activated');
+                    wakeLock.addEventListener('release', () => {
+                        console.log('Screen wake lock released');
+                        wakeLock = null;
+                    });
+                } catch (err) {
+                    console.error('Wake lock failed:', err.name, err.message);
+                }
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && !wakeLock) {
+                requestWakeLock();
+            }
+        });
+
+        requestWakeLock();
+
+        document.body.addEventListener('click', requestWakeLock, { once: true });
+        document.body.addEventListener('touchstart', requestWakeLock, { once: true });
     </script>
 </body>
 </html>
