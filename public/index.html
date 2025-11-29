@@ -104,12 +104,20 @@
             margin-top:80px;
         }
 
+        /* ---------- YOUTUBE PLAYLIST (above chat) ---------- */
+        #youtube-player{
+            max-width:900px;
+            margin:1.5rem auto;
+            padding:0 1rem;
+            aspect-ratio:16/9;
+        }
+
         /* ---------- TAVERN CHAT ---------- */
         #chat-section{
-            max-width:900px;margin:1.5rem auto;padding:0 1rem;
+            max-width:900px;margin:0 auto 1.5rem auto;padding:0 1rem;
         }
         #messages{
-            height:50vh;
+            height:25vh;                  /* ← HALF the original height */
             overflow-y:auto;
             background:#0d1117;
             padding:1rem;
@@ -119,7 +127,7 @@
             flex-direction:column;
             gap:0.8rem;
             font-family:'JetBrains Mono', monospace;
-            font-size:0.95rem;
+            font-size:0.80rem;            /* ← Smaller text */
             line-height:1.5;
         }
 
@@ -138,7 +146,7 @@
         #messageInput{
             flex:1;padding:1rem 1.2rem;background:#0d1117;color:#e6edf3;
             border:1px solid #fff;border-radius:8px;font-family:'JetBrains Mono', monospace;
-            font-size:0.95rem;outline:none;transition:border 0.2s;
+            font-size:0.80rem;outline:none;transition:border 0.2s;
         }
         #messageInput:focus{border:1px solid #58a6ff;box-shadow:0 0 0 2px rgba(88,166,255,0.2);}
         #messageInput::placeholder{color:#7d8590}
@@ -167,7 +175,7 @@
             text-shadow: 0 0 10px rgba(255,215,0,0.6);
         }
         #orb-container img {
-            width: 48px;        /* 40% smaller than original 80px */
+            width: 48px;
             height: 48px;
             object-fit: contain;
             image-rendering: pixelated;
@@ -186,10 +194,10 @@
             #radioToggle{top:0.6rem;right:0.6rem;}
             .radio-icon{width:36px;height:36px;border-width:2.5px;font-size:22px;}
             body > *:not(#header):not(#radioToggle){margin-top:70px;}
-            #messages{height:45vh;padding:0.9rem;font-size:0.93rem;}
+            #messages{height:22.5vh;font-size:0.78rem;}  /* half height + smaller text on mobile */
             #messageInput{font-size:16px;}
             #orb-container img {
-                width: 36px;   /* 40% smaller than original mobile 60px */
+                width: 36px;
                 height: 36px;
             }
         }
@@ -199,7 +207,7 @@
             position:fixed;top:0;left:0;width:100%;height:100%;
             pointer-events:none;z-index:0;
         }
-    </style>
+    </styleограф
 </head>
 <body>
 
@@ -232,6 +240,16 @@
     <audio id="everlookAudio" preload="metadata" crossorigin>
         <source src="https://sgradio.turtle-music.org/stream" type="audio/mpeg">
     </audio>
+
+    <!-- YOUTUBE PLAYLIST (autoplay, above chat) -->
+    <div id="youtube-player">
+        <iframe 
+            src="https://www.youtube.com/embed?list=PLtQPKmsul0-nxE6dE4e6tLZeDcMbAsF6G&autoplay=1&mute=1&loop=1&playlist=PLtQPKmsul0-nxE6dE4e6tLZeDcMbAsF6G&rel=0&controls=1&modestbranding=1" 
+            frameborder="0" 
+            allow="autoplay; encrypted-media" 
+            allowfullscreen>
+        </iframe>
+    </div>
 
     <!-- TAVERN CHAT -->
     <div id="chat-section">
@@ -409,17 +427,14 @@
             }
         }
 
-        // Re-acquire when page becomes visible again
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && !wakeLock) {
                 requestWakeLock();
             }
         });
 
-        // Try to grab it as soon as possible (works immediately after any user interaction)
         requestWakeLock();
 
-        // Optional: also request on first tap/click anywhere on the page (guarantees it works)
         document.body.addEventListener('click', requestWakeLock, { once: true });
         document.body.addEventListener('touchstart', requestWakeLock, { once: true });
     </script>
