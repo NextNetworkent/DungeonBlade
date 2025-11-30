@@ -27,12 +27,16 @@
         }
         #header h1,#header h2{margin:0}
         #header h1{
-            color:#fff;font-size:24px;
+            color:#fff;
+            font-size:20px;                  /* reduced from 24px */
             font-family:'IM Fell English SC',serif;letter-spacing:1px;
+            line-height:1.1;
         }
         #header h2{
-            color:#ffd700;font-size:18px;
+            color:#ffd700;
+            font-size:15px;                    /* reduced from 18px */
             font-family:'IM Fell English SC',serif;letter-spacing:.5px;
+            line-height:1.1;
         }
 
         /* Hamburger */
@@ -53,7 +57,7 @@
         }
         #menu.show{display:block}
         #menu a{
-            color:#cfcfcf;text-decoration:none;padding:.5rem 1rem;
+            color:#cfcf;text-decoration:none;padding:.5rem 1rem;
             display:block;white-space:nowrap;
         }
         #menu a:hover{background:#2a323a}
@@ -150,9 +154,11 @@
         #messages::-webkit-scrollbar-track{background:transparent}
         #messages::-webkit-scrollbar-thumb{background:#30363d;border-radius:3px}
 
-        /* Mobile */
+        /* Mobile adjustments */
         @media (max-width:600px){
             #header{padding:1rem 4rem 1rem 4rem;height:64px;}
+            #header h1{font-size:18px;}   /* even smaller on very small screens */
+            #header h2{font-size:14px;}
             .hamburger{top:0.8rem;left:0.8rem;}
             #radioToggle{top:0.6rem;right:0.6rem;}
             .radio-icon{width:36px;height:36px;border-width:2.5px;font-size:22px;}
@@ -203,7 +209,7 @@
     <!-- MAIN CONTENT WRAPPER -->
     <div class="main-content">
 
-        <!-- YOUTUBE PLAYER - Perfectly centered, responsive, no gap below -->
+        <!-- YOUTUBE PLAYER -->
         <div class="video-container">
             <div class="video-wrapper">
                 <iframe 
@@ -214,7 +220,7 @@
             </div>
         </div>
 
-        <!-- CHAT (immediately follows video) -->
+        <!-- CHAT -->
         <div id="chat-section">
             <div id="messages">
                 <!-- Messages loaded by JS -->
