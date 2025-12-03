@@ -8,7 +8,7 @@ let messages = [];
 
 // === ADD THIS: Persistent Welcome Message ===
 const WELCOME_MESSAGE = {
-  text: "Happy Holiday Season from Next Network entertainment!",
+  text: "Happy Holiday Season from Next Network entertainment! Enjoy the playlist we have made for you entitled 'Have yourself a Wookiee little Christmas'",
   timestamp: new Date().toISOString(),
   id: "welcome-001"  // fixed ID so we can detect it
 };
