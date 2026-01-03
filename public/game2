@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Vector Lander Side Scroller</title>
+    <style>
+        body { margin: 0; background: black; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Game variables
+        let lander = {
+            x: 100,
+            y: 100,
+            vx: 0,
+            vy: 0,
+            thrust: 0.2,
+            gravity: 0.05,
+            angle: 0, // For rotation, but keeping simple
+            fuel: 1000,
+            landed: false
+        };
+
+        let keys = {};
+        let terrain = generateTerrain();
+        let cameraX = 0; // For side-scrolling
+
+        // Generate random terrain
+        function generateTerrain() {
+            let points = [];
+            let y = canvas.height * 0.7;
+            for (let x = 0; x < canvas.width * 3; x += 20) { // Extend terrain for scrolling
+                points.push({x: x, y: y});
+                y += Math.random() * 40 - 20;
+                y = Math.max(canvas.height * 0.5, Math.min(canvas.height * 0.9, y));
+            }
+            return points;
+        }
+
+        // Handle key presses
+        window.addEventListener('keydown', (e) => { keys[e.key] = true; });
+        window.addEventListener('keyup', (e) => { keys[e.key] = false; });
+
+        // Update game state
+        function update() {
+            if (lander.landed) return;
+
+            // Gravity
+            lander.vy += lander.gravity;
+
+            // Controls
+            if (keys['ArrowUp'] && lander.fuel > 0) {
+                lander.vy -= lander.thrust;
+                lander.fuel -= 1;
+            }
+            if (keys['ArrowLeft']) {
+                lander.vx -= 0.1;
+            }
+            if (keys['ArrowRight']) {
+                lander.vx += 0.1;
+            }
+
+            // Update position
+            lander.x += lander.vx;
+            lander.y += lander.vy;
+
+            // Camera follows lander for side-scrolling
+            cameraX = Math.max(0, lander.x - canvas.width / 2);
+
+            // Check collision with terrain
+            for (let i = 0; i < terrain.length - 1; i++) {
+                let p1 = terrain[i];
+                let p2 = terrain[i+1];
+                if (lander.x >= p1.x && lander.x <= p2.x) {
+                    let terrainY = p1.y + (p2.y - p1.y) * (lander.x - p1.x) / (p2.x - p1.x);
+                    if (lander.y >= terrainY - 20) { // Lander height approximation
+                        lander.landed = true;
+                        if (Math.abs(lander.vy) > 2 || Math.abs(lander.vx) > 2) {
+                            alert('Crash!');
+                        } else {
+                            alert('Safe landing!');
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // Boundaries
+            if (lander.y > canvas.height) lander.y = canvas.height;
+            if (lander.x < 0) lander.x = 0;
+        }
+
+        // Draw everything
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw terrain
+            ctx.beginPath();
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+            ctx.moveTo(terrain[0].x - cameraX, terrain[0].y);
+            for (let point of terrain) {
+                ctx.lineTo(point.x - cameraX, point.y);
+            }
+            ctx.stroke();
+
+            // Draw lander (simple vector shape: triangle with legs)
+            ctx.beginPath();
+            ctx.moveTo(lander.x - cameraX, lander.y - 20); // Top
+            ctx.lineTo(lander.x - cameraX - 10, lander.y); // Left bottom
+            ctx.lineTo(lander.x - cameraX + 10, lander.y); // Right bottom
+            ctx.closePath();
+            ctx.stroke();
+
+            // Legs
+            ctx.moveTo(lander.x - cameraX - 10, lander.y);
+            ctx.lineTo(lander.x - cameraX - 15, lander.y + 10);
+            ctx.moveTo(lander.x - cameraX + 10, lander.y);
+            ctx.lineTo(lander.x - cameraX + 15, lander.y + 10);
+            ctx.stroke();
+
+            // Thrust flame if thrusting
+            if (keys['ArrowUp'] && lander.fuel > 0) {
+                ctx.beginPath();
+                ctx.moveTo(lander.x - cameraX - 5, lander.y);
+                ctx.lineTo(lander.x - cameraX, lander.y + 15);
+                ctx.lineTo(lander.x - cameraX + 5, lander.y);
+                ctx.stroke();
+            }
+
+            // HUD
+            ctx.fillStyle = 'white';
+            ctx.font = '16px Arial';
+            ctx.fillText(`Fuel: ${lander.fuel}`, 10, 20);
+            ctx.fillText(`Velocity: ${lander.vx.toFixed(1)}, ${lander.vy.toFixed(1)}`, 10, 40);
+        }
+
+        // Game loop
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            terrain = generateTerrain(); // Regenerate on resize
+        });
+    </script>
+</body>
+</html>
