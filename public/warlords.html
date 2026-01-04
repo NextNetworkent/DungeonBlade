@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Vector Lander Side Scroller</title>
+    <title>World Warlords</title>
     <style>
         body { margin: 0; background: black; }
         canvas { display: block; }
@@ -15,151 +15,177 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Set canvas size
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        let gravity = 0.05;
+        let projectiles = [];
+        let turn = true; // true for left, false for right
+        let delay_counter = 0;
+        let last_projectile_count = 0;
+        let left_terrain, right_terrain, base_y, left_base_x, right_base_x;
+        let square_size = 20;
+        let barrel_length = 15;
+        let dot_radius = 3;
 
-        // Game variables
-        let lander = {
-            x: 100,
-            y: 100,
-            vx: 0,
-            vy: 0,
-            thrust: 0.2,
-            gravity: 0.05,
-            angle: 0, // For rotation, but keeping simple
-            fuel: 1000,
-            landed: false
-        };
-
-        let keys = {};
-        let terrain = generateTerrain();
-        let cameraX = 0; // For side-scrolling
-
-        // Generate random terrain
-        function generateTerrain() {
+        function generateMountain(start_x, end_x, isLeft) {
             let points = [];
-            let y = canvas.height * 0.7;
-            for (let x = 0; x < canvas.width * 3; x += 20) { // Extend terrain for scrolling
-                points.push({x: x, y: y});
-                y += Math.random() * 40 - 20;
-                y = Math.max(canvas.height * 0.5, Math.min(canvas.height * 0.9, y));
+            let width = end_x - start_x;
+            let peak_x = start_x + width * 0.5 + (Math.random() * width * 0.2 - width * 0.1);
+            let peak_y = -Math.random() * canvas.height * 0.2;
+            let x = start_x;
+            let y = canvas.height;
+            points.push({x, y});
+            while (x < peak_x) {
+                x += Math.random() * 20 + 10;
+                if (x > peak_x) x = peak_x;
+                y = canvas.height - (canvas.height - peak_y) * (x - start_x) / (peak_x - start_x) + Math.random() * 50 - 25;
+                y = Math.max(peak_y, y);
+                points.push({x, y});
+            }
+            x = peak_x;
+            y = peak_y;
+            while (x < end_x) {
+                x += Math.random() * 20 + 10;
+                if (x > end_x) x = end_x;
+                y = peak_y + (canvas.height - peak_y) * (x - peak_x) / (end_x - peak_x) + Math.random() * 50 - 25;
+                y = Math.min(canvas.height, y);
+                points.push({x, y});
             }
             return points;
         }
 
-        // Handle key presses
-        window.addEventListener('keydown', (e) => { keys[e.key] = true; });
-        window.addEventListener('keyup', (e) => { keys[e.key] = false; });
-
-        // Update game state
-        function update() {
-            if (lander.landed) return;
-
-            // Gravity
-            lander.vy += lander.gravity;
-
-            // Controls
-            if (keys['ArrowUp'] && lander.fuel > 0) {
-                lander.vy -= lander.thrust;
-                lander.fuel -= 1;
-            }
-            if (keys['ArrowLeft']) {
-                lander.vx -= 0.1;
-            }
-            if (keys['ArrowRight']) {
-                lander.vx += 0.1;
-            }
-
-            // Update position
-            lander.x += lander.vx;
-            lander.y += lander.vy;
-
-            // Camera follows lander for side-scrolling
-            cameraX = Math.max(0, lander.x - canvas.width / 2);
-
-            // Check collision with terrain
+        function getXAtY(terrain, target_y) {
             for (let i = 0; i < terrain.length - 1; i++) {
                 let p1 = terrain[i];
-                let p2 = terrain[i+1];
-                if (lander.x >= p1.x && lander.x <= p2.x) {
-                    let terrainY = p1.y + (p2.y - p1.y) * (lander.x - p1.x) / (p2.x - p1.x);
-                    if (lander.y >= terrainY - 20) { // Lander height approximation
-                        lander.landed = true;
-                        if (Math.abs(lander.vy) > 2 || Math.abs(lander.vx) > 2) {
-                            alert('Crash!');
-                        } else {
-                            alert('Safe landing!');
-                        }
-                        break;
-                    }
+                let p2 = terrain[i + 1];
+                if ((p1.y <= target_y && p2.y >= target_y) || (p1.y >= target_y && p2.y <= target_y)) {
+                    let frac = (target_y - p1.y) / (p2.y - p1.y);
+                    return p1.x + frac * (p2.x - p1.x);
                 }
             }
-
-            // Boundaries
-            if (lander.y > canvas.height) lander.y = canvas.height;
-            if (lander.x < 0) lander.x = 0;
+            return terrain[terrain.length - 1].x;
         }
 
-        // Draw everything
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            base_y = canvas.height / 2;
+            left_terrain = generateMountain(0, canvas.width * 0.4, true);
+            right_terrain = generateMountain(canvas.width * 0.6, canvas.width, false);
+            left_base_x = getXAtY(left_terrain, base_y);
+            right_base_x = getXAtY(right_terrain, base_y);
+        }
+
+        function shoot(from_left) {
+            let start_x = from_left ? left_base_x + barrel_length : right_base_x - barrel_length;
+            let start_y = base_y;
+            let target_x = from_left ? right_base_x : left_base_x;
+            let target_y = base_y;
+            let dist = Math.abs(target_x - start_x);
+            let dir = from_left ? 1 : -1;
+            let speed = 5;
+            let vx = speed * dir;
+            let t = dist / speed;
+            let vy = ((target_y - start_y) - 0.5 * gravity * t * t) / t;
+            projectiles.push({x: start_x, y: start_y, vx: vx, vy: vy});
+        }
+
+        function update() {
+            projectiles.forEach(p => {
+                p.vy += gravity;
+                p.x += p.vx;
+                p.y += p.vy;
+            });
+
+            projectiles = projectiles.filter(p => {
+                if (p.y > canvas.height || p.x < 0 || p.x > canvas.width) return false;
+                let target_x = p.vx > 0 ? right_base_x : left_base_x;
+                let target_y = base_y;
+                if (Math.hypot(p.x - target_x, p.y - target_y) < 10) return false;
+                return true;
+            });
+
+            if (projectiles.length === 0 && last_projectile_count > 0) {
+                delay_counter = 60;
+            }
+            last_projectile_count = projectiles.length;
+
+            if (delay_counter > 0) {
+                delay_counter--;
+            } else if (projectiles.length === 0) {
+                shoot(turn);
+                turn = !turn;
+            }
+        }
+
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Draw terrain
+            // Draw left terrain
             ctx.beginPath();
             ctx.strokeStyle = 'white';
             ctx.lineWidth = 2;
-            ctx.moveTo(terrain[0].x - cameraX, terrain[0].y);
-            for (let point of terrain) {
-                ctx.lineTo(point.x - cameraX, point.y);
+            ctx.moveTo(left_terrain[0].x, left_terrain[0].y);
+            for (let point of left_terrain) {
+                ctx.lineTo(point.x, point.y);
             }
             ctx.stroke();
 
-            // Draw lander (simple vector shape: triangle with legs)
+            // Draw right terrain
             ctx.beginPath();
-            ctx.moveTo(lander.x - cameraX, lander.y - 20); // Top
-            ctx.lineTo(lander.x - cameraX - 10, lander.y); // Left bottom
-            ctx.lineTo(lander.x - cameraX + 10, lander.y); // Right bottom
-            ctx.closePath();
-            ctx.stroke();
-
-            // Legs
-            ctx.moveTo(lander.x - cameraX - 10, lander.y);
-            ctx.lineTo(lander.x - cameraX - 15, lander.y + 10);
-            ctx.moveTo(lander.x - cameraX + 10, lander.y);
-            ctx.lineTo(lander.x - cameraX + 15, lander.y + 10);
-            ctx.stroke();
-
-            // Thrust flame if thrusting
-            if (keys['ArrowUp'] && lander.fuel > 0) {
-                ctx.beginPath();
-                ctx.moveTo(lander.x - cameraX - 5, lander.y);
-                ctx.lineTo(lander.x - cameraX, lander.y + 15);
-                ctx.lineTo(lander.x - cameraX + 5, lander.y);
-                ctx.stroke();
+            ctx.moveTo(right_terrain[0].x, right_terrain[0].y);
+            for (let point of right_terrain) {
+                ctx.lineTo(point.x, point.y);
             }
+            ctx.stroke();
 
-            // HUD
-            ctx.fillStyle = 'white';
-            ctx.font = '16px Arial';
-            ctx.fillText(`Fuel: ${lander.fuel}`, 10, 20);
-            ctx.fillText(`Velocity: ${lander.vx.toFixed(1)}, ${lander.vy.toFixed(1)}`, 10, 40);
+            // Draw chasm walls
+            let left_edge = left_terrain[left_terrain.length - 1];
+            ctx.beginPath();
+            ctx.moveTo(left_edge.x, left_edge.y);
+            ctx.lineTo(left_edge.x, canvas.height);
+            ctx.stroke();
+
+            let right_edge = right_terrain[0];
+            ctx.beginPath();
+            ctx.moveTo(right_edge.x, right_edge.y);
+            ctx.lineTo(right_edge.x, canvas.height);
+            ctx.stroke();
+
+            // Draw left square
+            let square_y = base_y - square_size / 2;
+            let left_square_x = left_base_x - square_size / 2;
+            ctx.strokeRect(left_square_x, square_y, square_size, square_size);
+
+            // Draw right square
+            let right_square_x = right_base_x - square_size / 2;
+            ctx.strokeRect(right_square_x, square_y, square_size, square_size);
+
+            // Draw left barrel
+            let barrel_y = base_y - 2.5;
+            ctx.strokeRect(left_base_x, barrel_y, barrel_length, 5);
+
+            // Draw right barrel
+            ctx.strokeRect(right_base_x - barrel_length, barrel_y, barrel_length, 5);
+
+            // Draw projectiles
+            for (let p of projectiles) {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, dot_radius, 0, 2 * Math.PI);
+                ctx.fillStyle = 'white';
+                ctx.fill();
+            }
         }
 
-        // Game loop
         function loop() {
             update();
             draw();
             requestAnimationFrame(loop);
         }
 
+        init();
         loop();
 
-        // Resize handler
         window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            terrain = generateTerrain(); // Regenerate on resize
+            init();
         });
     </script>
 </body>
