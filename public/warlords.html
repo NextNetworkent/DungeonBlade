@@ -15,114 +15,267 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
-        let gravity = 0.05;
+        let gravity = 0.1;
         let projectiles = [];
+        let explosions = [];
         let turn = true; // true for left, false for right
-        let delay_counter = 0;
-        let last_projectile_count = 0;
-        let left_terrain, right_terrain, base_y, left_base_x, right_base_x;
-        let square_size = 20;
-        let barrel_length = 15;
-        let dot_radius = 3;
+        let aiming = false;
+        let aimStartTime = 0;
+        let aimDuration = 3000; // 3 seconds
+        let travelTime = 2; // 2 seconds target
+        let leftAngle = 0;
+        let rightAngle = 0;
+        let time = 0;
+        let leftShotCount = 0;
+        let rightShotCount = 0;
+        let gameOver = false;
+        let gameOverTime = 0;
+        let resetDelay = 5000; // 5 seconds after game over
+        let leftHealth = 1;
+        let rightHealth = 1;
+        let leftPieces = [];
+        let rightPieces = [];
+        let left_terrain, right_terrain, left_castle, right_castle;
+        let castleSize = 30;
+        let barrelLength = 15;
+        let dotRadius = 3;
+        let explosionDuration = 500; // ms
 
-        function generateMountain(start_x, end_x, isLeft) {
+        function generateCliff(start_x, end_x, descending) {
             let points = [];
-            let width = end_x - start_x;
-            let peak_x = start_x + width * 0.5 + (Math.random() * width * 0.2 - width * 0.1);
-            let peak_y = -Math.random() * canvas.height * 0.2;
             let x = start_x;
-            let y = canvas.height;
+            let y = descending ? 0 : canvas.height;
+            let dx = (end_x - start_x) / 20;
+            let dy = (canvas.height - 0) / 20 * (descending ? 1 : -1);
             points.push({x, y});
-            while (x < peak_x) {
-                x += Math.random() * 20 + 10;
-                if (x > peak_x) x = peak_x;
-                y = canvas.height - (canvas.height - peak_y) * (x - start_x) / (peak_x - start_x) + Math.random() * 50 - 25;
-                y = Math.max(peak_y, y);
-                points.push({x, y});
-            }
-            x = peak_x;
-            y = peak_y;
-            while (x < end_x) {
-                x += Math.random() * 20 + 10;
-                if (x > end_x) x = end_x;
-                y = peak_y + (canvas.height - peak_y) * (x - peak_x) / (end_x - peak_x) + Math.random() * 50 - 25;
-                y = Math.min(canvas.height, y);
+            for (let i = 0; i < 20; i++) {
+                x += dx + Math.random() * 10 - 5;
+                y += dy + Math.random() * 20 - 10;
+                if (descending) y = Math.max(0, Math.min(canvas.height, y));
+                else y = Math.min(canvas.height, Math.max(0, y));
                 points.push({x, y});
             }
             return points;
         }
 
-        function getXAtY(terrain, target_y) {
+        function getYAtX(terrain, target_x) {
             for (let i = 0; i < terrain.length - 1; i++) {
                 let p1 = terrain[i];
                 let p2 = terrain[i + 1];
-                if ((p1.y <= target_y && p2.y >= target_y) || (p1.y >= target_y && p2.y <= target_y)) {
-                    let frac = (target_y - p1.y) / (p2.y - p1.y);
-                    return p1.x + frac * (p2.x - p1.x);
+                if (target_x >= Math.min(p1.x, p2.x) && target_x <= Math.max(p1.x, p2.x)) {
+                    let frac = (target_x - p1.x) / (p2.x - p1.x);
+                    return p1.y + frac * (p2.y - p1.y);
                 }
             }
-            return terrain[terrain.length - 1].x;
+            return null;
         }
 
         function init() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            base_y = canvas.height / 2;
-            left_terrain = generateMountain(0, canvas.width * 0.4, true);
-            right_terrain = generateMountain(canvas.width * 0.6, canvas.width, false);
-            left_base_x = getXAtY(left_terrain, base_y);
-            right_base_x = getXAtY(right_terrain, base_y);
+            left_terrain = generateCliff(0, canvas.width * 0.45, true); // descending from top left
+            right_terrain = generateCliff(canvas.width, canvas.width * 0.55, false); // ascending from right bottom? Wait, adjust
+            right_terrain.reverse(); // to make descending from top right
+            left_castle = {x: canvas.width * 0.15, y: getYAtX(left_terrain, canvas.width * 0.15), angle: 0};
+            right_castle = {x: canvas.width * 0.85, y: getYAtX(right_terrain, canvas.width * 0.85), angle: 0};
+            projectiles = [];
+            explosions = [];
+            turn = true;
+            aiming = true;
+            aimStartTime = Date.now();
+            leftShotCount = 0;
+            rightShotCount = 0;
+            gameOver = false;
+            leftHealth = 1;
+            rightHealth = 1;
+            leftPieces = [];
+            rightPieces = [];
+        }
+
+        function startAiming() {
+            aiming = true;
+            aimStartTime = Date.now();
         }
 
         function shoot(from_left) {
-            let start_x = from_left ? left_base_x + barrel_length : right_base_x - barrel_length;
-            let start_y = base_y;
-            let target_x = from_left ? right_base_x : left_base_x;
-            let target_y = base_y;
-            let dist = Math.abs(target_x - start_x);
+            let castle = from_left ? left_castle : right_castle;
+            let target = from_left ? right_castle : left_castle;
             let dir = from_left ? 1 : -1;
-            let speed = 5;
-            let vx = speed * dir;
-            let t = dist / speed;
-            let vy = ((target_y - start_y) - 0.5 * gravity * t * t) / t;
-            projectiles.push({x: start_x, y: start_y, vx: vx, vy: vy});
+            let dist = Math.abs(target.x - castle.x);
+            let t = travelTime;
+            let vx = (dist / t) * dir;
+            let ideal_vy = 0.5 * gravity * t; // since y increases down, vy positive down, but to arc up, vy negative
+            // Wait, in canvas y down, gravity positive, to go up then down, vy negative
+            let idealVy = -0.5 * gravity * t + (target.y - castle.y) / t;
+            let error = (from_left ? leftShotCount : rightShotCount) * -5 + 30; // start high error, reduce
+            let vy = idealVy + error;
+            let angle = Math.atan2(vy, vx);
+            if (from_left) leftAngle = angle;
+            else rightAngle = angle;
+            let start_x = castle.x + dir * barrelLength * Math.cos(angle);
+            let start_y = castle.y - castleSize / 2 + barrelLength * Math.sin(angle); // cannon at mid height
+            projectiles.push({x: start_x, y: start_y, vx, vy});
+            if (from_left) leftShotCount++;
+            else rightShotCount++;
+        }
+
+        function checkCollision(p) {
+            if (p.y > canvas.height || p.x < 0 || p.x > canvas.width) return true;
+            let terrain = p.vx > 0 ? right_terrain : left_terrain;
+            let terrainY = getYAtX(terrain, p.x);
+            if (terrainY !== null && p.y > terrainY) return true;
+            return false;
+        }
+
+        function checkHitCastle(p, castle) {
+            let dx = p.x - castle.x;
+            let dy = p.y - (castle.y - castleSize / 2);
+            return Math.sqrt(dx*dx + dy*dy) < castleSize / 2 + dotRadius;
+        }
+
+        function crumbleCastle(isLeft) {
+            let castle = isLeft ? left_castle : right_castle;
+            let pieces = [];
+            // Create simple lines for crumbling
+            for (let i = 0; i < 10; i++) {
+                pieces.push({
+                    x: castle.x + Math.random() * castleSize - castleSize / 2,
+                    y: castle.y - Math.random() * castleSize,
+                    vx: Math.random() * 4 - 2,
+                    vy: -Math.random() * 2,
+                    length: Math.random() * 10 + 5,
+                    angle: Math.random() * Math.PI * 2
+                });
+            }
+            if (isLeft) leftPieces = pieces;
+            else rightPieces = pieces;
         }
 
         function update() {
-            projectiles.forEach(p => {
+            time = Date.now();
+
+            if (gameOver) {
+                if (time - gameOverTime > resetDelay) {
+                    init();
+                }
+                // Update crumbling pieces
+                [leftPieces, rightPieces].forEach(pieces => {
+                    pieces.forEach(p => {
+                        p.vy += gravity;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.angle += 0.1;
+                    });
+                });
+                return;
+            }
+
+            if (aiming) {
+                let elapsed = time - aimStartTime;
+                if (elapsed > aimDuration) {
+                    aiming = false;
+                    shoot(turn);
+                    turn = !turn;
+                    startAiming();
+                } else {
+                    let amp = Math.PI / 6; // 30 degrees
+                    let freq = 2; // oscillations in 3 sec
+                    let osc = Math.sin(2 * Math.PI * freq * elapsed / aimDuration) * amp;
+                    if (turn) leftAngle = osc;
+                    else rightAngle = osc;
+                }
+            }
+
+            projectiles.forEach((p, index) => {
                 p.vy += gravity;
                 p.x += p.vx;
                 p.y += p.vy;
+
+                let hitCastle = checkHitCastle(p, p.vx > 0 ? right_castle : left_castle);
+                if (hitCastle || checkCollision(p)) {
+                    explosions.push({x: p.x, y: p.y, start: time});
+                    projectiles.splice(index, 1);
+                    if (hitCastle) {
+                        if (p.vx > 0) rightHealth = 0;
+                        else leftHealth = 0;
+                        crumbleCastle(p.vx > 0);
+                        gameOver = true;
+                        gameOverTime = time;
+                    }
+                }
             });
 
-            projectiles = projectiles.filter(p => {
-                if (p.y > canvas.height || p.x < 0 || p.x > canvas.width) return false;
-                let target_x = p.vx > 0 ? right_base_x : left_base_x;
-                let target_y = base_y;
-                if (Math.hypot(p.x - target_x, p.y - target_y) < 10) return false;
-                return true;
+            explosions = explosions.filter(e => time - e.start < explosionDuration);
+        }
+
+        function drawCastle(x, y, angle, side, health) {
+            if (health <= 0) return;
+            // Simple vector castle: tower with roof and cannon
+            ctx.beginPath();
+            // Base
+            ctx.moveTo(x - 10, y);
+            ctx.lineTo(x + 10, y);
+            ctx.lineTo(x + 10, y - 20);
+            ctx.lineTo(x - 10, y - 20);
+            ctx.closePath();
+            // Tower
+            ctx.moveTo(x - 5, y - 20);
+            ctx.lineTo(x - 5, y - 40);
+            ctx.lineTo(x + 5, y - 40);
+            ctx.lineTo(x + 5, y - 20);
+            // Roof
+            ctx.moveTo(x - 7, y - 40);
+            ctx.lineTo(x, y - 50);
+            ctx.lineTo(x + 7, y - 40);
+            // Battlements
+            ctx.moveTo(x - 10, y - 20);
+            ctx.lineTo(x - 10, y - 23);
+            ctx.moveTo(x - 5, y - 20);
+            ctx.lineTo(x - 5, y - 23);
+            ctx.moveTo(x + 5, y - 20);
+            ctx.lineTo(x + 5, y - 23);
+            ctx.moveTo(x + 10, y - 20);
+            ctx.lineTo(x + 10, y - 23);
+            ctx.stroke();
+
+            // Cannon
+            let dir = side === 'left' ? 1 : -1;
+            let cx = x + dir * 5; // from side
+            let cy = y - 30; // mid tower
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + dir * barrelLength * Math.cos(angle), cy + barrelLength * Math.sin(angle));
+            ctx.stroke();
+        }
+
+        function drawCrumblePieces(pieces) {
+            pieces.forEach(p => {
+                ctx.beginPath();
+                ctx.moveTo(p.x - p.length / 2 * Math.cos(p.angle), p.y - p.length / 2 * Math.sin(p.angle));
+                ctx.lineTo(p.x + p.length / 2 * Math.cos(p.angle), p.y + p.length / 2 * Math.sin(p.angle));
+                ctx.stroke();
             });
+        }
 
-            if (projectiles.length === 0 && last_projectile_count > 0) {
-                delay_counter = 60;
+        function drawExplosion(e) {
+            let progress = (time - e.start) / explosionDuration;
+            let size = 10 * (1 - progress);
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                let a = i * Math.PI * 2 / 5;
+                ctx.moveTo(e.x, e.y);
+                ctx.lineTo(e.x + size * Math.cos(a), e.y + size * Math.sin(a));
             }
-            last_projectile_count = projectiles.length;
-
-            if (delay_counter > 0) {
-                delay_counter--;
-            } else if (projectiles.length === 0) {
-                shoot(turn);
-                turn = !turn;
-            }
+            ctx.stroke();
         }
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
 
             // Draw left terrain
             ctx.beginPath();
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 2;
             ctx.moveTo(left_terrain[0].x, left_terrain[0].y);
             for (let point of left_terrain) {
                 ctx.lineTo(point.x, point.y);
@@ -137,41 +290,31 @@
             }
             ctx.stroke();
 
-            // Draw chasm walls
-            let left_edge = left_terrain[left_terrain.length - 1];
-            ctx.beginPath();
-            ctx.moveTo(left_edge.x, left_edge.y);
-            ctx.lineTo(left_edge.x, canvas.height);
-            ctx.stroke();
+            // Draw castles
+            drawCastle(left_castle.x, left_castle.y, leftAngle, 'left', leftHealth);
+            drawCastle(right_castle.x, right_castle.y, rightAngle, 'right', rightHealth);
 
-            let right_edge = right_terrain[0];
-            ctx.beginPath();
-            ctx.moveTo(right_edge.x, right_edge.y);
-            ctx.lineTo(right_edge.x, canvas.height);
-            ctx.stroke();
-
-            // Draw left square
-            let square_y = base_y - square_size / 2;
-            let left_square_x = left_base_x - square_size / 2;
-            ctx.strokeRect(left_square_x, square_y, square_size, square_size);
-
-            // Draw right square
-            let right_square_x = right_base_x - square_size / 2;
-            ctx.strokeRect(right_square_x, square_y, square_size, square_size);
-
-            // Draw left barrel
-            let barrel_y = base_y - 2.5;
-            ctx.strokeRect(left_base_x, barrel_y, barrel_length, 5);
-
-            // Draw right barrel
-            ctx.strokeRect(right_base_x - barrel_length, barrel_y, barrel_length, 5);
+            // Draw crumble pieces
+            drawCrumblePieces(leftPieces);
+            drawCrumblePieces(rightPieces);
 
             // Draw projectiles
             for (let p of projectiles) {
                 ctx.beginPath();
-                ctx.arc(p.x, p.y, dot_radius, 0, 2 * Math.PI);
+                ctx.arc(p.x, p.y, dotRadius, 0, 2 * Math.PI);
                 ctx.fillStyle = 'white';
                 ctx.fill();
+            }
+
+            // Draw explosions
+            for (let e of explosions) {
+                drawExplosion(e);
+            }
+
+            if (gameOver) {
+                ctx.fillStyle = 'white';
+                ctx.font = '48px Arial';
+                ctx.fillText('Game Over', canvas.width / 2 - 150, canvas.height / 2);
             }
         }
 
