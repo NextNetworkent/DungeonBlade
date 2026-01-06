@@ -1,201 +1,441 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dungeon Blade</title>
-  <!-- Medieval fantasy font: Uncial Antiqua (free from Google Fonts) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      height: 100%;
-      overflow: hidden;
-    }
-    body {
-      background: #000;
-      position: relative;
-    }
-    .bg {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      min-width: 100vw;
-      min-height: 100vh;
-      width: auto;
-      height: auto;
-      transform: translate(-50%, -50%);
-      background: url('https://dungeonblade.onrender.com/DungeonBladeBG1.png')
-                  center center / cover no-repeat;
-      z-index: -1;
-    }
-    #particles {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .content {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      pointer-events: none;
-      z-index: 1;
-    }
-    .content > * { pointer-events: auto; }
-    .game-interface {
-      width: 90%;
-      max-width: 1400px;
-      aspect-ratio: 16 / 9;
-      background: transparent;
-      border: none;
-      color: #f00;
-      font-family: monospace;
-      font-size: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      text-shadow: 0 0 10px #f00;
-      padding: 20px;
-    }
-    /* Medieval fantasy title - smaller & gorgeous */
-    .title {
-      font-family: 'Uncial Antiqua', cursive;
-      font-size: 3.2rem; /* much smaller - fits perfectly on mobile too */
-      color: #ffddaa;
-      letter-spacing: 4px;
-      line-height: 1.1;
-      margin-bottom: 0.3em;
-      text-shadow:
-        -2px -2px 0 #000,
-        2px -2px 0 #000,
-        -2px 2px 0 #000,
-        2px 2px 0 #000,
-        0 0 15px #ffaa00,
-        0 0 25px #ff8800;
-    }
-    /* Smaller buttons (~30% reduced) */
-    .bottom-nav {
-      position: fixed;
-      bottom: 78px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 85px; /* reduced spacing for smaller buttons */
-      z-index: 10;
-    }
-    .nav-btn {
-      background: transparent;
-      color: #a0efff;
-      font-family: 'Uncial Antiqua', cursive;
-      font-size: 1.3rem; /* ~30% smaller */
-      padding: 8px 22px; /* reduced padding */
-      border: 1px solid #a0efff;
-      border-radius: 6px;
-      cursor: pointer;
-      text-shadow: 0 0 8px #a0efff;
-      box-shadow: 0 0 12px rgba(160, 239, 255, 0.4);
-      transition: all 0.3s ease;
-    }
-    .nav-btn:hover {
-      background: rgba(160, 239, 255, 0.15);
-      box-shadow: 0 0 20px rgba(160, 239, 255, 0.7);
-      transform: translateY(-2px);
-    }
-    /* Responsive fine-tuning for very small screens */
-    @media (max-width: 480px) {
-      .title { font-size: 2.8rem; }
-      .nav-btn { font-size: 1.1rem; padding: 6px 18px; }
-      .bottom-nav { gap: 70px; bottom: 75px; }
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Canyon Castle Cannon Duel</title>
+<style>
+  html,body {
+    height:100%;
+    margin:0;
+    background:#000;
+    -webkit-tap-highlight-color: transparent;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  /* Container sized for portrait phones */
+  .stage {
+    width:100vw;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:#000;
+  }
+
+  svg {
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  /* thin white line style like the photo */
+  .line {
+    stroke:#fff;
+    stroke-width:6;
+    stroke-linejoin:round;
+    stroke-linecap:round;
+    fill:none;
+  }
+
+  .castle-line {
+    stroke:#fff;
+    stroke-width:5;
+    fill:none;
+  }
+
+  /* cannonball style */
+  .cannonball {
+    fill:#fff;
+    stroke:none;
+  }
+
+  /* explosion particles */
+  .particle {
+    fill:#fff;
+    opacity:0.95;
+  }
+
+  /* instructions overlay for sound enabling */
+  #sound-enable {
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+    pointer-events:auto;
+  }
+  #sound-enable .box {
+    background: rgba(0,0,0,0.6);
+    border:2px solid rgba(255,255,255,0.15);
+    color:#fff;
+    padding:12px 18px;
+    border-radius:10px;
+    text-align:center;
+    font-size:15px;
+    backdrop-filter: blur(4px);
+    cursor:pointer;
+  }
+
+  /* subtle instructions label in corner */
+  .label {
+    position:fixed;
+    left:8px;
+    bottom:10px;
+    color:#888;
+    font-size:12px;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  /* hide elements when necessary */
+  .hidden { display:none !important; }
+</style>
 </head>
 <body>
-  <div class="bg"></div>
-  <canvas id="particles"></canvas>
-  <div class="content">
-    <div class="game-interface">
-      <div class="title"><br><br>Dungeon Blade</div>
-      <small><br> <br>
-     * materializing * </small>
-    </div>
-    <!-- Home & About buttons -->
-    <div class="bottom-nav">
-      <button class="nav-btn" onclick="location.href='/index.html'">Home</button>
-      <button class="nav-btn" onclick="location.href='/about.html'">About</button>
-    </div>
-  </div>
-  <script>
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-   
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+<div class="stage" id="stage">
+  <!-- SVG scene sized for portrait (720 x 1280) -->
+  <svg id="scene" viewBox="0 0 720 1280" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Two castles on cliffs firing cannonballs">
+    <!-- Left cliff path (white line) -->
+    <path id="left-cliff" class="line"
+      d="M 0 60
+         L 40 220
+         L 80 260
+         L 110 380
+         L 135 400
+         L 160 560
+         L 240 660
+         L 270 840
+         L 350 940
+         L 370 1080
+         L 420 1260" />
+
+    <!-- Right cliff path (mirrored) -->
+    <path id="right-cliff" class="line"
+      d="M 720 60
+         L 680 220
+         L 640 260
+         L 610 380
+         L 585 400
+         L 560 560
+         L 480 660
+         L 450 840
+         L 370 940
+         L 350 1080
+         L 300 1260" />
+
+    <!-- canyon bottom center V-shape -->
+    <path class="line" d="M 370 1080 L 360 1180 L 350 1260" />
+
+    <!-- left-side castle: small tower shape -->
+    <g id="castle-left" transform="translate(92,150) scale(1)">
+      <!-- platform and base lines -->
+      <path class="castle-line" d="M 0 120 L 8 120 L 8 24 L 22 24 L 22 8 L -14 8 L -14 24 L 0 24 Z"/>
+      <!-- tower pillar -->
+      <path class="castle-line" d="M 8 120 L 8 188"/>
+      <!-- crenellations -->
+      <path class="castle-line" d="M -12 24 L -12 12 L -4 12 L -4 24 L 4 24 L 4 12 L 12 12 L 12 24" />
+      <!-- roof triangle -->
+      <path class="castle-line" d="M -20 8 L 8 -18 L 36 8 Z" />
+      <!-- small cannon barrel -->
+      <path class="castle-line" d="M 36 -2 L 60 -2 L 60 2 L 36 2 Z" />
+    </g>
+
+    <!-- right-side castle: mirrored -->
+    <g id="castle-right" transform="translate(628,150) scale(1)">
+      <path class="castle-line" d="M 0 120 L -8 120 L -8 24 L -22 24 L -22 8 L 14 8 L 14 24 L 0 24 Z"/>
+      <path class="castle-line" d="M -8 120 L -8 188"/>
+      <path class="castle-line" d="M 12 24 L 12 12 L 4 12 L 4 24 L -4 24 L -4 12 L -12 12 L -12 24" />
+      <path class="castle-line" d="M 20 8 L -8 -18 L -36 8 Z" />
+      <path class="castle-line" d="M -36 -2 L -60 -2 L -60 2 L -36 2 Z" />
+    </g>
+
+    <!-- paths for cannon projectile trajectories (invisible) -->
+    <!-- From left cannon to right castle -->
+    <path id="path-left-to-right" d="M 160 138 Q 360 40 560 138" fill="none" stroke="transparent" stroke-width="2"/>
+    <!-- From right cannon to left castle -->
+    <path id="path-right-to-left" d="M 560 138 Q 360 40 160 138" fill="none" stroke="transparent" stroke-width="2"/>
+
+    <!-- cannonballs (start hidden) -->
+    <circle id="ball-left" class="cannonball" r="8" cx="-20" cy="-20" visibility="hidden"></circle>
+    <circle id="ball-right" class="cannonball" r="8" cx="-20" cy="-20" visibility="hidden"></circle>
+
+    <!-- explosion groups at target locations -->
+    <g id="expl-left" visibility="hidden">
+      <circle cx="160" cy="138" r="6" fill="#fff" opacity="0.9"/>
+      <!-- particle placeholders; JS will animate them -->
+    </g>
+    <g id="expl-right" visibility="hidden">
+      <circle cx="560" cy="138" r="6" fill="#fff" opacity="0.9"/>
+    </g>
+
+    <!-- small decorative lines near center (empty space like original image) -->
+    <path class="line" d="M 240 1080 L 360 1260" opacity="0.05"/>
+  </svg>
+</div>
+
+<div id="sound-enable">
+  <div class="box" id="enable-box">Tap to enable sound & start</div>
+</div>
+
+<div class="label">Cannon volleys every 10s • Tap to enable sound</div>
+
+<script>
+/* Cannon Duel animation + synthesized sounds
+   - Fires both cannons simultaneously every 10 seconds
+   - Cannonballs travel along SVG paths (JS uses getPointAtLength)
+   - Explosion animates on impact with small particles and expanding circle
+   - Sounds generated with WebAudio API (user interaction required to start audio)
+*/
+
+(function() {
+  const INTERVAL = 10000; // ms between volleys
+  const TRAVEL = 2000; // ms travel time for cannonball
+  const scene = document.getElementById('scene');
+  const pathLtoR = document.getElementById('path-left-to-right');
+  const pathRtoL = document.getElementById('path-right-to-left');
+  const ballL = document.getElementById('ball-left');
+  const ballR = document.getElementById('ball-right');
+  const explLeft = document.getElementById('expl-left');
+  const explRight = document.getElementById('expl-right');
+  const soundOverlay = document.getElementById('sound-enable');
+  const enableBox = document.getElementById('enable-box');
+
+  // prepare path lengths
+  const pLtoR_len = pathLtoR.getTotalLength();
+  const pRtoL_len = pathRtoL.getTotalLength();
+
+  // Web Audio setup
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+  }
+
+  // Synthesize a cannon "boom" - low pitch short thump
+  function playCannonBoom(time = 0) {
+    const ctx = ensureAudio();
+    const now = ctx.currentTime + time;
+    // layering two oscillators and a short noise burst
+    const o1 = ctx.createOscillator();
+    const o2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const noise = ctx.createBufferSource();
+
+    // noise buffer
+    const bufferSize = ctx.sampleRate * 0.25;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i=0;i<bufferSize;i++){
+      data[i] = (Math.random()*2-1) * Math.exp(-i/(ctx.sampleRate*0.12));
+    }
+    noise.buffer = buffer;
+
+    o1.type = 'sine';
+    o1.frequency.value = 60;
+    o2.type = 'sawtooth';
+    o2.frequency.value = 90;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(1.0, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
+
+    o1.connect(gain);
+    o2.connect(gain);
+    noise.connect(gain);
+    gain.connect(ctx.destination);
+
+    o1.start(now);
+    o2.start(now);
+    noise.start(now);
+    o1.stop(now + 0.9);
+    o2.stop(now + 0.9);
+    noise.stop(now + 0.9);
+  }
+
+  // Explosion sound: bright crack plus lower rumble
+  function playExplosion(time = 0) {
+    const ctx = ensureAudio();
+    const now = ctx.currentTime + time;
+    // short bright impact
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(800, now);
+    o.frequency.exponentialRampToValueAtTime(120, now + 0.5);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.8, now + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start(now);
+    o.stop(now + 0.8);
+
+    // low rumble
+    const o2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    o2.type='sine';
+    o2.frequency.setValueAtTime(80, now);
+    g2.gain.setValueAtTime(0.8, now);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
+    o2.connect(g2);
+    g2.connect(ctx.destination);
+    o2.start(now);
+    o2.stop(now + 1.4);
+  }
+
+  // Utility to animate along a path & promise when finished
+  function animateAlongPath(ball, path, pathLen, duration) {
+    return new Promise(resolve => {
+      ball.setAttribute('visibility','visible');
+      let start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        const t = ts - start;
+        const frac = Math.min(1, t / duration);
+        const distance = frac * pathLen;
+        const pt = path.getPointAtLength(distance);
+        ball.setAttribute('cx', pt.x);
+        ball.setAttribute('cy', pt.y);
+        if (frac < 1) {
+          requestAnimationFrame(step);
+        } else {
+          ball.setAttribute('visibility','hidden');
+          resolve();
+        }
+      }
+      requestAnimationFrame(step);
     });
-    const particlesArray = [];
-    const numberOfParticles = 18;
-    class Particle {
-      constructor() { this.reset(); }
-      reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = canvas.height + 10;
-        this.size = Math.random() * 5 + 2;
-        this.speedX = Math.random() * 1.5 - 0.75;
-        this.speedY = Math.random() * -2 - 0.8;
-        this.opacity = Math.random() * 0.6 + 0.3;
-      }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        this.speedX += (Math.random() - 0.5) * 0.08;
-        if (this.y < -20 || this.x < -20 || this.x > canvas.width + 20) this.reset();
-      }
-      draw() {
-        ctx.fillStyle = `rgba(255, 140, 0, ${this.opacity})`;
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = '#ff8c00';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = '#ffaa00';
-        ctx.fillStyle = `rgba(255, 180, 0, ${this.opacity * 0.6})`;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size * 0.6, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
+  }
+
+  // Explosion visual: create radial expansion and particles at (cx,cy) in parent group
+  function showExplosion(group, cx, cy) {
+    group.setAttribute('transform', `translate(0,0)`);
+    group.setAttribute('visibility','visible');
+    // remove previous particles
+    while (group.childElementCount > 0) group.removeChild(group.firstChild);
+
+    // main expanding circle
+    const main = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    main.setAttribute('cx', cx);
+    main.setAttribute('cy', cy);
+    main.setAttribute('r', 6);
+    main.setAttribute('fill', '#fff');
+    main.setAttribute('opacity', '0.95');
+    group.appendChild(main);
+
+    // particles: small circles that fly out
+    const particles = [];
+    const pcount = 12;
+    for (let i=0;i<pcount;i++){
+      const p = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      p.setAttribute('cx', cx);
+      p.setAttribute('cy', cy);
+      p.setAttribute('r', 2 + Math.random()*2);
+      p.setAttribute('class','particle');
+      p.setAttribute('opacity', '1');
+      group.appendChild(p);
+      particles.push(p);
     }
-    function init() {
-      particlesArray.length = 0;
-      for (let i = 0; i < numberOfParticles; i++) {
-        particlesArray.push(new Particle());
+
+    // animate using requestAnimationFrame
+    const start = performance.now();
+    const dur = 900;
+    function anim(now) {
+      const t = now - start;
+      const progress = Math.min(1, t / dur);
+      // expand main
+      main.setAttribute('r', 6 + progress * 60);
+      main.setAttribute('opacity', String(0.9 * (1 - progress)));
+      // particles spread
+      particles.forEach((p, idx) => {
+        const angle = (idx / particles.length) * Math.PI * 2 + (Math.random()-0.5)*0.6;
+        const speed = 40 + Math.random()*80;
+        const px = cx + Math.cos(angle) * speed * easeOutQuad(progress);
+        const py = cy + Math.sin(angle) * speed * easeOutQuad(progress) + progress*12;
+        p.setAttribute('cx', px);
+        p.setAttribute('cy', py);
+        p.setAttribute('opacity', String(1 - progress));
+      });
+      if (progress < 1) requestAnimationFrame(anim);
+      else group.setAttribute('visibility','hidden');
+    }
+    requestAnimationFrame(anim);
+  }
+
+  function easeOutQuad(t) { return t*(2-t); }
+
+  // positions for target impacts (end of path)
+  const leftImpact = pathRtoL.getPointAtLength(pRtoL_len); // end of right->left is at left castle
+  const rightImpact = pathLtoR.getPointAtLength(pLtoR_len); // end of left->right is at right castle
+
+  // main volley routine
+  let volleyTimer = null;
+  async function volley() {
+    // small muzzle flash simulation: play cannon boom
+    playCannonBoom();
+
+    // fire both balls simultaneously
+    const leftFired = animateAlongPath(ballL, pathLtoR, pLtoR_len, TRAVEL);
+    const rightFired = animateAlongPath(ballR, pathRtoL, pRtoL_len, TRAVEL);
+
+    // Wait TRAVEL duration then show explosions and sounds at targets
+    setTimeout(() => {
+      showExplosion(explRight, rightImpact.x, rightImpact.y);
+      playExplosion();
+    }, TRAVEL - 40);
+
+    setTimeout(() => {
+      showExplosion(explLeft, leftImpact.x, leftImpact.y);
+      playExplosion();
+    }, TRAVEL - 40);
+
+    await Promise.all([leftFired, rightFired]);
+  }
+
+  // loop volley every INTERVAL
+  function startLoop() {
+    // start immediately
+    volley().catch(console.error);
+    volleyTimer = setInterval(() => {
+      volley().catch(console.error);
+    }, INTERVAL);
+  }
+
+  // wire up sound overlay to resume audio on first tap and start loop
+  function enableAudioAndStart() {
+    try {
+      ensureAudio();
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
       }
+    } catch(e) {
+      console.warn('Audio init failed', e);
     }
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particlesArray.forEach(p => { p.update(); p.draw(); });
-      requestAnimationFrame(animate);
-    }
-    init();
-    animate();
-  </script>
+    if (soundOverlay) soundOverlay.classList.add('hidden');
+    if (!volleyTimer) startLoop();
+  }
+
+  enableBox.addEventListener('click', enableAudioAndStart, {passive:true});
+  // also allow tapping anywhere on stage to start audio
+  document.getElementById('stage').addEventListener('click', enableAudioAndStart, {passive:true});
+
+  // If the user never taps, still start visual-only loop after a short delay
+  setTimeout(() => {
+    if (!volleyTimer) startLoop();
+  }, 400); // allow immediate visuals; sound requires tap
+
+  // Accessibility: allow space/enter to start
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Enter') enableAudioAndStart();
+  });
+
+  // Ensure SVG scales nicely on resize
+  window.addEventListener('resize', ()=>{ /* nothing required, SVG preserves */ });
+
+})();
+</script>
 </body>
 </html>
