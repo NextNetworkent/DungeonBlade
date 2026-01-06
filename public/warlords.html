@@ -1,335 +1,441 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Warlords</title>
-    <style>
-        body { margin: 0; background: black; }
-        canvas { display: block; }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>Canyon Castle Cannon Duel</title>
+<style>
+  html,body {
+    height:100%;
+    margin:0;
+    background:#000;
+    -webkit-tap-highlight-color: transparent;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  /* Container sized for portrait phones */
+  .stage {
+    width:100vw;
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:#000;
+  }
+
+  svg {
+    width:100%;
+    height:100%;
+    display:block;
+  }
+
+  /* thin white line style like the photo */
+  .line {
+    stroke:#fff;
+    stroke-width:6;
+    stroke-linejoin:round;
+    stroke-linecap:round;
+    fill:none;
+  }
+
+  .castle-line {
+    stroke:#fff;
+    stroke-width:5;
+    fill:none;
+  }
+
+  /* cannonball style */
+  .cannonball {
+    fill:#fff;
+    stroke:none;
+  }
+
+  /* explosion particles */
+  .particle {
+    fill:#fff;
+    opacity:0.95;
+  }
+
+  /* instructions overlay for sound enabling */
+  #sound-enable {
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+    pointer-events:auto;
+  }
+  #sound-enable .box {
+    background: rgba(0,0,0,0.6);
+    border:2px solid rgba(255,255,255,0.15);
+    color:#fff;
+    padding:12px 18px;
+    border-radius:10px;
+    text-align:center;
+    font-size:15px;
+    backdrop-filter: blur(4px);
+    cursor:pointer;
+  }
+
+  /* subtle instructions label in corner */
+  .label {
+    position:fixed;
+    left:8px;
+    bottom:10px;
+    color:#888;
+    font-size:12px;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  /* hide elements when necessary */
+  .hidden { display:none !important; }
+</style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
+<div class="stage" id="stage">
+  <!-- SVG scene sized for portrait (720 x 1280) -->
+  <svg id="scene" viewBox="0 0 720 1280" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Two castles on cliffs firing cannonballs">
+    <!-- Left cliff path (white line) -->
+    <path id="left-cliff" class="line"
+      d="M 0 60
+         L 40 220
+         L 80 260
+         L 110 380
+         L 135 400
+         L 160 560
+         L 240 660
+         L 270 840
+         L 350 940
+         L 370 1080
+         L 420 1260" />
 
-        let gravity = 0.1;
-        let projectiles = [];
-        let explosions = [];
-        let turn = true; // true for left, false for right
-        let aiming = false;
-        let aimStartTime = 0;
-        let aimDuration = 3000; // 3 seconds
-        let travelTime = 2; // 2 seconds target
-        let leftAngle = 0;
-        let rightAngle = 0;
-        let time = 0;
-        let leftShotCount = 0;
-        let rightShotCount = 0;
-        let gameOver = false;
-        let gameOverTime = 0;
-        let resetDelay = 5000; // 5 seconds after game over
-        let leftHealth = 1;
-        let rightHealth = 1;
-        let leftPieces = [];
-        let rightPieces = [];
-        let left_terrain, right_terrain, left_castle, right_castle;
-        let castleSize = 30;
-        let barrelLength = 15;
-        let dotRadius = 3;
-        let explosionDuration = 500; // ms
+    <!-- Right cliff path (mirrored) -->
+    <path id="right-cliff" class="line"
+      d="M 720 60
+         L 680 220
+         L 640 260
+         L 610 380
+         L 585 400
+         L 560 560
+         L 480 660
+         L 450 840
+         L 370 940
+         L 350 1080
+         L 300 1260" />
 
-        function generateCliff(start_x, end_x, descending) {
-            let points = [];
-            let x = start_x;
-            let y = descending ? 0 : canvas.height;
-            let dx = (end_x - start_x) / 20;
-            let dy = (canvas.height - 0) / 20 * (descending ? 1 : -1);
-            points.push({x, y});
-            for (let i = 0; i < 20; i++) {
-                x += dx + Math.random() * 10 - 5;
-                y += dy + Math.random() * 20 - 10;
-                if (descending) y = Math.max(0, Math.min(canvas.height, y));
-                else y = Math.min(canvas.height, Math.max(0, y));
-                points.push({x, y});
-            }
-            return points;
+    <!-- canyon bottom center V-shape -->
+    <path class="line" d="M 370 1080 L 360 1180 L 350 1260" />
+
+    <!-- left-side castle: small tower shape -->
+    <g id="castle-left" transform="translate(92,150) scale(1)">
+      <!-- platform and base lines -->
+      <path class="castle-line" d="M 0 120 L 8 120 L 8 24 L 22 24 L 22 8 L -14 8 L -14 24 L 0 24 Z"/>
+      <!-- tower pillar -->
+      <path class="castle-line" d="M 8 120 L 8 188"/>
+      <!-- crenellations -->
+      <path class="castle-line" d="M -12 24 L -12 12 L -4 12 L -4 24 L 4 24 L 4 12 L 12 12 L 12 24" />
+      <!-- roof triangle -->
+      <path class="castle-line" d="M -20 8 L 8 -18 L 36 8 Z" />
+      <!-- small cannon barrel -->
+      <path class="castle-line" d="M 36 -2 L 60 -2 L 60 2 L 36 2 Z" />
+    </g>
+
+    <!-- right-side castle: mirrored -->
+    <g id="castle-right" transform="translate(628,150) scale(1)">
+      <path class="castle-line" d="M 0 120 L -8 120 L -8 24 L -22 24 L -22 8 L 14 8 L 14 24 L 0 24 Z"/>
+      <path class="castle-line" d="M -8 120 L -8 188"/>
+      <path class="castle-line" d="M 12 24 L 12 12 L 4 12 L 4 24 L -4 24 L -4 12 L -12 12 L -12 24" />
+      <path class="castle-line" d="M 20 8 L -8 -18 L -36 8 Z" />
+      <path class="castle-line" d="M -36 -2 L -60 -2 L -60 2 L -36 2 Z" />
+    </g>
+
+    <!-- paths for cannon projectile trajectories (invisible) -->
+    <!-- From left cannon to right castle -->
+    <path id="path-left-to-right" d="M 160 138 Q 360 40 560 138" fill="none" stroke="transparent" stroke-width="2"/>
+    <!-- From right cannon to left castle -->
+    <path id="path-right-to-left" d="M 560 138 Q 360 40 160 138" fill="none" stroke="transparent" stroke-width="2"/>
+
+    <!-- cannonballs (start hidden) -->
+    <circle id="ball-left" class="cannonball" r="8" cx="-20" cy="-20" visibility="hidden"></circle>
+    <circle id="ball-right" class="cannonball" r="8" cx="-20" cy="-20" visibility="hidden"></circle>
+
+    <!-- explosion groups at target locations -->
+    <g id="expl-left" visibility="hidden">
+      <circle cx="160" cy="138" r="6" fill="#fff" opacity="0.9"/>
+      <!-- particle placeholders; JS will animate them -->
+    </g>
+    <g id="expl-right" visibility="hidden">
+      <circle cx="560" cy="138" r="6" fill="#fff" opacity="0.9"/>
+    </g>
+
+    <!-- small decorative lines near center (empty space like original image) -->
+    <path class="line" d="M 240 1080 L 360 1260" opacity="0.05"/>
+  </svg>
+</div>
+
+<div id="sound-enable">
+  <div class="box" id="enable-box">Tap to enable sound & start</div>
+</div>
+
+<div class="label">Cannon volleys every 10s • Tap to enable sound</div>
+
+<script>
+/* Cannon Duel animation + synthesized sounds
+   - Fires both cannons simultaneously every 10 seconds
+   - Cannonballs travel along SVG paths (JS uses getPointAtLength)
+   - Explosion animates on impact with small particles and expanding circle
+   - Sounds generated with WebAudio API (user interaction required to start audio)
+*/
+
+(function() {
+  const INTERVAL = 10000; // ms between volleys
+  const TRAVEL = 2000; // ms travel time for cannonball
+  const scene = document.getElementById('scene');
+  const pathLtoR = document.getElementById('path-left-to-right');
+  const pathRtoL = document.getElementById('path-right-to-left');
+  const ballL = document.getElementById('ball-left');
+  const ballR = document.getElementById('ball-right');
+  const explLeft = document.getElementById('expl-left');
+  const explRight = document.getElementById('expl-right');
+  const soundOverlay = document.getElementById('sound-enable');
+  const enableBox = document.getElementById('enable-box');
+
+  // prepare path lengths
+  const pLtoR_len = pathLtoR.getTotalLength();
+  const pRtoL_len = pathRtoL.getTotalLength();
+
+  // Web Audio setup
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    return audioCtx;
+  }
+
+  // Synthesize a cannon "boom" - low pitch short thump
+  function playCannonBoom(time = 0) {
+    const ctx = ensureAudio();
+    const now = ctx.currentTime + time;
+    // layering two oscillators and a short noise burst
+    const o1 = ctx.createOscillator();
+    const o2 = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const noise = ctx.createBufferSource();
+
+    // noise buffer
+    const bufferSize = ctx.sampleRate * 0.25;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i=0;i<bufferSize;i++){
+      data[i] = (Math.random()*2-1) * Math.exp(-i/(ctx.sampleRate*0.12));
+    }
+    noise.buffer = buffer;
+
+    o1.type = 'sine';
+    o1.frequency.value = 60;
+    o2.type = 'sawtooth';
+    o2.frequency.value = 90;
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(1.0, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
+
+    o1.connect(gain);
+    o2.connect(gain);
+    noise.connect(gain);
+    gain.connect(ctx.destination);
+
+    o1.start(now);
+    o2.start(now);
+    noise.start(now);
+    o1.stop(now + 0.9);
+    o2.stop(now + 0.9);
+    noise.stop(now + 0.9);
+  }
+
+  // Explosion sound: bright crack plus lower rumble
+  function playExplosion(time = 0) {
+    const ctx = ensureAudio();
+    const now = ctx.currentTime + time;
+    // short bright impact
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.type = 'triangle';
+    o.frequency.setValueAtTime(800, now);
+    o.frequency.exponentialRampToValueAtTime(120, now + 0.5);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(0.8, now + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start(now);
+    o.stop(now + 0.8);
+
+    // low rumble
+    const o2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    o2.type='sine';
+    o2.frequency.setValueAtTime(80, now);
+    g2.gain.setValueAtTime(0.8, now);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now + 1.4);
+    o2.connect(g2);
+    g2.connect(ctx.destination);
+    o2.start(now);
+    o2.stop(now + 1.4);
+  }
+
+  // Utility to animate along a path & promise when finished
+  function animateAlongPath(ball, path, pathLen, duration) {
+    return new Promise(resolve => {
+      ball.setAttribute('visibility','visible');
+      let start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        const t = ts - start;
+        const frac = Math.min(1, t / duration);
+        const distance = frac * pathLen;
+        const pt = path.getPointAtLength(distance);
+        ball.setAttribute('cx', pt.x);
+        ball.setAttribute('cy', pt.y);
+        if (frac < 1) {
+          requestAnimationFrame(step);
+        } else {
+          ball.setAttribute('visibility','hidden');
+          resolve();
         }
+      }
+      requestAnimationFrame(step);
+    });
+  }
 
-        function getYAtX(terrain, target_x) {
-            for (let i = 0; i < terrain.length - 1; i++) {
-                let p1 = terrain[i];
-                let p2 = terrain[i + 1];
-                if (target_x >= Math.min(p1.x, p2.x) && target_x <= Math.max(p1.x, p2.x)) {
-                    let frac = (target_x - p1.x) / (p2.x - p1.x);
-                    return p1.y + frac * (p2.y - p1.y);
-                }
-            }
-            return null;
-        }
+  // Explosion visual: create radial expansion and particles at (cx,cy) in parent group
+  function showExplosion(group, cx, cy) {
+    group.setAttribute('transform', `translate(0,0)`);
+    group.setAttribute('visibility','visible');
+    // remove previous particles
+    while (group.childElementCount > 0) group.removeChild(group.firstChild);
 
-        function init() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            left_terrain = generateCliff(0, canvas.width * 0.45, true); // descending from top left
-            right_terrain = generateCliff(canvas.width, canvas.width * 0.55, false); // ascending from right bottom? Wait, adjust
-            right_terrain.reverse(); // to make descending from top right
-            left_castle = {x: canvas.width * 0.15, y: getYAtX(left_terrain, canvas.width * 0.15), angle: 0};
-            right_castle = {x: canvas.width * 0.85, y: getYAtX(right_terrain, canvas.width * 0.85), angle: 0};
-            projectiles = [];
-            explosions = [];
-            turn = true;
-            aiming = true;
-            aimStartTime = Date.now();
-            leftShotCount = 0;
-            rightShotCount = 0;
-            gameOver = false;
-            leftHealth = 1;
-            rightHealth = 1;
-            leftPieces = [];
-            rightPieces = [];
-        }
+    // main expanding circle
+    const main = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    main.setAttribute('cx', cx);
+    main.setAttribute('cy', cy);
+    main.setAttribute('r', 6);
+    main.setAttribute('fill', '#fff');
+    main.setAttribute('opacity', '0.95');
+    group.appendChild(main);
 
-        function startAiming() {
-            aiming = true;
-            aimStartTime = Date.now();
-        }
+    // particles: small circles that fly out
+    const particles = [];
+    const pcount = 12;
+    for (let i=0;i<pcount;i++){
+      const p = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      p.setAttribute('cx', cx);
+      p.setAttribute('cy', cy);
+      p.setAttribute('r', 2 + Math.random()*2);
+      p.setAttribute('class','particle');
+      p.setAttribute('opacity', '1');
+      group.appendChild(p);
+      particles.push(p);
+    }
 
-        function shoot(from_left) {
-            let castle = from_left ? left_castle : right_castle;
-            let target = from_left ? right_castle : left_castle;
-            let dir = from_left ? 1 : -1;
-            let dist = Math.abs(target.x - castle.x);
-            let t = travelTime;
-            let vx = (dist / t) * dir;
-            let ideal_vy = 0.5 * gravity * t; // since y increases down, vy positive down, but to arc up, vy negative
-            // Wait, in canvas y down, gravity positive, to go up then down, vy negative
-            let idealVy = -0.5 * gravity * t + (target.y - castle.y) / t;
-            let error = (from_left ? leftShotCount : rightShotCount) * -5 + 30; // start high error, reduce
-            let vy = idealVy + error;
-            let angle = Math.atan2(vy, vx);
-            if (from_left) leftAngle = angle;
-            else rightAngle = angle;
-            let start_x = castle.x + dir * barrelLength * Math.cos(angle);
-            let start_y = castle.y - castleSize / 2 + barrelLength * Math.sin(angle); // cannon at mid height
-            projectiles.push({x: start_x, y: start_y, vx, vy});
-            if (from_left) leftShotCount++;
-            else rightShotCount++;
-        }
+    // animate using requestAnimationFrame
+    const start = performance.now();
+    const dur = 900;
+    function anim(now) {
+      const t = now - start;
+      const progress = Math.min(1, t / dur);
+      // expand main
+      main.setAttribute('r', 6 + progress * 60);
+      main.setAttribute('opacity', String(0.9 * (1 - progress)));
+      // particles spread
+      particles.forEach((p, idx) => {
+        const angle = (idx / particles.length) * Math.PI * 2 + (Math.random()-0.5)*0.6;
+        const speed = 40 + Math.random()*80;
+        const px = cx + Math.cos(angle) * speed * easeOutQuad(progress);
+        const py = cy + Math.sin(angle) * speed * easeOutQuad(progress) + progress*12;
+        p.setAttribute('cx', px);
+        p.setAttribute('cy', py);
+        p.setAttribute('opacity', String(1 - progress));
+      });
+      if (progress < 1) requestAnimationFrame(anim);
+      else group.setAttribute('visibility','hidden');
+    }
+    requestAnimationFrame(anim);
+  }
 
-        function checkCollision(p) {
-            if (p.y > canvas.height || p.x < 0 || p.x > canvas.width) return true;
-            let terrain = p.vx > 0 ? right_terrain : left_terrain;
-            let terrainY = getYAtX(terrain, p.x);
-            if (terrainY !== null && p.y > terrainY) return true;
-            return false;
-        }
+  function easeOutQuad(t) { return t*(2-t); }
 
-        function checkHitCastle(p, castle) {
-            let dx = p.x - castle.x;
-            let dy = p.y - (castle.y - castleSize / 2);
-            return Math.sqrt(dx*dx + dy*dy) < castleSize / 2 + dotRadius;
-        }
+  // positions for target impacts (end of path)
+  const leftImpact = pathRtoL.getPointAtLength(pRtoL_len); // end of right->left is at left castle
+  const rightImpact = pathLtoR.getPointAtLength(pLtoR_len); // end of left->right is at right castle
 
-        function crumbleCastle(isLeft) {
-            let castle = isLeft ? left_castle : right_castle;
-            let pieces = [];
-            // Create simple lines for crumbling
-            for (let i = 0; i < 10; i++) {
-                pieces.push({
-                    x: castle.x + Math.random() * castleSize - castleSize / 2,
-                    y: castle.y - Math.random() * castleSize,
-                    vx: Math.random() * 4 - 2,
-                    vy: -Math.random() * 2,
-                    length: Math.random() * 10 + 5,
-                    angle: Math.random() * Math.PI * 2
-                });
-            }
-            if (isLeft) leftPieces = pieces;
-            else rightPieces = pieces;
-        }
+  // main volley routine
+  let volleyTimer = null;
+  async function volley() {
+    // small muzzle flash simulation: play cannon boom
+    playCannonBoom();
 
-        function update() {
-            time = Date.now();
+    // fire both balls simultaneously
+    const leftFired = animateAlongPath(ballL, pathLtoR, pLtoR_len, TRAVEL);
+    const rightFired = animateAlongPath(ballR, pathRtoL, pRtoL_len, TRAVEL);
 
-            if (gameOver) {
-                if (time - gameOverTime > resetDelay) {
-                    init();
-                }
-                // Update crumbling pieces
-                [leftPieces, rightPieces].forEach(pieces => {
-                    pieces.forEach(p => {
-                        p.vy += gravity;
-                        p.x += p.vx;
-                        p.y += p.vy;
-                        p.angle += 0.1;
-                    });
-                });
-                return;
-            }
+    // Wait TRAVEL duration then show explosions and sounds at targets
+    setTimeout(() => {
+      showExplosion(explRight, rightImpact.x, rightImpact.y);
+      playExplosion();
+    }, TRAVEL - 40);
 
-            if (aiming) {
-                let elapsed = time - aimStartTime;
-                if (elapsed > aimDuration) {
-                    aiming = false;
-                    shoot(turn);
-                    turn = !turn;
-                    startAiming();
-                } else {
-                    let amp = Math.PI / 6; // 30 degrees
-                    let freq = 2; // oscillations in 3 sec
-                    let osc = Math.sin(2 * Math.PI * freq * elapsed / aimDuration) * amp;
-                    if (turn) leftAngle = osc;
-                    else rightAngle = osc;
-                }
-            }
+    setTimeout(() => {
+      showExplosion(explLeft, leftImpact.x, leftImpact.y);
+      playExplosion();
+    }, TRAVEL - 40);
 
-            projectiles.forEach((p, index) => {
-                p.vy += gravity;
-                p.x += p.vx;
-                p.y += p.vy;
+    await Promise.all([leftFired, rightFired]);
+  }
 
-                let hitCastle = checkHitCastle(p, p.vx > 0 ? right_castle : left_castle);
-                if (hitCastle || checkCollision(p)) {
-                    explosions.push({x: p.x, y: p.y, start: time});
-                    projectiles.splice(index, 1);
-                    if (hitCastle) {
-                        if (p.vx > 0) rightHealth = 0;
-                        else leftHealth = 0;
-                        crumbleCastle(p.vx > 0);
-                        gameOver = true;
-                        gameOverTime = time;
-                    }
-                }
-            });
+  // loop volley every INTERVAL
+  function startLoop() {
+    // start immediately
+    volley().catch(console.error);
+    volleyTimer = setInterval(() => {
+      volley().catch(console.error);
+    }, INTERVAL);
+  }
 
-            explosions = explosions.filter(e => time - e.start < explosionDuration);
-        }
+  // wire up sound overlay to resume audio on first tap and start loop
+  function enableAudioAndStart() {
+    try {
+      ensureAudio();
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    } catch(e) {
+      console.warn('Audio init failed', e);
+    }
+    if (soundOverlay) soundOverlay.classList.add('hidden');
+    if (!volleyTimer) startLoop();
+  }
 
-        function drawCastle(x, y, angle, side, health) {
-            if (health <= 0) return;
-            // Simple vector castle: tower with roof and cannon
-            ctx.beginPath();
-            // Base
-            ctx.moveTo(x - 10, y);
-            ctx.lineTo(x + 10, y);
-            ctx.lineTo(x + 10, y - 20);
-            ctx.lineTo(x - 10, y - 20);
-            ctx.closePath();
-            // Tower
-            ctx.moveTo(x - 5, y - 20);
-            ctx.lineTo(x - 5, y - 40);
-            ctx.lineTo(x + 5, y - 40);
-            ctx.lineTo(x + 5, y - 20);
-            // Roof
-            ctx.moveTo(x - 7, y - 40);
-            ctx.lineTo(x, y - 50);
-            ctx.lineTo(x + 7, y - 40);
-            // Battlements
-            ctx.moveTo(x - 10, y - 20);
-            ctx.lineTo(x - 10, y - 23);
-            ctx.moveTo(x - 5, y - 20);
-            ctx.lineTo(x - 5, y - 23);
-            ctx.moveTo(x + 5, y - 20);
-            ctx.lineTo(x + 5, y - 23);
-            ctx.moveTo(x + 10, y - 20);
-            ctx.lineTo(x + 10, y - 23);
-            ctx.stroke();
+  enableBox.addEventListener('click', enableAudioAndStart, {passive:true});
+  // also allow tapping anywhere on stage to start audio
+  document.getElementById('stage').addEventListener('click', enableAudioAndStart, {passive:true});
 
-            // Cannon
-            let dir = side === 'left' ? 1 : -1;
-            let cx = x + dir * 5; // from side
-            let cy = y - 30; // mid tower
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.lineTo(cx + dir * barrelLength * Math.cos(angle), cy + barrelLength * Math.sin(angle));
-            ctx.stroke();
-        }
+  // If the user never taps, still start visual-only loop after a short delay
+  setTimeout(() => {
+    if (!volleyTimer) startLoop();
+  }, 400); // allow immediate visuals; sound requires tap
 
-        function drawCrumblePieces(pieces) {
-            pieces.forEach(p => {
-                ctx.beginPath();
-                ctx.moveTo(p.x - p.length / 2 * Math.cos(p.angle), p.y - p.length / 2 * Math.sin(p.angle));
-                ctx.lineTo(p.x + p.length / 2 * Math.cos(p.angle), p.y + p.length / 2 * Math.sin(p.angle));
-                ctx.stroke();
-            });
-        }
+  // Accessibility: allow space/enter to start
+  document.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Enter') enableAudioAndStart();
+  });
 
-        function drawExplosion(e) {
-            let progress = (time - e.start) / explosionDuration;
-            let size = 10 * (1 - progress);
-            ctx.beginPath();
-            for (let i = 0; i < 5; i++) {
-                let a = i * Math.PI * 2 / 5;
-                ctx.moveTo(e.x, e.y);
-                ctx.lineTo(e.x + size * Math.cos(a), e.y + size * Math.sin(a));
-            }
-            ctx.stroke();
-        }
+  // Ensure SVG scales nicely on resize
+  window.addEventListener('resize', ()=>{ /* nothing required, SVG preserves */ });
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 2;
-
-            // Draw left terrain
-            ctx.beginPath();
-            ctx.moveTo(left_terrain[0].x, left_terrain[0].y);
-            for (let point of left_terrain) {
-                ctx.lineTo(point.x, point.y);
-            }
-            ctx.stroke();
-
-            // Draw right terrain
-            ctx.beginPath();
-            ctx.moveTo(right_terrain[0].x, right_terrain[0].y);
-            for (let point of right_terrain) {
-                ctx.lineTo(point.x, point.y);
-            }
-            ctx.stroke();
-
-            // Draw castles
-            drawCastle(left_castle.x, left_castle.y, leftAngle, 'left', leftHealth);
-            drawCastle(right_castle.x, right_castle.y, rightAngle, 'right', rightHealth);
-
-            // Draw crumble pieces
-            drawCrumblePieces(leftPieces);
-            drawCrumblePieces(rightPieces);
-
-            // Draw projectiles
-            for (let p of projectiles) {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, dotRadius, 0, 2 * Math.PI);
-                ctx.fillStyle = 'white';
-                ctx.fill();
-            }
-
-            // Draw explosions
-            for (let e of explosions) {
-                drawExplosion(e);
-            }
-
-            if (gameOver) {
-                ctx.fillStyle = 'white';
-                ctx.font = '48px Arial';
-                ctx.fillText('Game Over', canvas.width / 2 - 150, canvas.height / 2);
-            }
-        }
-
-        function loop() {
-            update();
-            draw();
-            requestAnimationFrame(loop);
-        }
-
-        init();
-        loop();
-
-        window.addEventListener('resize', () => {
-            init();
-        });
-    </script>
+})();
+</script>
 </body>
 </html>
