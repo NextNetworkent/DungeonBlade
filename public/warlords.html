@@ -12,7 +12,6 @@
     -webkit-tap-highlight-color: transparent;
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   }
-  /* Container sized for portrait phones */
   .stage {
     width:100vw;
     height:100vh;
@@ -22,14 +21,11 @@
     overflow:hidden;
     background:#000;
   }
-
   svg {
     width:100%;
     height:100%;
     display:block;
   }
-
-  /* thin white line style like the photo */
   .line {
     stroke:#fff;
     stroke-width:6;
@@ -37,26 +33,40 @@
     stroke-linecap:round;
     fill:none;
   }
-
+  .detail-line {
+    stroke:#ddd;
+    stroke-width:3;
+    stroke-linejoin:round;
+    stroke-linecap:round;
+    fill:none;
+    opacity:0.7;
+  }
+  .shadow-line {
+    stroke:#aaa;
+    stroke-width:2;
+    stroke-linejoin:round;
+    stroke-linecap:round;
+    fill:none;
+    opacity:0.4;
+  }
   .castle-line {
     stroke:#fff;
     stroke-width:5;
     fill:none;
   }
-
-  /* cannonball style */
+  .castle-detail {
+    stroke:#eee;
+    stroke-width:3;
+    fill:none;
+  }
   .cannonball {
     fill:#fff;
     stroke:none;
   }
-
-  /* explosion particles */
   .particle {
     fill:#fff;
     opacity:0.95;
   }
-
-  /* instructions overlay for sound enabling */
   #sound-enable {
     position:fixed;
     inset:0;
@@ -77,8 +87,6 @@
     backdrop-filter: blur(4px);
     cursor:pointer;
   }
-
-  /* subtle instructions label in corner */
   .label {
     position:fixed;
     left:8px;
@@ -88,110 +96,125 @@
     user-select:none;
     -webkit-user-select:none;
   }
-
-  /* hide elements when necessary */
   .hidden { display:none !important; }
 </style>
 </head>
 <body>
 <div class="stage" id="stage">
-  <!-- SVG scene sized for portrait (720 x 1280) -->
   <svg id="scene" viewBox="0 0 720 1280" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Two castles on cliffs firing cannonballs">
-    <!-- Left cliff path (white line) -->
     <path id="left-cliff" class="line"
       d="M 0 60
+         L 20 120
          L 40 220
+         L 60 240
          L 80 260
+         L 100 340
          L 110 380
+         L 130 390
          L 135 400
+         L 150 480
          L 160 560
+         L 200 600
          L 240 660
+         L 260 780
          L 270 840
+         L 300 880
          L 350 940
+         L 360 1020
          L 370 1080
+         L 400 1200
          L 420 1260" />
-
-    <!-- Right cliff path (mirrored) -->
+    <path class="detail-line" d="M 30 180 L 50 200 L 70 220 L 90 300 L 120 320 L 140 380" />
+    <path class="detail-line" d="M 100 420 L 120 440 L 140 500 L 160 520 L 180 580" />
+    <path class="detail-line" d="M 180 620 L 200 640 L 220 700 L 240 720 L 260 780" />
+    <path class="shadow-line" d="M 50 240 L 70 260 L 90 320 L 110 340 L 130 400" opacity="0.5" />
+    <path class="shadow-line" d="M 140 460 L 160 480 L 180 540 L 200 560 L 220 620" opacity="0.5" />
     <path id="right-cliff" class="line"
       d="M 720 60
+         L 700 120
          L 680 220
+         L 660 240
          L 640 260
+         L 620 340
          L 610 380
+         L 590 390
          L 585 400
+         L 570 480
          L 560 560
+         L 520 600
          L 480 660
+         L 460 780
          L 450 840
+         L 420 880
          L 370 940
+         L 360 1020
          L 350 1080
+         L 320 1200
          L 300 1260" />
-
-    <!-- canyon bottom center V-shape -->
-    <path class="line" d="M 370 1080 L 360 1180 L 350 1260" />
-
-    <!-- left-side castle: small tower shape -->
+    <path class="detail-line" d="M 690 180 L 670 200 L 650 220 L 630 300 L 600 320 L 580 380" />
+    <path class="detail-line" d="M 620 420 L 600 440 L 580 500 L 560 520 L 540 580" />
+    <path class="detail-line" d="M 540 620 L 520 640 L 500 700 L 480 720 L 460 780" />
+    <path class="shadow-line" d="M 670 240 L 650 260 L 630 320 L 610 340 L 590 400" opacity="0.5" />
+    <path class="shadow-line" d="M 580 460 L 560 480 L 540 540 L 520 560 L 500 620" opacity="0.5" />
+    <path class="line" d="M 370 1080 L 365 1120 L 360 1180 L 355 1220 L 350 1260" />
+    <path class="detail-line" d="M 380 1100 L 370 1200 L 360 1260" opacity="0.6" />
+    <path class="detail-line" d="M 340 1100 L 350 1200 L 360 1260" opacity="0.6" />
     <g id="castle-left" transform="translate(92,150) scale(1)">
-      <!-- platform and base lines -->
       <path class="castle-line" d="M 0 120 L 8 120 L 8 24 L 22 24 L 22 8 L -14 8 L -14 24 L 0 24 Z"/>
-      <!-- tower pillar -->
-      <path class="castle-line" d="M 8 120 L 8 188"/>
-      <!-- crenellations -->
+      <path class="castle-line" d="M -20 120 L -20 130 L 28 130 L 28 120" />
+      <path class="castle-line" d="M 8 120 L 8 140 M 8 140 L 8 160 M 8 160 L 8 188"/>
       <path class="castle-line" d="M -12 24 L -12 12 L -4 12 L -4 24 L 4 24 L 4 12 L 12 12 L 12 24" />
-      <!-- roof triangle -->
+      <path class="castle-detail" d="M -8 18 H 8" />
       <path class="castle-line" d="M -20 8 L 8 -18 L 36 8 Z" />
-      <!-- small cannon barrel -->
+      <path class="castle-detail" d="M -20 8 L -12 -2 L -4 -12 L 4 -2 L 12 8 M 12 8 L 20 -2 L 28 -12 L 36 8" />
+      <rect class="castle-detail" x="-10" y="40" width="4" height="8" />
+      <rect class="castle-detail" x="14" y="40" width="4" height="8" />
+      <rect class="castle-detail" x="0" y="80" width="4" height="8" />
+      <path class="castle-line" d="M 8 -18 L 8 -40" />
+      <path class="castle-detail" d="M 8 -40 L 20 -35 L 15 -40 L 20 -45 Z" />
       <path class="castle-line" d="M 36 -2 L 60 -2 L 60 2 L 36 2 Z" />
+      <path class="castle-detail" d="M 40 0 H 56" />
+      <circle class="castle-detail" cx="36" cy="0" r="4" />
     </g>
-
-    <!-- right-side castle: mirrored -->
     <g id="castle-right" transform="translate(628,150) scale(1)">
       <path class="castle-line" d="M 0 120 L -8 120 L -8 24 L -22 24 L -22 8 L 14 8 L 14 24 L 0 24 Z"/>
-      <path class="castle-line" d="M -8 120 L -8 188"/>
+      <path class="castle-line" d="M 20 120 L 20 130 L -28 130 L -28 120" />
+      <path class="castle-line" d="M -8 120 L -8 140 M -8 140 L -8 160 M -8 160 L -8 188"/>
       <path class="castle-line" d="M 12 24 L 12 12 L 4 12 L 4 24 L -4 24 L -4 12 L -12 12 L -12 24" />
+      <path class="castle-detail" d="M 8 18 H -8" />
       <path class="castle-line" d="M 20 8 L -8 -18 L -36 8 Z" />
+      <path class="castle-detail" d="M 20 8 L 12 -2 L 4 -12 L -4 -2 L -12 8 M -12 8 L -20 -2 L -28 -12 L -36 8" />
+      <rect class="castle-detail" x="6" y="40" width="4" height="8" />
+      <rect class="castle-detail" x="-18" y="40" width="4" height="8" />
+      <rect class="castle-detail" x="-4" y="80" width="4" height="8" />
+      <path class="castle-line" d="M -8 -18 L -8 -40" />
+      <path class="castle-detail" d="M -8 -40 L -20 -35 L -15 -40 L -20 -45 Z" />
       <path class="castle-line" d="M -36 -2 L -60 -2 L -60 2 L -36 2 Z" />
+      <path class="castle-detail" d="M -40 0 H -56" />
+      <circle class="castle-detail" cx="-36" cy="0" r="4" />
     </g>
-
-    <!-- paths for cannon projectile trajectories (invisible) -->
-    <!-- From left cannon to right castle -->
     <path id="path-left-to-right" d="M 160 138 Q 360 40 560 138" fill="none" stroke="transparent" stroke-width="2"/>
-    <!-- From right cannon to left castle -->
     <path id="path-right-to-left" d="M 560 138 Q 360 40 160 138" fill="none" stroke="transparent" stroke-width="2"/>
-
-    <!-- cannonballs (start hidden) -->
     <circle id="ball-left" class="cannonball" r="8" cx="-20" cy="-20" visibility="hidden"></circle>
     <circle id="ball-right" class="cannonball" r="8" cx="-20" cy="-20" visibility="hidden"></circle>
-
-    <!-- explosion groups at target locations -->
     <g id="expl-left" visibility="hidden">
       <circle cx="160" cy="138" r="6" fill="#fff" opacity="0.9"/>
-      <!-- particle placeholders; JS will animate them -->
     </g>
     <g id="expl-right" visibility="hidden">
       <circle cx="560" cy="138" r="6" fill="#fff" opacity="0.9"/>
     </g>
-
-    <!-- small decorative lines near center (empty space like original image) -->
-    <path class="line" d="M 240 1080 L 360 1260" opacity="0.05"/>
+    <path class="line" d="M 240 1080 L 300 1180 L 360 1260" opacity="0.05"/>
+    <path class="detail-line" d="M 280 1120 L 340 1220" opacity="0.03"/>
   </svg>
 </div>
-
 <div id="sound-enable">
   <div class="box" id="enable-box">Tap to enable sound & start</div>
 </div>
-
 <div class="label">Cannon volleys every 10s • Tap to enable sound</div>
-
 <script>
-/* Cannon Duel animation + synthesized sounds
-   - Fires both cannons simultaneously every 10 seconds
-   - Cannonballs travel along SVG paths (JS uses getPointAtLength)
-   - Explosion animates on impact with small particles and expanding circle
-   - Sounds generated with WebAudio API (user interaction required to start audio)
-*/
-
 (function() {
-  const INTERVAL = 10000; // ms between volleys
-  const TRAVEL = 2000; // ms travel time for cannonball
+  const INTERVAL = 10000;
+  const TRAVEL = 2000;
   const scene = document.getElementById('scene');
   const pathLtoR = document.getElementById('path-left-to-right');
   const pathRtoL = document.getElementById('path-right-to-left');
@@ -201,12 +224,8 @@
   const explRight = document.getElementById('expl-right');
   const soundOverlay = document.getElementById('sound-enable');
   const enableBox = document.getElementById('enable-box');
-
-  // prepare path lengths
   const pLtoR_len = pathLtoR.getTotalLength();
   const pRtoL_len = pathRtoL.getTotalLength();
-
-  // Web Audio setup
   let audioCtx = null;
   function ensureAudio() {
     if (!audioCtx) {
@@ -214,18 +233,13 @@
     }
     return audioCtx;
   }
-
-  // Synthesize a cannon "boom" - low pitch short thump
   function playCannonBoom(time = 0) {
     const ctx = ensureAudio();
     const now = ctx.currentTime + time;
-    // layering two oscillators and a short noise burst
     const o1 = ctx.createOscillator();
     const o2 = ctx.createOscillator();
     const gain = ctx.createGain();
     const noise = ctx.createBufferSource();
-
-    // noise buffer
     const bufferSize = ctx.sampleRate * 0.25;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -233,7 +247,6 @@
       data[i] = (Math.random()*2-1) * Math.exp(-i/(ctx.sampleRate*0.12));
     }
     noise.buffer = buffer;
-
     o1.type = 'sine';
     o1.frequency.value = 60;
     o2.type = 'sawtooth';
@@ -241,12 +254,10 @@
     gain.gain.setValueAtTime(0.0001, now);
     gain.gain.exponentialRampToValueAtTime(1.0, now + 0.02);
     gain.gain.exponentialRampToValueAtTime(0.01, now + 0.9);
-
     o1.connect(gain);
     o2.connect(gain);
     noise.connect(gain);
     gain.connect(ctx.destination);
-
     o1.start(now);
     o2.start(now);
     noise.start(now);
@@ -254,12 +265,9 @@
     o2.stop(now + 0.9);
     noise.stop(now + 0.9);
   }
-
-  // Explosion sound: bright crack plus lower rumble
   function playExplosion(time = 0) {
     const ctx = ensureAudio();
     const now = ctx.currentTime + time;
-    // short bright impact
     const o = ctx.createOscillator();
     const g = ctx.createGain();
     o.type = 'triangle';
@@ -272,8 +280,6 @@
     g.connect(ctx.destination);
     o.start(now);
     o.stop(now + 0.8);
-
-    // low rumble
     const o2 = ctx.createOscillator();
     const g2 = ctx.createGain();
     o2.type='sine';
@@ -285,8 +291,6 @@
     o2.start(now);
     o2.stop(now + 1.4);
   }
-
-  // Utility to animate along a path & promise when finished
   function animateAlongPath(ball, path, pathLen, duration) {
     return new Promise(resolve => {
       ball.setAttribute('visibility','visible');
@@ -309,15 +313,10 @@
       requestAnimationFrame(step);
     });
   }
-
-  // Explosion visual: create radial expansion and particles at (cx,cy) in parent group
   function showExplosion(group, cx, cy) {
     group.setAttribute('transform', `translate(0,0)`);
     group.setAttribute('visibility','visible');
-    // remove previous particles
     while (group.childElementCount > 0) group.removeChild(group.firstChild);
-
-    // main expanding circle
     const main = document.createElementNS('http://www.w3.org/2000/svg','circle');
     main.setAttribute('cx', cx);
     main.setAttribute('cy', cy);
@@ -325,8 +324,6 @@
     main.setAttribute('fill', '#fff');
     main.setAttribute('opacity', '0.95');
     group.appendChild(main);
-
-    // particles: small circles that fly out
     const particles = [];
     const pcount = 12;
     for (let i=0;i<pcount;i++){
@@ -339,17 +336,13 @@
       group.appendChild(p);
       particles.push(p);
     }
-
-    // animate using requestAnimationFrame
     const start = performance.now();
     const dur = 900;
     function anim(now) {
       const t = now - start;
       const progress = Math.min(1, t / dur);
-      // expand main
       main.setAttribute('r', 6 + progress * 60);
       main.setAttribute('opacity', String(0.9 * (1 - progress)));
-      // particles spread
       particles.forEach((p, idx) => {
         const angle = (idx / particles.length) * Math.PI * 2 + (Math.random()-0.5)*0.6;
         const speed = 40 + Math.random()*80;
@@ -364,47 +357,30 @@
     }
     requestAnimationFrame(anim);
   }
-
   function easeOutQuad(t) { return t*(2-t); }
-
-  // positions for target impacts (end of path)
-  const leftImpact = pathRtoL.getPointAtLength(pRtoL_len); // end of right->left is at left castle
-  const rightImpact = pathLtoR.getPointAtLength(pLtoR_len); // end of left->right is at right castle
-
-  // main volley routine
+  const leftImpact = pathRtoL.getPointAtLength(pRtoL_len);
+  const rightImpact = pathLtoR.getPointAtLength(pLtoR_len);
   let volleyTimer = null;
   async function volley() {
-    // small muzzle flash simulation: play cannon boom
     playCannonBoom();
-
-    // fire both balls simultaneously
     const leftFired = animateAlongPath(ballL, pathLtoR, pLtoR_len, TRAVEL);
     const rightFired = animateAlongPath(ballR, pathRtoL, pRtoL_len, TRAVEL);
-
-    // Wait TRAVEL duration then show explosions and sounds at targets
     setTimeout(() => {
       showExplosion(explRight, rightImpact.x, rightImpact.y);
       playExplosion();
     }, TRAVEL - 40);
-
     setTimeout(() => {
       showExplosion(explLeft, leftImpact.x, leftImpact.y);
       playExplosion();
     }, TRAVEL - 40);
-
     await Promise.all([leftFired, rightFired]);
   }
-
-  // loop volley every INTERVAL
   function startLoop() {
-    // start immediately
     volley().catch(console.error);
     volleyTimer = setInterval(() => {
       volley().catch(console.error);
     }, INTERVAL);
   }
-
-  // wire up sound overlay to resume audio on first tap and start loop
   function enableAudioAndStart() {
     try {
       ensureAudio();
@@ -417,24 +393,15 @@
     if (soundOverlay) soundOverlay.classList.add('hidden');
     if (!volleyTimer) startLoop();
   }
-
   enableBox.addEventListener('click', enableAudioAndStart, {passive:true});
-  // also allow tapping anywhere on stage to start audio
   document.getElementById('stage').addEventListener('click', enableAudioAndStart, {passive:true});
-
-  // If the user never taps, still start visual-only loop after a short delay
   setTimeout(() => {
     if (!volleyTimer) startLoop();
-  }, 400); // allow immediate visuals; sound requires tap
-
-  // Accessibility: allow space/enter to start
+  }, 400);
   document.addEventListener('keydown', (e) => {
     if (e.key === ' ' || e.key === 'Enter') enableAudioAndStart();
   });
-
-  // Ensure SVG scales nicely on resize
-  window.addEventListener('resize', ()=>{ /* nothing required, SVG preserves */ });
-
+  window.addEventListener('resize', ()=>{});
 })();
 </script>
 </body>
